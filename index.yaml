@@ -13,6 +13,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/api-gateway-0.4.10/api-gateway-0.4.10.tgz
     version: 0.4.10
+  identity-service:
+  - apiVersion: v2
+    created: "2020-10-11T08:55:07.93189642Z"
+    description: A Helm chart for Kubernetes
+    digest: 473e78cec579b24ec6e2e9729248ae8c2c626ccafba601a6b7c0992fe0683d88
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: identity-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/identity-service-0.1.11/identity-service-0.1.11.tgz
+    version: 0.1.11
   team-management-service:
   - apiVersion: v2
     created: "2020-10-08T07:40:49.307890528Z"
