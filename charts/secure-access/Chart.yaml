@@ -1,0 +1,22 @@
+apiVersion: v2
+name: distribution-chart
+description: Frontegg's secure access Helm Chart
+type: application
+version: 0.1.0
+
+dependencies:
+  - name: api-gateway
+    version: "0.4.*"
+    repository: "https://frontegg.github.io/helm-charts/"
+
+  - name: team-management-service
+    version: "0.1.*"
+    repository: "https://frontegg.github.io/helm-charts/"
+
+  - name: identity-service
+    version: "0.1.*"
+    repository: "https://frontegg.github.io/helm-charts/"
+
+maintainers:
+  - name: "Guy Ludvig"
+    email: "guy@frontegg.com"

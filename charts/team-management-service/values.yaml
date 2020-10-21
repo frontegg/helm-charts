@@ -132,7 +132,7 @@ network:
   identityServiceUrl: http://frontegg-identity-service
   integrationsServiceUrl: http://frontegg-integrations-service
 
-## Set saml properties
+## Set saml properties, values should be provided by Frontegg.
 ##
 saml:
   privateKey: ""
