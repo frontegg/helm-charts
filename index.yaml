@@ -146,6 +146,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.7/connectors-worker-0.1.7.tgz
     version: 0.1.7
+  event-service:
+  - apiVersion: v2
+    created: "2020-10-27T08:23:06.958154237Z"
+    description: A Helm chart for Kubernetes
+    digest: 72a8ee32e5d0131c0f54001ef3f5c077fee29c703381d3b2db62cf93ef00071c
+    maintainers:
+    - email: guy@front.com
+      name: Guy Ludvig
+    name: event-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/event-service-0.1.6/event-service-0.1.6.tgz
+    version: 0.1.6
   identity-service:
   - apiVersion: v2
     created: "2020-10-24T20:16:34.149109134Z"
