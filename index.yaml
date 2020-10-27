@@ -135,6 +135,18 @@ entries:
     version: 0.4.10
   connectors-worker:
   - apiVersion: v2
+    created: "2020-10-27T09:17:59.005628647Z"
+    description: A Helm chart for Kubernetes
+    digest: 7c8699743b2e7ca39b4dae7146465b3c228f833c606a2fdcdf57108a8258d660
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: connectors-worker
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.8/connectors-worker-0.1.8.tgz
+    version: 0.1.8
+  - apiVersion: v2
     created: "2020-10-27T08:11:52.067873445Z"
     description: A Helm chart for Kubernetes
     digest: 39df17f96b3c4b39d5fa88e8a3c2d16d5338cb185756f0ad1e4fd19ee988d62e
