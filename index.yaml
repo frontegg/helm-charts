@@ -133,6 +133,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/api-gateway-0.4.10/api-gateway-0.4.10.tgz
     version: 0.4.10
+  connectors-worker:
+  - apiVersion: v2
+    created: "2020-10-27T08:11:52.067873445Z"
+    description: A Helm chart for Kubernetes
+    digest: 39df17f96b3c4b39d5fa88e8a3c2d16d5338cb185756f0ad1e4fd19ee988d62e
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: connectors-worker
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.7/connectors-worker-0.1.7.tgz
+    version: 0.1.7
   identity-service:
   - apiVersion: v2
     created: "2020-10-24T20:16:34.149109134Z"
