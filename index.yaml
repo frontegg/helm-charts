@@ -663,4 +663,17 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/team-management-service-0.1.2/team-management-service-0.1.2.tgz
     version: 0.1.2
+  webpush-service:
+  - apiVersion: v2
+    created: "2020-10-28T16:09:50.648876551Z"
+    description: Frontegg Webpush Service Helm chart for Kubernetes
+    digest: d195ae2001d9d07f60f6a68eaeddbe94ee1f27b3c3ce1ee9fa1911fa09c4b617
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: webpush-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
+    version: 0.3.2
 generated: "2020-10-03T09:09:55.706872692Z"
