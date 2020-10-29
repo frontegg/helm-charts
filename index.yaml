@@ -304,6 +304,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/identity-service-0.1.11/identity-service-0.1.11.tgz
     version: 0.1.11
+  integrations-service:
+  - apiVersion: v2
+    created: "2020-10-29T11:42:13.292111316Z"
+    description: A Helm chart for Kubernetes
+    digest: f50a36eddb999345b47949e3c01fc51f248d341c235c8279d637a1000be6db4b
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: integrations-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/integrations-service-0.1.2/integrations-service-0.1.2.tgz
+    version: 0.1.2
   secire-access:
   - apiVersion: v2
     created: "2020-10-21T06:59:39.058409376Z"
