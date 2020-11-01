@@ -341,6 +341,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/integrations-service-0.1.2/integrations-service-0.1.2.tgz
     version: 0.1.2
+  notification-service:
+  - apiVersion: v2
+    created: "2020-11-01T12:49:16.105933186Z"
+    description: Frontegg Notification Service Helm chart for Kubernetes
+    digest: 51c512616c8c019db19e16bcd30904ed6929dcdd8bfbdf206e8dbafb587974dc
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: notification-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/notification-service-0.1.5/notification-service-0.1.5.tgz
+    version: 0.1.5
   secire-access:
   - apiVersion: v2
     created: "2020-10-21T06:59:39.058409376Z"
