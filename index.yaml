@@ -135,6 +135,34 @@ entries:
     version: 0.4.10
   connectivity:
   - apiVersion: v2
+    created: "2020-11-02T12:28:44.493651528Z"
+    dependencies:
+    - name: connectors-worker
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.*
+    - name: event-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.*
+    - name: integrations-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.*
+    - name: notification-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.*
+    - name: webpush-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.3.*
+    description: Frontegg's Connectivity Helm chart for Kubernetes
+    digest: d3d18907ed36abcaf6309e734f27a89781f0a0b229d622672870da4dd574b644
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: connectivity
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/connectivity-0.1.0-beta8/connectivity-0.1.0-beta8.tgz
+    version: 0.1.0-beta8
+  - apiVersion: v2
     created: "2020-11-02T11:14:54.192432108Z"
     dependencies:
     - name: connectors-worker
