@@ -699,6 +699,18 @@ entries:
     version: 0.1.11
   integrations-service:
   - apiVersion: v2
+    created: "2020-11-02T15:17:19.400849123Z"
+    description: A Helm chart for Kubernetes
+    digest: bcec353b5d5cd2fcef078f6af4e6d03558e74799d21275b4293c6c17f708ade0
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: integrations-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/integrations-service-0.1.5/integrations-service-0.1.5.tgz
+    version: 0.1.5
+  - apiVersion: v2
     created: "2020-11-02T10:59:01.488594947Z"
     description: A Helm chart for Kubernetes
     digest: 19772539cd8f254968112eb1a85ea2a07e29ff6d89063ddabce192944ab6bc80
