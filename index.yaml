@@ -1229,6 +1229,18 @@ entries:
     version: 0.1.2
   webpush-service:
   - apiVersion: v2
+    created: "2020-11-02T15:53:28.396694101Z"
+    description: Frontegg Webpush Service Helm chart for Kubernetes
+    digest: c29faf4ab3d3a0ee084062e43eda2a77f5c13a4490135b9d849b9a029a09ee59
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: webpush-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.4/webpush-service-0.3.4.tgz
+    version: 0.3.4
+  - apiVersion: v2
     created: "2020-11-02T09:37:52.920495435Z"
     description: Frontegg Webpush Service Helm chart for Kubernetes
     digest: c8cdbad44d7fcb4de62dff406fed861587472963238dc21537dadcfff967ff4b
