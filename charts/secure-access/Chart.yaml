@@ -2,7 +2,7 @@ apiVersion: v2
 name: secure-access
 description: Frontegg's secure access Helm Chart
 type: application
-version: 1.2.0
+version: 1.3.0
 icon: https://frontegg.com/wp-content/uploads/2020/04/logo_frrontegg.svg
 
 dependencies:

@@ -17,7 +17,7 @@ api-gateway:
   # -- Provide the amount of pods if HPA is not enabled
   replicaCount: 2
   # -- Provide the image docker tag default: latest
-  appVersion: "2020.11.26083115"
+  appVersion: "2020.12.14201945"
   # -- Manage docker image properties
   image:
     # -- Provide docker image repository
@@ -138,7 +138,7 @@ identity-service:
   replicaCount: 2
 
   # -- Provide the image docker tag default: latest
-  appVersion: "2020.11.29121109"
+  appVersion: "2020.12.15104347"
 
   # -- Manage docker image properties
   image:
@@ -256,7 +256,7 @@ team-management-service:
   replicaCount: 2
 
   # -- Provide the image docker tag default: latest
-  appVersion: "2020.11.24071135"
+  appVersion: "2020.12.14132859"
 
   # -- Manage docker image properties
   image:
