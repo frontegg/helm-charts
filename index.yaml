@@ -1381,6 +1381,19 @@ entries:
     version: 0.1.0
   team-management-service:
   - apiVersion: v2
+    created: "2020-12-17T14:45:10.728545774Z"
+    description: Frontegg Team Management Service Helm chart for Kubernetes
+    digest: 5f2a9e631be218c966477b5edda10c23dfe1e51d731b9a6ae953143c54bc26e6
+    icon: https://frontegg.com/wp-content/uploads/2020/04/logo_frrontegg.svg
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: team-management-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/team-management-service-0.1.16/team-management-service-0.1.16.tgz
+    version: 0.1.16
+  - apiVersion: v2
     created: "2020-10-31T14:34:31.845231279Z"
     description: Frontegg Team Management Service Helm chart for Kubernetes
     digest: 2ac9b135bcf18a5290561d05edda378cb2512c450773bbceba2452704c2c96d7
