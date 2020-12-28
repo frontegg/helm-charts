@@ -1596,6 +1596,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/team-management-service-0.1.2/team-management-service-0.1.2.tgz
     version: 0.1.2
+  webhook-service:
+  - apiVersion: v2
+    created: "2020-12-28T12:45:26.325299592Z"
+    description: Frontegg Webhook Service Helm chart for Kubernetes
+    digest: d5840542b345e691ab64d7d952b1ac94ffee9514fe61a0664e60aa4ebd10284f
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: webhook-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/webhook-service-0.2.2/webhook-service-0.2.2.tgz
+    version: 0.2.2
   webpush-service:
   - apiVersion: v2
     created: "2020-11-02T15:53:28.396694101Z"
