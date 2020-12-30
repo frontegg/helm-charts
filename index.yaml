@@ -339,6 +339,34 @@ entries:
     - https://github.com/frontegg/helm-charts/releases/download/connectivity-0.1.0-beta4/connectivity-0.1.0-beta4.tgz
     version: 0.1.0-beta4
   - apiVersion: v2
+    created: "2020-12-30T15:07:43.143861488Z"
+    dependencies:
+    - name: api-gateway
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.4.24
+    - name: connectors-worker
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.14
+    - name: event-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.12
+    - name: integrations-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.7
+    - name: webhook-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.2.5
+    description: Frontegg's Connectivity Helm chart for Kubernetes
+    digest: db5c7f62eeaf787cfeec3d417545c728332ec25040239cb9fc9391add292028e
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: connectivity
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/connectivity-0.1.0-beta27/connectivity-0.1.0-beta27.tgz
+    version: 0.1.0-beta27
+  - apiVersion: v2
     created: "2020-12-30T12:58:38.561867229Z"
     dependencies:
     - name: api-gateway
@@ -787,6 +815,18 @@ entries:
     - https://github.com/frontegg/helm-charts/releases/download/connectivity-0.1.0-beta1/connectivity-0.1.0-beta1.tgz
     version: 0.1.0-beta1
   connectors-worker:
+  - apiVersion: v2
+    created: "2020-12-30T15:07:43.301206241Z"
+    description: A Helm chart for Kubernetes
+    digest: 2ac49df1182ebcf3ece8fc464f418325e30ee218b5e7fc39ed9d4d357dfa0cc2
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: connectors-worker
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.16/connectors-worker-0.1.16.tgz
+    version: 0.1.16
   - apiVersion: v2
     created: "2020-11-08T15:49:14.159514987Z"
     description: A Helm chart for Kubernetes
