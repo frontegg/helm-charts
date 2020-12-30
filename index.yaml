@@ -1598,6 +1598,18 @@ entries:
     version: 0.1.2
   webhook-service:
   - apiVersion: v2
+    created: "2020-12-30T09:47:21.737232836Z"
+    description: Frontegg Webhook Service Helm chart for Kubernetes
+    digest: 01213dc85fd3f5e517f55fa6d74403a194746cea0472c8f65bd2f5cf3843da9f
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: webhook-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/webhook-service-0.2.4/webhook-service-0.2.4.tgz
+    version: 0.2.4
+  - apiVersion: v2
     created: "2020-12-30T09:23:26.735415359Z"
     description: Frontegg Webhook Service Helm chart for Kubernetes
     digest: 4ea8939e22cd845230e07050117baf4a5c78c503f49cfb9d54bd92a1fa4108c3
