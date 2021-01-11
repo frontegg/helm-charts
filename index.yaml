@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   api-gateway:
   - apiVersion: v2
+    created: "2021-01-11T17:30:15.869491372Z"
+    description: Frontegg Api Gateway Helm Chart
+    digest: a6ddfd3f073f9f81abded14def551c1ab0b3533e3a8cf8f49e0e97c93488a768
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: api-gateway
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/api-gateway-0.4.28/api-gateway-0.4.28.tgz
+    version: 0.4.28
+  - apiVersion: v2
     created: "2021-01-11T17:23:45.885108461Z"
     description: Frontegg Api Gateway Helm Chart
     digest: ca3f6da9daa292cc33d3362ceb871de128cc1cea17926cb36d404fba8597a10d
