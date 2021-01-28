@@ -1209,6 +1209,18 @@ entries:
     version: 0.1.7
   event-service:
   - apiVersion: v2
+    created: "2021-01-28T10:55:09.284916576Z"
+    description: A Helm chart for Kubernetes
+    digest: a158d6900fb55a3f5c111482578ec83620855ff5b7eaae73f02ff73df8f72f19
+    maintainers:
+    - email: guy@front.com
+      name: Guy Ludvig
+    name: event-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/event-service-0.1.13/event-service-0.1.13.tgz
+    version: 0.1.13
+  - apiVersion: v2
     created: "2020-12-30T12:40:33.042980914Z"
     description: A Helm chart for Kubernetes
     digest: 2b618ca84a2fd121773419d996772ac3b0c8ff00467b06cb64c4e72e5929d047
