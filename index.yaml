@@ -1366,6 +1366,18 @@ entries:
     version: 0.1.6
   identity-service:
   - apiVersion: v2
+    created: "2021-02-17T10:13:05.28580853Z"
+    description: A Helm chart for Kubernetes
+    digest: 388f943efb73a9c6b6469e1a43f82d0f27584e96e4de480ce3a1be539e002072
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: identity-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/identity-service-0.1.39/identity-service-0.1.39.tgz
+    version: 0.1.39
+  - apiVersion: v2
     created: "2021-01-31T08:58:38.942420576Z"
     description: A Helm chart for Kubernetes
     digest: fb66ec8f06e874d9da3829af732660bd6c7ed214561ac5fddc451534cd901363
@@ -1763,6 +1775,29 @@ entries:
     - https://github.com/frontegg/helm-charts/releases/download/secire-access-0.1.0/secire-access-0.1.0.tgz
     version: 0.1.0
   secure-access:
+  - apiVersion: v2
+    created: "2021-02-17T10:13:05.373855031Z"
+    dependencies:
+    - name: api-gateway
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.4.34
+    - name: team-management-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.17
+    - name: identity-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.37
+    description: Frontegg's secure access Helm Chart
+    digest: 254a964df7b33fdd470ab815ab4d5cb7c71e88a39b728a247023fa9cd34eed36
+    icon: https://frontegg.com/wp-content/uploads/2020/04/logo_frrontegg.svg
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: secure-access
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/secure-access-1.5.0-beta.5/secure-access-1.5.0-beta.5.tgz
+    version: 1.5.0-beta.5
   - apiVersion: v2
     created: "2021-02-17T08:55:41.149718946Z"
     dependencies:
