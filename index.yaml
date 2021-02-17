@@ -1788,6 +1788,29 @@ entries:
     version: 0.1.0
   secure-access:
   - apiVersion: v2
+    created: "2021-02-17T10:31:13.115889167Z"
+    dependencies:
+    - name: api-gateway
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.4.34
+    - name: team-management-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.17
+    - name: identity-service
+      repository: https://frontegg.github.io/helm-charts/
+      version: 0.1.40
+    description: Frontegg's secure access Helm Chart
+    digest: 30472e9dc8a5b14e9ddee9ca37fe940e36b2636c2929939c5aaef6e966ac4a4e
+    icon: https://frontegg.com/wp-content/uploads/2020/04/logo_frrontegg.svg
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: secure-access
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/secure-access-1.5.0/secure-access-1.5.0.tgz
+    version: 1.5.0
+  - apiVersion: v2
     created: "2021-02-17T10:17:48.264283526Z"
     dependencies:
     - name: api-gateway
