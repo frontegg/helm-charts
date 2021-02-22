@@ -1,0 +1,43 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    image: frontegg/hybrid-api-gateway:${API_GATEWAY_TAG}
+    container_name: frontegg-api-gateway
+    ports:
+      - 9090:9090
+    networks:
+      - frontegg-network
+    env_file:
+      - ./.common.env
+    environment:
+      - FRONTEGG_AUTH_PUBLIC_KEY=
+      - FRONTEGG_HYBRID_SERVICES=audits
+
+  audits-service:
+    image: frontegg/audits-service 
+    container_name: frontegg-audits-service
+    networks:
+      - frontegg-network
+    env_file:
+      - ./.common.env
+    environment:
+      - FRONTEGG_PORT="3002"
+      - FRONTEGG_AUDITS_DB_URL=${AUDITS_DB_URL}
+      - FRONTEGG_AUDITS_SERVICE_API_KEY=${AUDITS_SERVICE_API_KEY}
+      - FRONTEGG_METADATA_SERVICE_API_KEY=${METADATA_SERVICE_API_KEY}
+      - FRONTEGG_KAFKA_BROKER_LIST=${KAFKA_BROKER_LIST}
+      - FRONTEGG_KAFKA_SASL_PASSWORD=${KAFKA_SASL_PASSWORD}
+      - FRONTEGG_AUDITS_TOPIC_NAME=${AUDITS_TOPIC_NAME}
+      - FRONTEGG_AUDITS_DB_TYPE="mysql"
+      - FRONTEGG_AUDITS_DB_HOST=${AUDITS_DB_HOST}
+      - FRONTEGG_AUDITS_DB_USERNAME=${AUDITS_DB_USERNAME}
+      - FRONTEGG_AUDITS_DB_PASSWORD=${AUDITS_DB_PASSWORD}
+      - FRONTEGG_AUDITS_DB_NAME=${AUDITS_DB_NAME}
+      - FRONTEGG_AUDITS_DB_USE_SSL=${AUDITS_DB_USE_SSL}
+      - FRONTEGG_METADATA_SERVICE_FETCH_PUBSUB_STRATEGY="false"
+      - FRONTEGG_METADATA_SERVICE_URL=${METADATA_SERVICE_URL}
+
+networks:
+  frontegg-network:
+    driver: bridge
