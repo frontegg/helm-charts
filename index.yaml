@@ -1758,6 +1758,18 @@ entries:
     version: 0.1.6
   identity-service:
   - apiVersion: v2
+    created: "2021-09-14T08:46:54.001206832Z"
+    description: A Helm chart for Kubernetes
+    digest: 38ad69a411fff0aaaad07d86cf84a7633d1bc169240c7526fa290dfbc3c7f01a
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: identity-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/identity-service-0.1.53/identity-service-0.1.53.tgz
+    version: 0.1.53
+  - apiVersion: v2
     created: "2021-09-14T08:04:06.933698368Z"
     description: A Helm chart for Kubernetes
     digest: ed264c0597ce0a571a9a4234976f8fecb2571db95abae98798213818465ae3af
