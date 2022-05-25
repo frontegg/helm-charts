@@ -723,6 +723,18 @@ entries:
     version: 0.4.10
   audits-service:
   - apiVersion: v2
+    created: "2022-05-25T10:39:41.90860454Z"
+    description: Frontegg Audits Service Helm chart
+    digest: 97b42c5037bb4af65403153155e2a1c457f9bbea93abd6e4189ed8a80de1dafe
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: audits-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/audits-service-0.6.17/audits-service-0.6.17.tgz
+    version: 0.6.17
+  - apiVersion: v2
     created: "2022-05-24T12:36:31.870487194Z"
     description: Frontegg Audits Service Helm chart
     digest: c53cfbfb139a0ed863115c292738b14995c66db1def9097baa01831c42ba6679
