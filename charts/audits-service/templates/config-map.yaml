@@ -3,7 +3,7 @@ apiVersion: v1
 metadata:
   name: {{ include "audits-service.fullname" . }}-configmap
   labels:
-  {{- include "api-gateway.labels" . | nindent 4 }}
+  {{- include "audits-service.labels" . | nindent 4 }}
 data:
   NODE_ENV: production
   FRONTEGG_HYBRID_MODE: "true"
