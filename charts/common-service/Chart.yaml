@@ -1,0 +1,10 @@
+apiVersion: v2
+name: common-service
+description: A Common Helm chart for frontegg services
+type: application
+version: 0.1.0
+maintainers:
+  - name: Frontegg Platform
+    email: devops.team@frontegg.com
+
+

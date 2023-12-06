@@ -1,0 +1,7 @@
+{{- $top := . -}}
+{{- $values := .Values -}}
+{{- range $deploymentName, $deployment := $values.deployments -}}
+xxx: {{ $deploymentName }}
+{{ toYaml $deployment }}
+{{/*{{- include "common.deployment" (dict "name" $deploymentName "deployment" $deployment "context" $) -}}*/}}
+{{- end -}}

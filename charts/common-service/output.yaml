@@ -1,0 +1,4 @@
+---
+# Source: common-service/templates/xxx.yaml
+xxx: moshe
+x: true

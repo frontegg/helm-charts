@@ -1,0 +1,21 @@
+{{/*{{- $top := . -}}*/}}
+{{/*{{- $values := .Values -}}*/}}
+{{/*{{- range $deploymentName, $deployment := $values.deployments -}}*/}}
+{{/*---*/}}
+{{/*apiVersion: apps/v1*/}}
+{{/*kind: Deployment*/}}
+{{/*metadata:*/}}
+{{/*  name: {{ include "common-service.fullname" . }}-deployment*/}}
+{{/*  labels:*/}}
+{{/*  {{- include "common-service.labels" . | nindent 4 }}*/}}
+{{/*  {{- with $deployment.labels }}*/}}
+{{/*    {{- toYaml . | nindent 4 }}*/}}
+{{/*  {{- end }}*/}}
+{{/*spec:*/}}
+{{/*  {{- if $deployment.argoRollouts }}*/}}
+{{/*  replicas: 0*/}}
+{{/*  {{- else if not $deployment.autoScaling.enabled }}*/}}
+{{/*  replicas: {{ $deployment.replicaCount }}*/}}
+{{/*  {{- end }}*/}}
+
+{{/*{{- end }}*/}}
