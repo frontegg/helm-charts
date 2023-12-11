@@ -10,7 +10,9 @@ metadata:
   name: {{ $values.name }}-{{ $block_name }}-deployment
   labels:
     app.kubernetes.io/name: {{ $values.name }}-{{ $block_name }}-deployment
-    {{- $block_specs.labels | toYaml | nindent 4 }}
+    {{- with $block_specs.labels }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
 spec:
   {{- if not $block_specs.hpa }}
   replicas: {{ $deploy_specs.replicaCount | default 1 }}

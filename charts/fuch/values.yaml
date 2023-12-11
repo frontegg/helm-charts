@@ -15,12 +15,14 @@ defaults:
   hpa: {}
   probes: {}
   resources: {}
+  svc:
+    targetPort: 3016
   deployment:
     imagePullSecrets:
       - name: regcred
     ports:
       - name: http
-        containerPort: 4012
+        containerPort: 3016
         protocol: TCP
     image:
       repository: asshole
@@ -79,7 +81,7 @@ blocks:
       imagePullSecrets:
         - name: regcred
       replicaCount: 7
-      labels: {}
+      # labels: {}
       probes:
         startupProbe: {}
         livenessProbe: {}
@@ -114,6 +116,7 @@ blocks:
     rollout:
       enabled: true
     hpa:
+      defaults: true
     configmap:
       useExisting:
         nameRef: service
@@ -121,17 +124,23 @@ blocks:
       externalSecret:
         useExisting:
           nameRef: service
-  # highpriority:
-  #   service:
-  #   ingress:
-  #   configmap:
-  #   deployment:
-  #   rollout:
-  #   hpa:
-  #   secret:
-  #     externalSecret:
-  #       useExisting:
-  #         nameRef: generalService
+  highpriority:
+    svc:
+      defaults: true
+    ingress:
+      defaults: true
+    configmap:
+      defaults: true
+    deployment:
+      defaults: true
+    rollout:
+      defaults: true
+    hpa:
+      defaults: true
+    secret:
+      externalSecret:
+        useExisting:
+          nameRef: service
 
 jobs:
   migrate:
