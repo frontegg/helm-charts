@@ -2,6 +2,18 @@ apiVersion: v1
 entries:
   api-gateway:
   - apiVersion: v2
+    created: "2023-12-12T14:21:59.379827892Z"
+    description: Frontegg Api Gateway Helm Chart
+    digest: d9fbb8925e279aa11d541179e8877f06146c9223b3597fa75fbcd4251303e542
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: api-gateway
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/api-gateway-0.4.113/api-gateway-0.4.113.tgz
+    version: 0.4.113
+  - apiVersion: v2
     created: "2023-02-08T15:54:40.197458828Z"
     description: Frontegg Api Gateway Helm Chart
     digest: a1f8fe705324091b018f4090c691d0a15a77e709737c5aca9736715ab09b528b
@@ -878,6 +890,18 @@ entries:
     - https://github.com/frontegg/helm-charts/releases/download/api-gateway-0.4.10/api-gateway-0.4.10.tgz
     version: 0.4.10
   audits-service:
+  - apiVersion: v2
+    created: "2023-12-12T14:21:59.522364969Z"
+    description: Frontegg Audits Service Helm chart
+    digest: 9582e75d86311d77326537116495c2bc690480c7606b32fd10b72b83e45bf2d5
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: audits-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/audits-service-0.6.33/audits-service-0.6.33.tgz
+    version: 0.6.33
   - apiVersion: v2
     created: "2023-02-08T15:54:40.389407181Z"
     description: Frontegg Audits Service Helm chart
@@ -1973,6 +1997,18 @@ entries:
     version: 0.1.0-beta1
   connectors-worker:
   - apiVersion: v2
+    created: "2023-12-12T14:21:59.649259542Z"
+    description: A Helm chart for Kubernetes
+    digest: 08b5a56142694af96648b1c70e70390ba1eb028aa6af8a9351ed87539d0561bb
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: connectors-worker
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.31/connectors-worker-0.1.31.tgz
+    version: 0.1.31
+  - apiVersion: v2
     created: "2023-02-13T14:31:26.441705963Z"
     description: A Helm chart for Kubernetes
     digest: 431ed266b433321d00e071025d063240c441f4f0557077e91354bca391584d33
@@ -2238,6 +2274,18 @@ entries:
     version: 0.1.7
   event-service:
   - apiVersion: v2
+    created: "2023-12-12T14:21:59.788402873Z"
+    description: A Helm chart for Kubernetes
+    digest: efd892f731c341d6d96e654dc43deb64b7479f2069722d3604718dd8a2ad9c6f
+    maintainers:
+    - email: guy@front.com
+      name: Guy Ludvig
+    name: event-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/event-service-0.1.30/event-service-0.1.30.tgz
+    version: 0.1.30
+  - apiVersion: v2
     created: "2023-02-13T14:00:57.956726725Z"
     description: A Helm chart for Kubernetes
     digest: 0023b88f759f428adcfbc7e6f1e042795459d920bfd8395e38c45d45da178b5d
@@ -2465,7 +2513,45 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/event-service-0.1.6/event-service-0.1.6.tgz
     version: 0.1.6
+  fastify-api-gateway:
+  - apiVersion: v2
+    created: "2023-12-12T14:21:59.94202758Z"
+    description: Frontegg Fastify Api Gateway Helm Chart
+    digest: efe4690bbf0a148dccec3896adb0070b3bf5ba3c24398e7322d929477d278871
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: fastify-api-gateway
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/fastify-api-gateway-0.1.3/fastify-api-gateway-0.1.3.tgz
+    version: 0.1.3
+  frontegg-utils:
+  - apiVersion: v2
+    created: "2023-12-12T14:22:00.056207497Z"
+    description: A Helm chart for Kubernetes
+    digest: 16756d1ee049ad61418ee2d29f006bcea659d9644fe55031f0e6c74ef1031dc7
+    maintainers:
+    - email: platform@frontegg.com
+      name: Frontegg Platform
+    name: frontegg-utils
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/frontegg-utils-0.1.0/frontegg-utils-0.1.0.tgz
+    version: 0.1.0
   identity-service:
+  - apiVersion: v2
+    created: "2023-12-12T14:22:00.193890367Z"
+    description: A Helm chart for Kubernetes
+    digest: e41c276778647116d2674809384b819fe991bb61827a146daa05a76655c764b0
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: identity-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/identity-service-0.1.94/identity-service-0.1.94.tgz
+    version: 0.1.94
   - apiVersion: v2
     created: "2023-02-12T09:13:29.354838887Z"
     description: A Helm chart for Kubernetes
@@ -3296,6 +3382,18 @@ entries:
     version: 0.1.11
   integrations-service:
   - apiVersion: v2
+    created: "2023-12-12T14:22:00.320549793Z"
+    description: A Helm chart for Kubernetes
+    digest: e51dc3394ab7ff976144469ed74f1d93b611041162de83eb4215cce4a39391aa
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: integrations-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/integrations-service-0.1.17/integrations-service-0.1.17.tgz
+    version: 0.1.17
+  - apiVersion: v2
     created: "2023-02-08T15:54:40.972493155Z"
     description: A Helm chart for Kubernetes
     digest: d1e18f311fd551b4135cd28fcb7c3bb7dcaa5e3e89b0f0d65936ecc45a0e9e97
@@ -4007,6 +4105,19 @@ entries:
     version: 0.1.0
   team-management-service:
   - apiVersion: v2
+    created: "2023-12-12T14:22:00.479023944Z"
+    description: Frontegg Team Management Service Helm chart for Kubernetes
+    digest: 72a9ef14eb846be1a94aff3c17ab00c8a7cbc0f76e61f5a0aa240e2c575968ce
+    icon: https://frontegg.com/wp-content/uploads/2020/04/logo_frontegg.svg
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: team-management-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/team-management-service-0.1.48/team-management-service-0.1.48.tgz
+    version: 0.1.48
+  - apiVersion: v2
     created: "2023-02-08T15:54:41.332737212Z"
     description: Frontegg Team Management Service Helm chart for Kubernetes
     digest: 4ecd1d10b09f2fceb35f768b5ffe905696426c9944debd3e5599676c412fd8d9
@@ -4462,6 +4573,18 @@ entries:
     version: 0.1.2
   webhook-service:
   - apiVersion: v2
+    created: "2023-12-12T14:22:00.645415586Z"
+    description: Frontegg Webhook Service Helm chart for Kubernetes
+    digest: 658a602aaf0d38a0cd15df78441fdb70665ce295f604f80c3ee69566de3e7de7
+    maintainers:
+    - email: guy@frontegg.com
+      name: Guy Ludvig
+    name: webhook-service
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/webhook-service-0.2.30/webhook-service-0.2.30.tgz
+    version: 0.2.30
+  - apiVersion: v2
     created: "2023-02-08T16:15:22.370106484Z"
     description: Frontegg Webhook Service Helm chart for Kubernetes
     digest: 1c6bc4693940bc356e6b102a1683133b19ecae676fa6298d8142c3a2623ab8fb
@@ -4714,4 +4837,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2020-10-03T09:09:55.706872692Z"
+generated: "2023-12-12T14:22:00.647142593Z"
