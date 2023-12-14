@@ -1,0 +1,19 @@
+# default value for Frontegg Unified Helm Chart
+componentsCollectionIdentifier: local
+team: devops
+name: example
+
+# not sure i wanna support overrides
+overrides: {}
+
+defaults:
+  hpa: {}
+  probes: {}
+  resources: {}
+  svc: {}
+  deployment: {}
+  ingress: {}
+
+blocks: {}
+
+jobs: {}
