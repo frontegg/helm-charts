@@ -1,161 +1,19 @@
-# wip
+# default value for Frontegg Unified Helm Chart
 componentsCollectionIdentifier: local
-team: core
-name: identity
+team: devops
+name: example
 
 # not sure i wanna support overrides
-overrides:
-  prd-ap-se2:
-    blocks:
-      svc:
-        hpa:
-          minReplicas: 10
+overrides: {}
 
 defaults:
   hpa: {}
   probes: {}
   resources: {}
-  svc:
-    targetPort: 3016
-  deployment:
-    imagePullSecrets:
-      - name: regcred
-    ports:
-      - name: http
-        containerPort: 3016
-        protocol: TCP
-    image:
-      repository: asshole
-      tag: fuckthis
+  svc: {}
+  deployment: {}
+  ingress: {}
 
-  ingress:
-    annotations:
-      nginx.ingress.kubernetes.io/proxy-body-size: 4m
-      nginx.ingress.kubernetes.io/configuration-snippet: |
-        more_clear_input_headers "Host" "X-Forwarded-Host";
-        proxy_set_header Host $http_host;
-        proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
-      nginx.ingress.kubernetes.io/server-snippet: |
-        add_header X-Request-ID $request_id;
-        add_header Cache-Control "no-transform";
-        location ~* ^/(metrics|healthcheck) {
-          deny all;
-          return 403;
-        }
+blocks: {}
 
-blocks:
-  service:
-    # not applicable for identity
-    ingress:
-      ingressClassName: nginx
-    # not applicable for identity
-    albIngress:
-      ingressClassName: nginx2
-    configmap:
-      data:
-        CLOUD_ENVIRONMENT: dev
-        FRONTEGG_SERVICE_NAME: identity-service
-        NODE_ENV: production
-        FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
-        FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
-        FRONTEGG_ANALYTICS_TYPE: firehose
-        FRONTEGG_JAEGER_ENABLED: "true"
-        FRONTEGG_TWILIO_SENDER: "+12055578527"
-        LOG_LEVEL: verbose
-        MIGRATION_DIR_PATH: /dist/migrations,/dist/seeders
-      configcenter:
-        FRONTEGG_REPORTS_ENGINE_URL: reports-engine-url
-        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
-        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
-        FRONTEGG_API_GW_URL: api-gateway-url
-        FRONTEGG_PREHOOK_SERVICE_URL: prehook-service-url
-        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
-        FRONTEGG_EMAIL_SERVICE_URL: email-service-url
-        FRONTEGG_MAX_CONCURRENT_SESSIONS: identity-service-max-concurrent-sessions
-        FRONTEGG_IDENTITY_SERVICE_DB_NAME: identity-service-db-name
-        FRONTEGG_AUDITS_KAFKA_TOPIC_NAME: identity-service-audit-triggered-topic-name
-        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-        FRONTEGG_OAUTH_SERVICE_URL: oauth-service-url
-        FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
-    deployment:
-      imagePullSecrets:
-        - name: regcred
-      replicaCount: 7
-      # labels: {}
-      probes:
-        startupProbe: {}
-        livenessProbe: {}
-        readinessProbe: {}
-      resources:
-        requests:
-          cpu: 1000m
-          memory: 2Gi
-    rollout:
-      enabled: true
-    svc:
-      targetPort: 3016
-    hpa:
-      autoscaling:
-        minReplicas: 1
-        maxReplicas: 2
-        targetCPUUtilizationPercentage: 50
-        targetMemoryUtilizationPercentage: 75
-    secret:
-      externalSecret:
-        text: |
-          {{- $secret := .contents | fromYaml }}
-          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-          splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
-  offline:
-    deployment:
-      imagePullSecrets: []
-      resources:
-        requests:
-          cpu: 1000m
-          memory: 2Gi
-    rollout:
-      enabled: true
-    hpa:
-      defaults: true
-    configmap:
-      useExisting:
-        nameRef: service
-    secret:
-      externalSecret:
-        useExisting:
-          nameRef: service
-  p1:
-    svc:
-      defaults: true
-    ingress:
-      defaults: true
-    configmap:
-      defaults: true
-    deployment:
-      defaults: true
-    rollout:
-      defaults: true
-    hpa:
-      defaults: true
-    secret:
-      externalSecret:
-        useExisting:
-          nameRef: service
-
-jobs:
-  migrate:
-    enabled: true
-    metadata:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "-2"
-        helm.sh/hook-delete-policy: "before-hook-creation"
-    spec:
-      annotations: {}
-      args:
-        - "/bin/bash"
-        - "./run-migrations.sh"
-      resources:
-        requests:
-          cpu: 500m
-          memory: 500Mi
+jobs: {}
