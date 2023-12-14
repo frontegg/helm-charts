@@ -1,0 +1,28 @@
+{{- $values := .Values -}}
+{{- $top := . -}}
+{{- range $block_name, $block_specs := $values.blocks -}}
+{{- if and $block_specs.rollout }}
+{{- $rollout_specs := $block_specs.rollout }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ $values.name }}-{{ $block_name }}-rollout
+spec:
+  workloadRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ $values.name }}-{{ $block_name }}-deployment
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ $values.name }}-{{ $block_name }}-deployment
+  strategy:
+    blueGreen:
+      {{- if not $block_specs.svc }}
+      {{- fail "Argo rollouts requires a service, svc block is missing in values." }}
+      {{- end }}
+      activeService: {{ $values.name }}-{{ $block_name }}-svc
+      autoPromotionEnabled: {{ $rollout_specs.autoPromotionEnabled | default true }}
+{{- end }}
+{{- end }}

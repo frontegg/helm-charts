@@ -1,6 +1,6 @@
 {{- $values := .Values -}}
 {{- $top := . -}}
-{{- range $block_name, $block_specs := $values.blocks -}}
+{{- range $block_name, $block_specs := $values.blocks }}
 {{- if $block_specs.hpa }}
 {{- $hpa_specs := $block_specs.hpa }}
 ---
@@ -22,10 +22,10 @@ spec:
     {{- else }}
     apiVersion: apps/v1
     kind: Deployment
-    name:{{ $values.name }}-{{ $block_name }}-deployment
+    name: {{ $values.name }}-{{ $block_name }}-deployment
     {{- end }}
-  minReplicas: {{ $hpa_specs.minReplicas }}
-  maxReplicas: {{ $hpa_specs.maxReplicas }}
+  minReplicas: {{ default $hpa_specs.minReplicas $values.defaults.hpa.minReplicas }}
+  maxReplicas: {{ default $hpa_specs.maxReplicas $values.defaults.hpa.maxReplicas }}
   metrics:
     {{- if or $hpa_specs.targetCPUUtilizationPercentage $values.defaults.hpa.targetCPUUtilizationPercentage}}
     - type: Resource
