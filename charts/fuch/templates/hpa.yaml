@@ -1,0 +1,47 @@
+{{- $values := .Values -}}
+{{- $top := . -}}
+{{- range $block_name, $block_specs := $values.blocks -}}
+{{- if $block_specs.hpa }}
+{{- $hpa_specs := $block_specs.hpa }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ $values.name }}-{{ $block_name }}-hpa
+  labels:
+    app.kubernetes.io/name: {{ $values.name }}-{{ $block_name }}-hpa
+    {{- with $block_specs.labels }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
+spec:
+  scaleTargetRef:
+    {{- if $block_specs.rollout }}
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: {{ $values.name }}-{{ $block_name }}-rollout
+    {{- else }}
+    apiVersion: apps/v1
+    kind: Deployment
+    name:{{ $values.name }}-{{ $block_name }}-deployment
+    {{- end }}
+  minReplicas: {{ $hpa_specs.minReplicas }}
+  maxReplicas: {{ $hpa_specs.maxReplicas }}
+  metrics:
+    {{- if or $hpa_specs.targetCPUUtilizationPercentage $values.defaults.hpa.targetCPUUtilizationPercentage}}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ default $hpa_specs.targetCPUUtilizationPercentage $values.defaults.hpa.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if or $hpa_specs.targetMemoryUtilizationPercentage $values.defaults.hpa.targetMemoryUtilizationPercentage}}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ default $hpa_specs.targetMemoryUtilizationPercentage $values.defaults.hpa.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+{{- end }}

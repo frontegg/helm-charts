@@ -124,7 +124,7 @@ blocks:
       externalSecret:
         useExisting:
           nameRef: service
-  highpriority:
+  p1:
     svc:
       defaults: true
     ingress:
