@@ -29,9 +29,8 @@ defaults:
         containerPort: 3016
         protocol: TCP
     image:
-      repository: asshole
-      tag: fuckthis
-
+      repository: somerepo
+      tag: myawesomeimage
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 4m
