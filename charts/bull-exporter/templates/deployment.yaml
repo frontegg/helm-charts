@@ -1,0 +1,34 @@
+{{- range $index, $redis := .Values.bullExporter.bullExporter.env.exporterRedisUrls }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "bull-exporter.fullname" . }}-bull-exporter
+  labels:
+    app: bull
+    role: exporter {{- include "bull-exporter.labels" . | nindent 4 }}
+    redis-db: {{ $redis.name }}
+spec:
+  replicas: {{ .Values.bullExporter.replicas }}
+  selector:
+    matchLabels:
+      app: bull
+      role: exporter {{- include "bull-exporter.selectorLabels" . | nindent 6 }}
+      redis-db: {{ $redis.name }}
+  template:
+    metadata:
+      labels:
+        app: bull
+        role: exporter {{- include "bull-exporter.selectorLabels" . | nindent 8 }}
+        redis-db: {{ $redis.name }}
+    spec:
+      containers:
+      - env:
+        - name: EXPORTER_REDIS_URL
+          value: {{ quote $redis.url }}
+        - name: KUBERNETES_CLUSTER_DOMAIN
+          value: {{ quote .Values.kubernetesClusterDomain }}
+        image: {{ .Values.bullExporter.bullExporter.image.repository }}:{{ .Values.bullExporter.bullExporter.image.tag | default .Chart.AppVersion }}
+        name: bull-exporter
+        resources: {{- toYaml .Values.bullExporter.bullExporter.resources | nindent 10 }}
+        securityContext: {{- toYaml .Values.bullExporter.bullExporter.containerSecurityContext | nindent 10 }}
+{{- end }}

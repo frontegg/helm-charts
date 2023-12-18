@@ -1,0 +1,63 @@
+bullExporter:
+  bullExporter:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - all
+      privileged: false
+      readOnlyRootFilesystem: true
+      runAsGroup: 65534
+      runAsNonRoot: true
+      runAsUser: 65534
+    env:
+      exporterRedisUrls:
+        - name: db0
+          url: redis://redis:6379/0
+        - name: db1
+          url: redis://redis:6379/1
+        - name: db2
+          url: redis://redis:6379/2
+        - name: db3
+          url: redis://redis:6379/3
+        - name: db4
+          url: redis://redis:6379/4
+        - name: db5
+          url: redis://redis:6379/5
+        - name: db6
+          url: redis://redis:6379/6
+        - name: db7
+          url: redis://redis:6379/7
+        - name: db8
+          url: redis://redis:6379/8
+        - name: db9
+          url: redis://redis:6379/9
+        - name: db10
+          url: redis://redis:6379/10
+        - name: db11
+          url: redis://redis:6379/11
+        - name: db12
+          url: redis://redis:6379/12
+        - name: db13
+          url: redis://redis:6379/13
+        - name: db14
+          url: redis://redis:6379/14
+        - name: db15
+          url: redis://redis:6379/15
+    image:
+      repository: uphabit/bull_exporter
+      tag: latest
+    resources:
+      limits:
+        cpu: 200m
+        memory: 512M
+      requests:
+        cpu: 100m
+        memory: 128M
+  ports:
+  - name: http
+    port: 9538
+    targetPort: 9538
+  replicas: 1
+  type: ClusterIP
+kubernetesClusterDomain: cluster.local
