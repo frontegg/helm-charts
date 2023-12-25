@@ -1070,6 +1070,17 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/audits-service-0.6.16/audits-service-0.6.16.tgz
     version: 0.6.16
+  bull-exporter:
+  - apiVersion: v2
+    appVersion: 0.1.0
+    created: "2023-12-25T10:17:33.822383512Z"
+    description: A Helm chart for Kubernetes
+    digest: e85fbce681e08c509dea78072c6e070a256f3c849c9434768170200e2cbd657a
+    name: bull-exporter
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/bull-exporter-0.1.0/bull-exporter-0.1.0.tgz
+    version: 0.1.0
   connectivity:
   - apiVersion: v2
     created: "2021-05-05T19:30:54.545306539Z"
@@ -4837,4 +4848,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2023-12-12T14:22:00.647142593Z"
+generated: "2023-12-25T10:17:33.823168269Z"
