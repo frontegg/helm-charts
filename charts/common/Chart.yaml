@@ -1,0 +1,12 @@
+apiVersion: v2
+name: common
+description: Frontegg Unified Common Helm Chart
+
+type: application
+
+version: 0.0.1
+appVersion: "0.0.1"
+
+maintainers:
+  - name: devops
+    email: devops@frontegg.com

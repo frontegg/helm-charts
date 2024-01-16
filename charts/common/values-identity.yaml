@@ -29,8 +29,8 @@ defaults:
         containerPort: 3016
         protocol: TCP
     image:
-      repository: somerepo
-      tag: myawesomeimage
+      repository: defaultrepo
+      appVersion: defaultappversion
   ingress:
     annotations:
       nginx.ingress.kubernetes.io/proxy-body-size: 4m
@@ -81,6 +81,9 @@ blocks:
         FRONTEGG_OAUTH_SERVICE_URL: oauth-service-url
         FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
     deployment:
+      image:
+        repository: specificrepo
+        appVersion: specificAppversion
       imagePullSecrets:
         - name: regcred
       replicaCount: 7
@@ -116,7 +119,7 @@ blocks:
           cpu: 1000m
           memory: 2Gi
     # rollout:
-    #   enabled: true
+    #   defaults: true
     hpa:
       defaults: true
     configmap:

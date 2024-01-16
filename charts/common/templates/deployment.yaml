@@ -28,7 +28,7 @@ spec:
       imagePullSecrets:
         {{- $deploy_specs.imagePullSecrets | default $values.defaults.deployment.imagePullSecrets | toYaml | nindent 8 }}
       {{- if false}}
-      serviceAccountName: {{ include "fuch.serviceAccountName" $top }}
+      serviceAccountName: {{ include "common.serviceAccountName" $top }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       {{- end }}
@@ -39,7 +39,8 @@ spec:
             {{- toYaml .Values.securityContext | nindent 12 }}
           {{- end }}
           {{- $image := $deploy_specs.image | default $values.defaults.deployment.image }}
-          image: "{{ $image.repository }}:{{ $image.tag | default $top.Chart.AppVersion }}"
+          {{- $appVersion := default $deploy_specs.appVersion $values.defaults.deployment.image.appVersion }}
+          image: "{{ $image.repository }}:{{ $appVersion | default "master-latest" }}"
           imagePullPolicy: {{ $image.pullPolicy | default "always" }}
           {{- $ports := $deploy_specs.ports | default $values.defaults.deployment.ports }}
           {{- with $ports}}
