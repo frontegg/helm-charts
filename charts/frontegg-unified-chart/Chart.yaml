@@ -1,6 +1,6 @@
 apiVersion: v2
-name: tenants-service
-description: Frontegg Tenants Service Helm chart for Kubernetes
+name: frontegg-unified-chart
+description: Frontegg Unified Chart (FUC)
 type: application
 
 version: 0.1.29

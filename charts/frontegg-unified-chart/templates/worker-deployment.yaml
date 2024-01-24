@@ -3,9 +3,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "tenants-service.fullname" . }}-worker-deployment
+  name: {{ include "fuc.fullname" . }}-worker-deployment
   labels:
-  {{- include "tenants-service.workerLabels" . | nindent 4 }}
+  {{- include "fuc.workerLabels" . | nindent 4 }}
 spec:
   {{- if .Values.argoRollouts }}
   replicas: 0
@@ -15,11 +15,11 @@ spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   selector:
     matchLabels:
-      {{- include "tenants-service.workerSelectorLabels" . | nindent 6 }}
+      {{- include "fuc.workerSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-      {{- include "tenants-service.workerLabels" . | nindent 8 }}
+      {{- include "fuc.workerLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ (print .Values.configmap) | sha256sum }}
         {{- with .Values.offline.podAnnotations }}
@@ -80,7 +80,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "tenants-service.fullname" . }}-configmap
+                name: {{ include "fuc.fullname" . }}-configmap
           resources:
             {{- toYaml .Values.offline.resources | nindent 12 }}
           args:

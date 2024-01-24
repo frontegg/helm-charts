@@ -6,9 +6,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "tenants-service.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+  name: {{ include "fuc.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
   labels:
-    {{- include "tenants-service.jobLabels" $top | nindent 4 }}
+    {{- include "fuc.jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
     {{- if $job.metadata }}
@@ -24,9 +24,9 @@ spec:
   backoffLimit: {{ .backoffLimit | default 1 }}
   template:
     metadata:
-      name: {{ include "tenants-service.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+      name: {{ include "fuc.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
       labels:
-        {{- include "tenants-service.jobLabels" $top | nindent 8 }}
+        {{- include "fuc.jobLabels" $top | nindent 8 }}
         app.kubernetes.io/component: {{ $jobName }}
       {{- with .annotations }}
       annotations:
@@ -47,7 +47,7 @@ spec:
       {{- end }}
       {{- end }}
       containers:
-        - name: {{ include "tenants-service.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+        - name: {{ include "fuc.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
           image: {{ $values.image.repository }}:{{ $values.appVersion }}
           imagePullPolicy: {{ $values.image.pullPolicy }}
           {{- if $values.externalSecret }}
@@ -76,7 +76,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "tenants-service.fullname" $top }}-configmap
+                name: {{ include "fuc.fullname" $top }}-configmap
           {{- with .args }}
           args:
             {{- toYaml . | nindent 12 }}

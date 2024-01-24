@@ -3,7 +3,7 @@
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: frontegg-tenants-service.frontegg.svc.cluster.local
+  name: frontegg-fuc.frontegg.svc.cluster.local
   namespace: frontegg
 spec:
   routes:

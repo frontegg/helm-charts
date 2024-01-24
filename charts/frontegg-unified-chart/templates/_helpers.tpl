@@ -2,7 +2,7 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "tenants-service.hostname" -}}
+{{- define "fuc.hostname" -}}
 {{- if .Values.ingress.hostnameOverride -}}
 {{- .Values.ingress.hostnameOverride | trimSuffix "-" -}}
 {{- else -}}
@@ -13,7 +13,7 @@ Expand the name of the chart.
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "tenants-service.name" -}}
+{{- define "fuc.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
@@ -22,7 +22,7 @@ Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "tenants-service.fullname" -}}
+{{- define "fuc.fullname" -}}
 {{- if .Values.fullnameOverride -}}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" -}}
 {{- else -}}
@@ -38,17 +38,17 @@ If release name contains chart name it will be used as a full name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "tenants-service.chart" -}}
+{{- define "fuc.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
 Common labels includes selectorLabels
 */}}
-{{- define "tenants-service.labels" -}}
-helm.sh/chart: {{ include "tenants-service.chart" . }}
+{{- define "fuc.labels" -}}
+helm.sh/chart: {{ include "fuc.chart" . }}
 app.frontegg.com/team: {{ .Values.team }}
-{{ include "tenants-service.selectorLabels" . }}
+{{ include "fuc.selectorLabels" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
@@ -57,29 +57,29 @@ app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
 {{/*
 Selector labels
 */}}
-{{- define "tenants-service.selectorLabels" -}}
-app.frontegg.com/name: {{ include "tenants-service.name" . }}
+{{- define "fuc.selectorLabels" -}}
+app.frontegg.com/name: {{ include "fuc.name" . }}
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "tenants-service.jobLabels" -}}
-app.frontegg.com/name: {{ include "tenants-service.name" . }}-job
+{{- define "fuc.jobLabels" -}}
+app.frontegg.com/name: {{ include "fuc.name" . }}-job
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
 
-{{- define "tenants-service.workerLabels" -}}
+{{- define "fuc.workerLabels" -}}
 app.frontegg.com/team: {{ .Values.team }}
-app.frontegg.com/name: {{ include "tenants-service.name" . }}-worker
+app.frontegg.com/name: {{ include "fuc.name" . }}-worker
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
 {{- end -}}
 
-{{- define "tenants-service.workerSelectorLabels" -}}
-app.frontegg.com/name: {{ include "tenants-service.name" . }}-worker
+{{- define "fuc.workerSelectorLabels" -}}
+app.frontegg.com/name: {{ include "fuc.name" . }}-worker
 {{- end -}}
 
 {{- define "external-secret-unique-name" -}}
-{{ include "tenants-service.fullname" . }}-external-secret-{{ now | unixEpoch }}
+{{ include "fuc.fullname" . }}-external-secret-{{ now | unixEpoch }}
 {{- end -}}
 
 {{- define "isLinkerdInjectEnabled" -}}

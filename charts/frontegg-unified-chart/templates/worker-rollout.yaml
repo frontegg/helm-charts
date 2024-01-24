@@ -3,18 +3,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ include "tenants-service.fullname" . }}-worker-rollout
+  name: {{ include "fuc.fullname" . }}-worker-rollout
 spec:
   workloadRef: # Reference an existing Deployment using workloadRef field
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "tenants-service.fullname" . }}-worker-deployment
+    name: {{ include "fuc.fullname" . }}-worker-deployment
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      {{- include "tenants-service.workerSelectorLabels" . | nindent 6 }}
+      {{- include "fuc.workerSelectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: frontegg-{{ include "tenants-service.name" . }}-worker
+      activeService: frontegg-{{ include "fuc.name" . }}-worker
       autoPromotionEnabled: true
 {{- end }}
