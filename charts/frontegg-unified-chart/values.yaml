@@ -54,7 +54,7 @@ offline:
     periodSeconds: 5
 
 image:
-  repository: frontegg/tenants-service
+  repository:
   pullPolicy: Always
 
 imagePullSecrets:
