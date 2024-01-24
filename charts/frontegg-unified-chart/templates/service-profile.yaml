@@ -1,0 +1,54 @@
+{{- if (eq (include "isLinkerdInjectEnabled" .Values) "true") }}
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: frontegg-tenants-service.frontegg.svc.cluster.local
+  namespace: frontegg
+spec:
+  routes:
+    - condition:
+        method: GET
+        pathRegex: /resources/account-settings/v1/
+      name: GET /resources/account-settings/v1/
+    - condition:
+        method: GET
+        pathRegex: /resources/hierarchy/v1/
+      name: GET /resources/hierarchy/v1/
+    - condition:
+        method: POST
+        pathRegex: /resources/hierarchy/v1/internal/descendants/access
+      name: POST /resources/hierarchy/v1/internal/descendants/access
+    - condition:
+        method: GET
+        pathRegex: /resources/hierarchy/v2/
+      name: GET /resources/hierarchy/v2/
+    - condition:
+        method: GET
+        pathRegex: /resources/hierarchy/v2/internal/
+      name: GET /resources/hierarchy/v2/internal/
+    - condition:
+        method: POST
+        pathRegex: /resources/migrations/v1/tenants
+      name: POST /resources/migrations/v1/tenants
+    - condition:
+        method: POST
+        pathRegex: /resources/sub-tenants/v1/
+      name: POST /resources/sub-tenants/v1/
+    - condition:
+        method: POST
+        pathRegex: /resources/tenant-assets/v1
+      name: POST /resources/tenant-assets/v1
+    - condition:
+        method: DELETE
+        pathRegex: /resources/tenants/v1
+      name: DELETE /resources/tenants/v1
+    - condition:
+        method: GET
+        pathRegex: /resources/tenants/v1/
+      name: GET /resources/tenants/v1/
+    - condition:
+        method: GET
+        pathRegex: /resources/tenants/v2/
+      name: GET /resources/tenants/v2/
+{{- end }}

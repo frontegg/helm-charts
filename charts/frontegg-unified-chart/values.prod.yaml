@@ -1,0 +1,19 @@
+autoscaling:
+  enabled: true
+  minReplicas: 4
+  maxReplicas: 20
+
+offline:
+  podAnnotations:
+    linkerd.io/inject: disabled
+  autoscaling:
+    minReplicas: 2
+    maxReplicas: 4
+
+configmap:
+  data:
+    CLOUD_ENVIRONMENT: prod
+    NODE_ENV: production
+
+podAnnotations:
+  linkerd.io/inject: disabled

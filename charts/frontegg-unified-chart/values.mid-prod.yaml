@@ -1,0 +1,9 @@
+autoscaling:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 4
+
+configmap:
+  data:
+    CLOUD_ENVIRONMENT: prod
+    NODE_ENV: production

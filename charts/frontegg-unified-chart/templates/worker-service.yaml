@@ -1,0 +1,19 @@
+{{- if .Values.argoRollouts }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontegg-{{ include "tenants-service.name" . }}-worker
+  labels:
+    monitoring-metrics: enabled
+    {{- include "tenants-service.workerLabels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: {{ .Values.service.protocol }}
+      name: {{ .Values.service.name }}
+  selector:
+    {{- include "tenants-service.workerSelectorLabels" . | nindent 4 }}
+{{- end }}

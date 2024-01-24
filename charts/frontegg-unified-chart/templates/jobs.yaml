@@ -1,0 +1,96 @@
+{{- $values := .Values -}}
+{{- $top := . -}}
+{{- range $jobName, $job := $values.jobs -}}
+{{- if $job.enabled }}
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "tenants-service.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+  labels:
+    {{- include "tenants-service.jobLabels" $top | nindent 4 }}
+    app.kubernetes.io/component: {{ $jobName }}
+  annotations:
+    {{- if $job.metadata }}
+    {{- with $job.metadata.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+    {{- end }}
+spec:
+  {{- with $job.spec }}
+  completions: {{ .completions | default 1 }}
+  parallelism: {{ .parallelism | default 1 }}
+  ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | default 600 }}
+  backoffLimit: {{ .backoffLimit | default 1 }}
+  template:
+    metadata:
+      name: {{ include "tenants-service.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+      labels:
+        {{- include "tenants-service.jobLabels" $top | nindent 8 }}
+        app.kubernetes.io/component: {{ $jobName }}
+      {{- with .annotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    spec:
+      restartPolicy: {{ .restartPolicy | default "Never" }}
+      {{- with $values.imagePullSecrets }}
+      imagePullSecrets :
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if $values.externalSecret }}
+      {{- if $values.externalSecret.enabled }}
+      volumes:
+        - name: vol-secret
+          secret:
+            secretName: {{ include "external-secret-unique-name" $top }}
+      {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ include "tenants-service.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+          image: {{ $values.image.repository }}:{{ $values.appVersion }}
+          imagePullPolicy: {{ $values.image.pullPolicy }}
+          {{- if $values.externalSecret }}
+          {{- if $values.externalSecret.enabled }}
+          volumeMounts:
+            - name: vol-secret
+              mountPath: /etc/config/config.yaml
+              subPath: config
+          {{- end }}
+          {{- end }}
+          env:
+          {{- if $values.externalSecret }}
+          {{- if $values.externalSecret.enabled }}
+            - name: FRONTEGG_CONFIG_DIRECTORY
+              value: "/etc/config"
+          {{- end }}
+          {{- end }}
+          {{- range $config_name, $localValues := $values.configuration.map }}
+          {{- range $key, $value :=  $localValues }}
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $config_name }}
+                  key: {{ $value }}
+          {{- end }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "tenants-service.fullname" $top }}-configmap
+          {{- with .args }}
+          args:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          resources:
+            {{- toYaml .resources | nindent 12 }}
+      {{- if $values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml $values.nodeSelector | nindent 8 }}
+      {{- end }}
+      {{- if $values.tolerations }}
+      tolerations:
+      {{- toYaml $values.tolerations | nindent 8 }}
+      {{- end }}
+{{- end }}
+{{- end }}
+{{- end }}
