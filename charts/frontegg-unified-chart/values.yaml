@@ -183,3 +183,60 @@ externalSecret:
         awsAccessKey: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
         awsSecretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
   additionalSecrets: ""
+
+prometheusRule:
+  enabled: true
+  namespace: observability
+  labels:
+    release: prometheus
+  rpsAlertLimit: 300
+  rules:
+    - alert: ApiGatewayRequestRateIsTooHigh
+      expr: |
+        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fuc.fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        description: Api Gateway RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
+        summary: Api Gateway RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostnameOverride: ""
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 4m
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_clear_input_headers "Host" "X-Forwarded-Host";
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Request-ID $request_id;
+      add_header Cache-Control "no-transform";
+      location ~* ^/(metrics|healthcheck) {
+        deny all;
+        return 403;
+      }
+  tls:
+    enabled: false
+    secretName: frontegg-secret-2020
+  hosts: []
+
+albIngress:
+  enabled: true
+  ingressClassName: nginx2
+  hostnameOverride: ""
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 4m
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_clear_input_headers "Host" "X-Forwarded-Host";
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Request-ID $request_id;
+      add_header Cache-Control "no-transform";
+      location ~* ^/(metrics|healthcheck) {
+        deny all;
+        return 403;
+      }
