@@ -3,7 +3,7 @@ name: frontegg-unified-chart
 description: Frontegg Unified Chart (FUC)
 type: application
 
-version: 0.1.29
+version: 0.0.1
 
 maintainers:
   - name: "platform"

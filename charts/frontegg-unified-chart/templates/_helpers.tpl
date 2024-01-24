@@ -15,6 +15,13 @@ Expand the name of the chart.
 {{- end -}}
 
 {{/*
+Some services include fullname in their values
+*/}}
+{{- define "fullname" -}}
+{{ include "fuc.name" . }}
+{{- end -}}
+
+{{/*
 Create chart name and version as used by the chart label.
 */}}
 {{- define "fuc.chart" -}}

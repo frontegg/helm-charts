@@ -200,7 +200,7 @@ prometheusRule:
   rules:
     - alert: ApiGatewayRequestRateIsTooHigh
       expr: |
-        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fuc.fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
       for: 2m
       labels:
         severity: warning
