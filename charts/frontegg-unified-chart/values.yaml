@@ -121,20 +121,14 @@ readinessProbe:
   initialDelaySeconds: 5
   periodSeconds: 5
 
-nodeSelector:
-  agentpool: agentpool
+nodeSelector: {}
 
 tolerations: []
 
 affinity: {}
 
 configmap:
-  data:
-    CLOUD_ENVIRONMENT: dev
-    NODE_ENV: production
-    FRONTEGG_JAEGER_ENABLED: "true"
-    FRONTEGG_ANALYTICS_TYPE: firehose
-    LOG_LEVEL: verbose
+  data: {}
 
 configuration:
   map:
@@ -144,7 +138,7 @@ externalSecret:
   enabled: false
   text: |
     {{- $secret := .contents | fromYaml}}
-    apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+    apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey| default "x" }}
   additionalSecrets: ""
 
 prometheusRule:
