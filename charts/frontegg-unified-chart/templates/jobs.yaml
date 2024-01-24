@@ -20,7 +20,7 @@ spec:
   {{- with $job.spec }}
   completions: {{ .completions | default 1 }}
   parallelism: {{ .parallelism | default 1 }}
-  ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | default 600 }}
+  # ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | default 86400 }}
   backoffLimit: {{ .backoffLimit | default 1 }}
   template:
     metadata:
