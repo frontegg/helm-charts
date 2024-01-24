@@ -199,7 +199,7 @@ albIngress:
       }
 
 highPriority:
-  enabled: true
+  enabled: false
   labels:
     priority: "high"
   replicaCount: 1
