@@ -1,0 +1,76 @@
+{{- if .Values.highPriority.enabled }}
+{{- if (eq (include "isLinkerdInjectEnabled" .Values) "true") }}
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: frontegg-identity-service-hp.frontegg.svc.cluster.local
+  namespace: frontegg
+spec:
+  routes:
+  - condition:
+      method: POST
+      pathRegex: /api/traces
+    name: POST /api/traces
+  - condition:
+      method: GET
+      pathRegex: /resources/users/v2/me
+    name: GET /resources/users/v2/me
+  - condition:
+      method: GET
+      pathRegex: /resources/users/v3/me/tenants
+    name: GET /resources/users/v3/me/tenants
+  - condition:
+      method: POST
+      pathRegex: /resources/auth/v1/user/token/refresh
+    name: POST /resources/auth/v1/user/token/refresh
+  - condition:
+      method: POST
+      pathRegex: /engines/run
+    name: POST /engines/run
+  - condition:
+      method: GET
+      pathRegex: /resources/configurations/v1
+    name: GET /resources/configurations/v1
+  - condition:
+      method: POST
+      pathRegex: /resources/configurations/v1/trigger
+    name: POST /resources/configurations/v1/trigger
+  - condition: 
+      method: GET
+      pathRegex: /resources/configurations/v1/public
+    name: GET /resources/configurations/v1/public
+  - condition:
+      method: GET
+      pathRegex: /resources/users/v1/me/authorization
+    name: GET /resources/users/v1/me/authorization
+  - condition:
+      method: GET
+      pathRegex: /resources/tenants/v2
+    name: GET /resources/tenants/v2
+  - condition:
+      method: POST
+      pathRegex: /resources/auth/v1/api-token
+    name: POST /resources/auth/v1/api-token
+  - condition:
+      method: GET
+      pathRegex: /resources/configurations/v1/auth/strategies/public
+    name: GET /resources/configurations/v1/auth/strategies/public
+  - condition:
+      method: GET
+      pathRegex: /resources/sso/v2
+    name: GET /resources/sso/v2
+  - condition:
+      method: GET
+      pathRegex: /resources/sso/custom/v1
+    name: GET /resources/sso/custom/v1
+  - condition:
+      method: GET
+      pathRegex: /resources/configurations/v1/captcha-policy/public
+    name: GET /resources/configurations/v1/captcha-policy/public
+  - condition:
+      method: GET
+      pathRegex: /resources/policies/v1/bot-detection
+    name: GET /resources/policies/v1/bot-detection
+{{- end }}
+{{- end }}

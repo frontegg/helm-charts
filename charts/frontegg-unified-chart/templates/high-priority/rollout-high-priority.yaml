@@ -1,0 +1,22 @@
+{{- if .Values.highPriority.enabled }}
+{{- if .Values.argoRollouts }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: {{ include "fuc.fullname" . }}-rollout-hp
+spec:
+  workloadRef: # Reference an existing Deployment using workloadRef field
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "fuc.fullname" . }}-deployment-hp
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      {{- include "fuc.hp.selectorLabels" . | nindent 6 }}
+  strategy:
+    blueGreen:
+      activeService: frontegg-{{ include "fuc.name" . }}-hp
+      autoPromotionEnabled: true
+{{- end }}
+{{- end }}

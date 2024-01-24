@@ -89,3 +89,23 @@ app.frontegg.com/name: {{ include "fuc.name" . }}-worker
   false
 {{- end -}}
 {{- end -}}
+
+{{/*
+Common labels includes HP selectorLabels
+*/}}
+{{- define "fuc.hp.labels" -}}
+app.frontegg.com/team: {{ .Values.team }}
+helm.sh/chart: {{ include "fuc.chart" . }}
+app.frontegg.io/version: {{ .Chart.Version | quote }}
+app.frontegg.io/managed-by: {{ .Release.Service }}
+app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
+{{ include "fuc.hp.selectorLabels" . }}
+{{- end -}}
+
+{{/*
+Selector labels for high priority pods
+*/}}
+{{- define "fuc.hp.selectorLabels" -}}
+app.frontegg.com/name: {{ include "fuc.name" . }}-hp
+app.frontegg.com/instance: {{ .Release.Name }}
+{{- end -}}

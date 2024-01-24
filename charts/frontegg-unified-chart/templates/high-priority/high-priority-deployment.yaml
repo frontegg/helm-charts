@@ -1,0 +1,106 @@
+{{- if .Values.highPriority.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fuc.fullname" . }}-deployment-hp
+  labels:
+  {{- include "fuc.hp.labels" . | nindent 4 }}
+  {{- toYaml .Values.highPriority.labels | nindent 4 }}
+spec:
+  {{- if .Values.argoRollouts }}
+  replicas: 0
+  {{- else if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.highPriority.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "fuc.hp.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "fuc.hp.labels" . | nindent 8 }}
+        {{- with .Values.podLabels  }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      annotations:
+        checksum/config: {{ (print .Values.configmap) | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.externalSecret }}
+      {{- if .Values.externalSecret.enabled }}
+      volumes :
+        - name : vol-secret
+          secret :
+            secretName : {{ include "fuc.fullname" . }}-external-secret
+      {{- end }}
+      {{- end }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.image.repository }}:{{ .Values.appVersion }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.externalSecret }}
+          {{- if .Values.externalSecret.enabled }}
+          volumeMounts :
+            - name : vol-secret
+              mountPath: /etc/config/config.yaml
+              subPath : config
+          {{- end }}
+          {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.targetPort }} # change this to 80 in the future
+              protocol: TCP
+          {{- with .Values.livenessProbe }}
+          livenessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.readinessProbe }}
+          readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          env:
+          {{- if .Values.externalSecret }}
+          {{- if .Values.externalSecret.enabled }}
+            - name: FRONTEGG_CONFIG_DIRECTORY
+              value: "/etc/config"
+          {{- end }}
+          {{- end }}
+
+          {{- range $config_name, $values := .Values.configuration.map }}
+          {{- range $key, $value :=  $values}}
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $config_name }}
+                  key: {{ $value }}
+          {{- end }}
+          {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "fuc.fullname" . }}-configmap
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          args:
+            - "/bin/bash"
+            - "./entrypoint.sh"
+            - "service"
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+  {{- end }}
+{{- end }}

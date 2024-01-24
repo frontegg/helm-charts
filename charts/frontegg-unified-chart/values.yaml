@@ -9,6 +9,10 @@ minReplicasOverride:
   prd-ap-se2:
     minReplicas: 3
 
+highPriorityMinReplicasOverride:
+  prd-ap-se2:
+    minReplicas: 2
+
 replicaCount: 1
 appVersion: master-latest
 argoRollouts: true
@@ -240,3 +244,14 @@ albIngress:
         deny all;
         return 403;
       }
+
+highPriority:
+  enabled: true
+  labels:
+    priority: "high"
+  replicaCount: 1
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 75
