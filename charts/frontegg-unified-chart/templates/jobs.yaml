@@ -6,7 +6,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "fuc.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+  name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
   labels:
     {{- include "fuc.jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
@@ -24,7 +24,7 @@ spec:
   backoffLimit: {{ .backoffLimit | default 1 }}
   template:
     metadata:
-      name: {{ include "fuc.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+      name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
       labels:
         {{- include "fuc.jobLabels" $top | nindent 8 }}
         app.kubernetes.io/component: {{ $jobName }}
@@ -47,7 +47,7 @@ spec:
       {{- end }}
       {{- end }}
       containers:
-        - name: {{ include "fuc.fullname" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+        - name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
           image: {{ $values.image.repository }}:{{ $values.appVersion }}
           imagePullPolicy: {{ $values.image.pullPolicy }}
           {{- if $values.externalSecret }}
@@ -76,7 +76,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "fuc.fullname" $top }}-configmap
+                name: {{ include "fuc.name" $top }}-configmap
           {{- with .args }}
           args:
             {{- toYaml . | nindent 12 }}

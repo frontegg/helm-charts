@@ -4,12 +4,12 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ include "fuc.fullname" . }}-rollout-hp
+  name: {{ include "fuc.name" . }}-rollout-hp
 spec:
   workloadRef: # Reference an existing Deployment using workloadRef field
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "fuc.fullname" . }}-deployment-hp
+    name: {{ include "fuc.name" . }}-deployment-hp
   revisionHistoryLimit: 2
   selector:
     matchLabels:

@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fuc.fullname" . }}-deployment-hp
+  name: {{ include "fuc.name" . }}-deployment-hp
   labels:
   {{- include "fuc.hp.labels" . | nindent 4 }}
   {{- toYaml .Values.highPriority.labels | nindent 4 }}
@@ -38,7 +38,7 @@ spec:
       volumes :
         - name : vol-secret
           secret :
-            secretName : {{ include "fuc.fullname" . }}-external-secret
+            secretName : {{ include "fuc.name" . }}-external-secret
       {{- end }}
       {{- end }}
       containers:
@@ -84,7 +84,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "fuc.fullname" . }}-configmap
+                name: {{ include "fuc.name" . }}-configmap
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           args:

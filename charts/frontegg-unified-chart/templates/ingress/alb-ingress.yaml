@@ -1,5 +1,5 @@
 {{- if .Values.albIngress.enabled -}}
-{{- $fullName := include "fuc.fullname" . -}}
+{{- $fullName := include "fuc.name" . -}}
 {{- $name := include "fuc.name" . -}}
 {{- $svcPort := .Values.service.port -}}
 ---

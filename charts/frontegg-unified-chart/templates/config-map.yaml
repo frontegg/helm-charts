@@ -4,7 +4,7 @@ apiVersion: v1
 metadata:
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
-  name: {{ include "fuc.fullname" . }}-configmap
+  name: {{ include "fuc.name" . }}-configmap
   labels:
     {{- include "fuc.labels" . | nindent 4 }}
 data:

@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fuc.fullname" . }}-deployment
+  name: {{ include "fuc.name" . }}-deployment
   labels:
   {{- include "fuc.labels" . | nindent 4 }}
 spec:
@@ -79,7 +79,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "fuc.fullname" . }}-configmap
+                name: {{ include "fuc.name" . }}-configmap
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           args:
