@@ -6,11 +6,11 @@
 
 componentsCollectionIdentifier: local
 
-minReplicasOverride:
+minReplicasOverride: {}
   # prd-ap-se2:
   #   minReplicas: 3
 
-highPriorityMinReplicasOverride:
+highPriorityMinReplicasOverride: {}
   # prd-ap-se2:
   #   minReplicas: 2
 
@@ -19,9 +19,9 @@ appVersion: master-latest
 argoRollouts: true
 
 offline:
-  enabled: true
+  enabled: false
   podAnnotations:
-    linkerd.io/inject: enabled
+    linkerd.io/inject: disabled
   replicaCount: 1
   nodeSelector:
     workload: general
@@ -60,11 +60,8 @@ image:
 imagePullSecrets:
   - name: regcred
 
-nameOverride: ""
-fullnameOverride: ""
-
 podAnnotations:
-  linkerd.io/inject: enabled
+  linkerd.io/inject: disabled
 
 podSecurityContext: {}
 # fsGroup: 2000
@@ -142,55 +139,16 @@ configmap:
 configuration:
   map:
     config-center:
-      FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
-      FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
-      FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-      FRONTEGG_TENANT_ASSETS_S3_BUCKET: tenant-assets-s3-bucket
-      FRONTEGG_TENANTS_SERVICE_MYSQL_DB_NAME: tenants-service-mysql-db-name
-      FRONTEGG_USAGE_REPORTING_KAFKA_TOPIC_NAME: tenants-usage-reporting-topic-name
-      FRONTEGG_TENANTS_SERVICE_REDIS_DB_INDEX: tenants-redis-db-index
-      FRONTEGG_USE_FIREHOSE_ANALYTICS: use-firehose-analytics
-      FRONTEGG_TENANT_ASSETS_S3_ENDPOINT: tenant-assets-s3-endpoint
-      FRONTEGG_AWS_ENDPOINT: tenant-assets-s3-aws-endpoint
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
 externalSecret:
-  enabled: true
+  enabled: false
   text: |
     {{- $secret := .contents | fromYaml}}
     apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
-    fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-    splitIO:
-      key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-      redis:
-        host: {{ $secret.databases.redis.host | toYaml }}
-        port: {{ $secret.databases.redis.port | toYaml }}
-        password: {{ $secret.databases.redis.password | toYaml }}
-
-    database:
-      mongo:
-        uri: {{ $secret.databases.mongo.connectionString | toYaml }}
-      sql:
-        host: {{ $secret.databases.generalMysql.host | toYaml }}
-        username: {{ $secret.databases.generalMysql.username | toYaml }}
-        password: {{ $secret.databases.generalMysql.password | toYaml }}
-    kafka:
-      brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-      saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-      saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-    redis:
-      host: {{ $secret.databases.redis.host | toYaml }}
-      port: {{ $secret.databases.redis.port | toYaml }}
-      password: {{ $secret.databases.redis.password | toYaml }}
-      tls: {{ $secret.databases.redis.tls | toYaml }}
-    analytics:
-      firehose:
-        awsRegion: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
-        awsAccessKey: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
-        awsSecretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
   additionalSecrets: ""
 
 prometheusRule:
-  enabled: true
+  enabled: false
   namespace: observability
   labels:
     release: prometheus
@@ -207,7 +165,7 @@ prometheusRule:
         summary: Api Gateway RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
 
 ingress:
-  enabled: true
+  enabled: false
   ingressClassName: nginx
   hostnameOverride: ""
   annotations:
