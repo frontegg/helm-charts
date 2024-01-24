@@ -1,0 +1,260 @@
+# Default values for fuc.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+serviceName: api-gateway
+
+team: core
+
+componentsCollectionIdentifier: local
+
+minReplicasOverride:
+  prd-ap-se2:
+    minReplicas: 3
+
+highPriorityMinReplicasOverride:
+  prd-ap-se2:
+    minReplicas: 2
+
+replicaCount: 1
+appVersion: master-latest
+argoRollouts: true
+
+offline:
+  enabled: true
+  podAnnotations:
+    linkerd.io/inject: enabled
+  replicaCount: 1
+  nodeSelector:
+    workload: general
+  autoscaling:
+    enabled: true
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 75
+  resources:
+    requests:
+      cpu: 500m
+      memory: 1Gi
+  # handles restart
+  livenessProbe:
+    failureThreshold: 5
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 60
+    periodSeconds: 60
+
+  # decides when to forward requests
+  readinessProbe:
+    failureThreshold: 1
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+
+image:
+  repository: frontegg/tenants-service
+  pullPolicy: Always
+
+imagePullSecrets:
+  - name: regcred
+
+nameOverride: ""
+fullnameOverride: ""
+
+podAnnotations:
+  linkerd.io/inject: enabled
+
+podSecurityContext: {}
+# fsGroup: 2000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3015
+  protocol: TCP
+  name: http
+
+jobs:
+  migrate:
+    enabled: true
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-500"
+    spec:
+      annotations: {}
+      args:
+        - "/bin/bash"
+        - "./run-migrations.sh"
+      resources:
+        requests:
+          cpu: 300m
+          memory: 500Mi
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    memory: 1Gi
+
+autoscaling:
+  enabled: true
+  minReplicas: 1
+  maxReplicas: 2
+  targetCPUUtilizationPercentage: 50
+  targetMemoryUtilizationPercentage: 75
+
+# handles restart (not offline)
+livenessProbe:
+  failureThreshold: 3
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 40
+  periodSeconds: 60
+
+# decides when to forward requests (not offline)
+readinessProbe:
+  failureThreshold: 1
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 5
+
+nodeSelector:
+  agentpool: agentpool
+
+tolerations: []
+
+affinity: {}
+
+configmap:
+  data:
+    CLOUD_ENVIRONMENT: dev
+    NODE_ENV: production
+    FRONTEGG_JAEGER_ENABLED: "true"
+    FRONTEGG_ANALYTICS_TYPE: firehose
+    LOG_LEVEL: verbose
+
+configuration:
+  map:
+    config-center:
+      FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+      FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
+      FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+      FRONTEGG_TENANT_ASSETS_S3_BUCKET: tenant-assets-s3-bucket
+      FRONTEGG_TENANTS_SERVICE_MYSQL_DB_NAME: tenants-service-mysql-db-name
+      FRONTEGG_USAGE_REPORTING_KAFKA_TOPIC_NAME: tenants-usage-reporting-topic-name
+      FRONTEGG_TENANTS_SERVICE_REDIS_DB_INDEX: tenants-redis-db-index
+      FRONTEGG_USE_FIREHOSE_ANALYTICS: use-firehose-analytics
+      FRONTEGG_TENANT_ASSETS_S3_ENDPOINT: tenant-assets-s3-endpoint
+      FRONTEGG_AWS_ENDPOINT: tenant-assets-s3-aws-endpoint
+      FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+externalSecret:
+  enabled: true
+  text: |
+    {{- $secret := .contents | fromYaml}}
+    apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+    fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+    splitIO:
+      key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+
+    database:
+      mongo:
+        uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+      sql:
+        host: {{ $secret.databases.generalMysql.host | toYaml }}
+        username: {{ $secret.databases.generalMysql.username | toYaml }}
+        password: {{ $secret.databases.generalMysql.password | toYaml }}
+    kafka:
+      brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+      saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+    redis:
+      host: {{ $secret.databases.redis.host | toYaml }}
+      port: {{ $secret.databases.redis.port | toYaml }}
+      password: {{ $secret.databases.redis.password | toYaml }}
+      tls: {{ $secret.databases.redis.tls | toYaml }}
+    analytics:
+      firehose:
+        awsRegion: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
+        awsAccessKey: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
+        awsSecretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
+  additionalSecrets: ""
+
+prometheusRule:
+  enabled: true
+  namespace: observability
+  labels:
+    release: prometheus
+  rpsAlertLimit: 300
+  rules:
+    - alert: ApiGatewayRequestRateIsTooHigh
+      expr: |
+        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fuc.fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+      for: 2m
+      labels:
+        severity: warning
+      annotations:
+        description: Api Gateway RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
+        summary: Api Gateway RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostnameOverride: ""
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 4m
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_clear_input_headers "Host" "X-Forwarded-Host";
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Request-ID $request_id;
+      add_header Cache-Control "no-transform";
+      location ~* ^/(metrics|healthcheck) {
+        deny all;
+        return 403;
+      }
+  tls:
+    enabled: false
+    secretName: frontegg-secret-2020
+  hosts: []
+
+albIngress:
+  enabled: true
+  ingressClassName: nginx2
+  hostnameOverride: ""
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 4m
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_clear_input_headers "Host" "X-Forwarded-Host";
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header X-Request-ID $request_id;
+      add_header Cache-Control "no-transform";
+      location ~* ^/(metrics|healthcheck) {
+        deny all;
+        return 403;
+      }
+
+highPriority:
+  enabled: true
+  labels:
+    priority: "high"
+  replicaCount: 1
+  autoscaling:
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 75
