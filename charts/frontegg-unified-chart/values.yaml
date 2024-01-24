@@ -181,7 +181,7 @@ ingress:
   hosts: []
 
 albIngress:
-  enabled: true
+  enabled: false
   ingressClassName: nginx2
   hostnameOverride: ""
   annotations:
