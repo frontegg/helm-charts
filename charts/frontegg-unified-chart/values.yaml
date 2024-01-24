@@ -1,17 +1,18 @@
-# Default values for fuc.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-team: core
+# Default values for frontegg unified chart.
+
+# required
+# serviceName: my-new-awesome-service
+# team: my-team-of-imbeciles
 
 componentsCollectionIdentifier: local
 
 minReplicasOverride:
-  prd-ap-se2:
-    minReplicas: 3
+  # prd-ap-se2:
+  #   minReplicas: 3
 
 highPriorityMinReplicasOverride:
-  prd-ap-se2:
-    minReplicas: 2
+  # prd-ap-se2:
+  #   minReplicas: 2
 
 replicaCount: 1
 appVersion: master-latest
@@ -197,7 +198,7 @@ prometheusRule:
   rules:
     - alert: ApiGatewayRequestRateIsTooHigh
       expr: |
-        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fuc.fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
       for: 2m
       labels:
         severity: warning

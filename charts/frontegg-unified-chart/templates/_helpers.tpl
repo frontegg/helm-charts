@@ -1,7 +1,4 @@
-{{/* vim: set filetype=mustache: */}}
-{{/*
-Expand the name of the chart.
-*/}}
+{{/* Hostname is used in services who render ingress */}}
 {{- define "fuc.hostname" -}}
 {{- if .Values.ingress.hostnameOverride -}}
 {{- .Values.ingress.hostnameOverride | trimSuffix "-" -}}
@@ -10,27 +7,22 @@ Expand the name of the chart.
 {{- end -}}
 {{- end -}}
 
+{{/* Just the serviceName */}}
 {{- define "fuc.name" -}}
 {{- required ".Values.serviceName must be set" .Values.serviceName | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{/*
-Some services include fullname in their values
-*/}}
+{{/* Some services include fullname in their values */}}
 {{- define "fullname" -}}
 {{ include "fuc.name" . }}
 {{- end -}}
 
-{{/*
-Create chart name and version as used by the chart label.
-*/}}
+{{/* Create chart name and version as used by the chart label. */}}
 {{- define "fuc.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{/*
-Common labels includes selectorLabels
-*/}}
+{{/* Common labels includes selectorLabels */}}
 {{- define "fuc.labels" -}}
 helm.sh/chart: {{ include "fuc.chart" . }}
 app.frontegg.com/team: {{ .Values.team }}
@@ -40,9 +32,7 @@ app.frontegg.io/managed-by: {{ .Release.Service }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
 {{- end -}}
 
-{{/*
-Selector labels
-*/}}
+{{/* Selector labels */}}
 {{- define "fuc.selectorLabels" -}}
 app.frontegg.com/name: {{ include "fuc.name" . }}
 app.frontegg.com/instance: {{ .Release.Name }}
@@ -55,9 +45,9 @@ app.frontegg.com/instance: {{ .Release.Name }}
 
 
 {{- define "fuc.workerLabels" -}}
-app.frontegg.com/team: {{ .Values.team }}
-app.frontegg.com/name: {{ include "fuc.name" . }}-worker
+app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
+{{ include "fuc.workerSelectorLabels" . }}
 {{- end -}}
 
 {{- define "fuc.workerSelectorLabels" -}}
