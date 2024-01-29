@@ -1,5 +1,5 @@
 apiVersion: v2
-name: frontegg-unified-chart
+name: unified-chart
 description: Frontegg Unified Chart (FUC)
 type: application
 
