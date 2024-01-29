@@ -38,4 +38,3 @@ spec:
           averageUtilization: {{ .Values.offline.autoscaling.targetMemoryUtilizationPercentage }}
   {{- end }}
   {{- end }}
-
