@@ -1,14 +1,15 @@
+{{- $top := . }}
 {{- if (eq (include "isLinkerdInjectEnabled" .Values) "true") }}
+{{- if .Values.serviceProfile }}
+{{- with .Values.serviceProfile.routes }}
 ---
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: frontegg-{{ include "fuc.name" . }}.frontegg.svc.cluster.local
+  name: frontegg-{{ include "fuc.name" $top }}.frontegg.svc.cluster.local
   namespace: frontegg
 spec:
   routes:
-    {{- if .Values.serviceProfile }}
-    {{- with .Values.serviceProfile.routes }}
     {{- . | toYaml | nindent 4 }}
     {{- end }}
     {{- end }}
