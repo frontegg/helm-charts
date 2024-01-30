@@ -6,11 +6,13 @@
 
 componentsCollectionIdentifier: local
 
-minReplicasOverride: {}
+minReplicasOverride:
+  {}
   # prd-ap-se2:
   #   minReplicas: 3
 
-highPriorityMinReplicasOverride: {}
+highPriorityMinReplicasOverride:
+  {}
   # prd-ap-se2:
   #   minReplicas: 2
 
@@ -61,7 +63,8 @@ imagePullSecrets:
   - name: regcred
 
 podAnnotations:
-  linkerd.io/inject: disabled
+  linkerd.io/inject: enabled
+  testing: alon
 
 podSecurityContext: {}
 # fsGroup: 2000
