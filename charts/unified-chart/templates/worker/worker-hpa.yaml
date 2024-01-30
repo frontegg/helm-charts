@@ -1,5 +1,5 @@
 {{- if .Values.offline.enabled }}
-{{- if .Values.offline.autoscaling.enabled }}
+{{- if .Values.offline.autoscaling }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
