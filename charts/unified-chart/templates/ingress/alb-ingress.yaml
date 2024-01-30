@@ -24,7 +24,7 @@ spec:
         - path: /
           backend:
             service:
-              name: frontegg-{{ $name }}
+              name: frontegg-{{ include "fuc.name" . }}
               port:
                 number: {{ $svcPort }}
           pathType: ImplementationSpecific

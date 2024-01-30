@@ -78,7 +78,6 @@ configmap:
 configuration:
   map:
     config-center:
-      FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
 
 externalSecret:
   enabled: false
