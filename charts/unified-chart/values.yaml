@@ -22,38 +22,6 @@ argoRollouts: true
 
 offline:
   enabled: false
-  podAnnotations:
-    linkerd.io/inject: disabled
-  replicaCount: 1
-  nodeSelector:
-    workload: general
-  autoscaling:
-    enabled: true
-    minReplicas: 1
-    maxReplicas: 2
-    targetCPUUtilizationPercentage: 50
-    targetMemoryUtilizationPercentage: 75
-  resources:
-    requests:
-      cpu: 500m
-      memory: 1Gi
-  # handles restart
-  livenessProbe:
-    failureThreshold: 5
-    httpGet:
-      path: /health
-      port: http
-    initialDelaySeconds: 60
-    periodSeconds: 60
-
-  # decides when to forward requests
-  readinessProbe:
-    failureThreshold: 1
-    httpGet:
-      path: /health
-      port: http
-    initialDelaySeconds: 5
-    periodSeconds: 5
 
 image:
   repository:
@@ -62,45 +30,19 @@ image:
 imagePullSecrets:
   - name: regcred
 
-podAnnotations:
-  linkerd.io/inject: enabled
+podAnnotations: {}
 
 podSecurityContext: {}
-# fsGroup: 2000
 
 service:
   type: ClusterIP
-  port: 80
-  targetPort: 3015
-  protocol: TCP
-  name: http
 
-jobs:
-  {}
-  # migrate:
-  #   enabled: false
-  # metadata:
-  #   annotations:
-  #     argocd.argoproj.io/sync-wave: "-500"
-  # spec:
-  #   annotations: {}
-  #   args:
-  #     - "/bin/bash"
-  #     - "./run-migrations.sh"
-  #   resources:
-  #     requests:
-  #       cpu: 300m
-  #       memory: 500Mi
+jobs: {}
 
-resources:
-  requests:
-    cpu: 500m
-    memory: 1Gi
-  limits:
-    memory: 1Gi
+resources: {}
 
 autoscaling:
-  enabled: true
+  enabled: false
   minReplicas: 1
   maxReplicas: 2
   targetCPUUtilizationPercentage: 50
@@ -137,6 +79,7 @@ configuration:
   map:
     config-center:
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+
 externalSecret:
   enabled: false
   text: |
@@ -146,60 +89,12 @@ externalSecret:
 
 prometheusRule:
   enabled: false
-  namespace: observability
-  labels:
-    release: prometheus
-  rpsAlertLimit: 300
-  rules:
-    - alert: ApiGatewayRequestRateIsTooHigh
-      expr: |
-        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "fullname" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
-      for: 2m
-      labels:
-        severity: warning
-      annotations:
-        description: Api Gateway RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
-        summary: Api Gateway RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
 
 ingress:
   enabled: false
-  ingressClassName: nginx
-  hostnameOverride: ""
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 4m
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_clear_input_headers "Host" "X-Forwarded-Host";
-      proxy_set_header Host $http_host;
-      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
-    nginx.ingress.kubernetes.io/server-snippet: |
-      add_header X-Request-ID $request_id;
-      add_header Cache-Control "no-transform";
-      location ~* ^/(metrics|healthcheck) {
-        deny all;
-        return 403;
-      }
-  tls:
-    enabled: false
-    secretName: frontegg-secret-2020
-  hosts: []
 
 albIngress:
   enabled: false
-  ingressClassName: nginx2
-  hostnameOverride: ""
-  annotations:
-    nginx.ingress.kubernetes.io/proxy-body-size: 4m
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      more_clear_input_headers "Host" "X-Forwarded-Host";
-      proxy_set_header Host $http_host;
-      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
-    nginx.ingress.kubernetes.io/server-snippet: |
-      add_header X-Request-ID $request_id;
-      add_header Cache-Control "no-transform";
-      location ~* ^/(metrics|healthcheck) {
-        deny all;
-        return 403;
-      }
 
 highPriority:
   enabled: false
