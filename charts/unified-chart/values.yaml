@@ -64,7 +64,6 @@ imagePullSecrets:
 
 podAnnotations:
   linkerd.io/inject: enabled
-  testing: alon
 
 podSecurityContext: {}
 # fsGroup: 2000
