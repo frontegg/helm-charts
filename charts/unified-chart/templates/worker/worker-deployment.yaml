@@ -39,7 +39,7 @@ spec:
       {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-worker
+        - name: {{ .Values.serviceName }}-worker
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ .Values.appVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.externalSecret }}
