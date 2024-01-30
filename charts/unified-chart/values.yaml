@@ -76,20 +76,21 @@ service:
   name: http
 
 jobs:
-  migrate:
-    enabled: true
-    metadata:
-      annotations:
-        argocd.argoproj.io/sync-wave: "-500"
-    spec:
-      annotations: {}
-      args:
-        - "/bin/bash"
-        - "./run-migrations.sh"
-      resources:
-        requests:
-          cpu: 300m
-          memory: 500Mi
+  {}
+  # migrate:
+  #   enabled: false
+  # metadata:
+  #   annotations:
+  #     argocd.argoproj.io/sync-wave: "-500"
+  # spec:
+  #   annotations: {}
+  #   args:
+  #     - "/bin/bash"
+  #     - "./run-migrations.sh"
+  #   resources:
+  #     requests:
+  #       cpu: 300m
+  #       memory: 500Mi
 
 resources:
   requests:
