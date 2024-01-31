@@ -3,7 +3,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{ include "fuc.name" . }}
+  name: {{ include "fuc.name" . }}-rule
 {{- if .Values.prometheusRule.namespace }}
   namespace: {{ .Values.prometheusRule.namespace }}
 {{- end }}

@@ -9,7 +9,7 @@
 
 {{/* Just the serviceName */}}
 {{- define "fuc.name" -}}
-{{- required ".Values.serviceName must be set" .Values.serviceName | trunc 63 | trimSuffix "-" -}}
+{{- required ".Values.serviceName must be set" .Values.serviceName }}
 {{- end -}}
 
 {{/* Some services include fullname in their values */}}
@@ -55,7 +55,7 @@ app.frontegg.com/name: {{ include "fuc.name" . }}-worker
 {{- end -}}
 
 {{- define "external-secret-unique-name" -}}
-{{ include "fuc.name" . }}-external-secret-{{ now | unixEpoch }}
+{{ include "fuc.name" . }}-secret-{{ now | unixEpoch }}
 {{- end -}}
 
 {{- define "isLinkerdInjectEnabled" -}}
