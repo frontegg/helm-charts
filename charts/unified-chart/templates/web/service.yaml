@@ -15,6 +15,9 @@ spec:
       name: {{ .Values.service.name }}
   selector:
     {{- include "fuc.selectorLabels" . | nindent 4 }}
+
+{{- $serviceName := (include "fuc.name" .) }}
+{{- if has $serviceName .Values.doubleSVC }}
 ---
 apiVersion: v1
 kind: Service
@@ -32,3 +35,4 @@ spec:
       name: {{ .Values.service.name }}
   selector:
     {{- include "fuc.selectorLabels" . | nindent 4 }}
+{{- end }}

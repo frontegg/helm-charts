@@ -10,7 +10,7 @@ metadata:
 spec:
   {{- if .Values.argoRollouts }}
   replicas: 0
-  {{- else if not .Values.autoscaling.enabled }}
+  {{- else if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.highPriority.replicaCount }}
   {{- end }}
   selector:
@@ -25,7 +25,7 @@ spec:
         {{- end }}
       annotations:
         checksum/config: {{ (print .Values.configmap) | sha256sum }}
-        {{- with .Values.podAnnotations }}
+        {{- with .Values.web.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
@@ -57,11 +57,11 @@ spec:
             - name: http
               containerPort: {{ .Values.service.targetPort }} # change this to 80 in the future
               protocol: TCP
-          {{- with .Values.livenessProbe }}
+          {{- with .Values.web.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.readinessProbe }}
+          {{- with .Values.web.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -86,20 +86,20 @@ spec:
             - configMapRef:
                 name: {{ include "fuc.name" . }}-configmap
           resources:
-            {{- toYaml .Values.resources | nindent 12 }}
+            {{- toYaml .Values.web.resources | nindent 12 }}
           args:
             - "/bin/bash"
             - "./entrypoint.sh"
             - "service"
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.web.nodeSelector }}
       nodeSelector:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.web.affinity }}
       affinity:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.web.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
   {{- end }}

@@ -9,7 +9,7 @@ metadata:
 spec:
   {{- if .Values.argoRollouts }}
   replicas: 0
-  {{- else if not .Values.autoscaling.enabled }}
+  {{- else if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.offline.replicaCount }}
   {{- end }}
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
@@ -91,11 +91,11 @@ spec:
       nodeSelector:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.affinity }}
+      {{- with .Values.web.affinity }}
       affinity:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.web.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
   {{- end }}

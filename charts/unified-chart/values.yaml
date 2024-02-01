@@ -16,9 +16,38 @@ highPriorityMinReplicasOverride:
   # prd-ap-se2:
   #   minReplicas: 2
 
-replicaCount: 1
 appVersion: master-latest
 argoRollouts: true
+
+web:
+  replicaCount: 1
+  autoscaling:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 2
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 75
+  podAnnotations: {}
+  resources: {}
+  # handles restart (not offline)
+  livenessProbe:
+    failureThreshold: 3
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 40
+    periodSeconds: 60
+  # decides when to forward requests (not offline)
+  readinessProbe:
+    failureThreshold: 1
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    periodSeconds: 5
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
 
 offline:
   enabled: false
@@ -27,50 +56,15 @@ image:
   repository:
   pullPolicy: Always
 
+revisionHistoryLimit: 3
+
 imagePullSecrets:
   - name: regcred
-
-podAnnotations: {}
-
-podSecurityContext: {}
 
 service:
   type: ClusterIP
 
 jobs: {}
-
-resources: {}
-
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 2
-  targetCPUUtilizationPercentage: 50
-  targetMemoryUtilizationPercentage: 75
-
-# handles restart (not offline)
-livenessProbe:
-  failureThreshold: 3
-  httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 40
-  periodSeconds: 60
-
-# decides when to forward requests (not offline)
-readinessProbe:
-  failureThreshold: 1
-  httpGet:
-    path: /health
-    port: http
-  initialDelaySeconds: 5
-  periodSeconds: 5
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}
 
 configmap:
   data: {}
@@ -105,3 +99,10 @@ highPriority:
     maxReplicas: 2
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 75
+
+doubleSVC:
+  - security-engines
+  - reporting-scheduler
+  - api-gateway
+  - dashboard
+  - forward-proxy

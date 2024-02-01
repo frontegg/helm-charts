@@ -1,5 +1,5 @@
 {{- if .Values.highPriority.enabled }}
-{{- if .Values.autoscaling.enabled }}
+{{- if .Values.web.autoscaling.enabled }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -27,7 +27,7 @@ spec:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.web.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
     {{- if .Values.highPriority.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
@@ -35,7 +35,7 @@ spec:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.web.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
 {{- end }}
