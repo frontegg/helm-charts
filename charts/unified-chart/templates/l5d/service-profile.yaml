@@ -1,5 +1,5 @@
 {{- $top := . }}
-{{- if (eq (include "isLinkerdInjectEnabled" .Values) "true") }}
+{{- if (eq (include "isLinkerdInjectEnabled" .Values.web ) "true") }}
 {{- if .Values.serviceProfile }}
 {{- with .Values.serviceProfile.routes }}
 ---

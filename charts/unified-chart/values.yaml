@@ -29,6 +29,7 @@ web:
     targetMemoryUtilizationPercentage: 75
   podAnnotations: {}
   resources: {}
+  terminationGracePeriodSeconds: 30
   # handles restart (not offline)
   livenessProbe:
     failureThreshold: 3
