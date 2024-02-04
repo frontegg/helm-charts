@@ -11,6 +11,8 @@ metadata:
     {{- include "fuc.jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
+    # default sync wave 
+    argocd.argoproj.io/sync-wave: "-499"
     {{- if $job.metadata }}
     {{- with $job.metadata.annotations }}
     {{- toYaml . | nindent 4 }}

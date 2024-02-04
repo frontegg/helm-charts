@@ -1,2 +1,3 @@
-podAnnotations:
-  thiscamefrom: "godmode"
+web:
+  podAnnotations:
+    thiscamefrom: "godmode"

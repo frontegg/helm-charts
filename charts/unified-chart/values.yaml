@@ -65,9 +65,13 @@ imagePullSecrets:
 service:
   type: ClusterIP
 
+# default job annotation
+# argocd.argoproj.io/sync-wave: "-500"
 jobs: {}
 
 configmap:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1000"
   data: {}
 
 configuration:
@@ -75,6 +79,8 @@ configuration:
     config-center:
 
 externalSecret:
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1000"
   enabled: false
   text: |
     {{- $secret := .contents | fromYaml}}
