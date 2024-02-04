@@ -4,7 +4,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "fuc.name" . }}-hp-rollout-hpa
+  name: {{ include "fuc.name" . }}-hp
   labels:
   {{- include "fuc.labels" . | nindent 4 }}
 spec:
