@@ -43,7 +43,7 @@ spec:
       {{- end }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}
+        - name: {{ include "fuc.name" . }}-hp
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ .Values.appVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.externalSecret }}
@@ -64,6 +64,10 @@ spec:
           {{- end }}
           {{- with .Values.web.readinessProbe }}
           readinessProbe:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.web.startupProbe }}
+          startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
