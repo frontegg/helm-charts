@@ -2,6 +2,7 @@
 {{- $top := . -}}
 {{- range $jobName, $job := $values.jobs -}}
 {{- if $job.enabled }}
+{{- $defaultSyncWave := true -}}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -11,12 +12,17 @@ metadata:
     {{- include "fuc.jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
-    # default sync wave 
-    argocd.argoproj.io/sync-wave: "-499"
     {{- if $job.metadata }}
     {{- with $job.metadata.annotations }}
     {{- toYaml . | nindent 4 }}
+    {{- if (index . "argocd.argoproj.io/sync-wave") }}
+    {{- $defaultSyncWave = false }}
     {{- end }}
+    {{- end }}
+    {{- end }}
+    {{- if $defaultSyncWave }}
+    # default sync wave for jobs
+    argocd.argoproj.io/sync-wave: "-499"
     {{- end }}
 spec:
   {{- with $job.spec }}
