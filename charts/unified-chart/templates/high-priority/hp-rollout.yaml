@@ -16,7 +16,7 @@ spec:
       {{- include "fuc.hp.selectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: frontegg-{{ include "fuc.name" . }}-hp
+      activeService: frontegg-{{ include "fuc.name" . }}-service-hp
       autoPromotionEnabled: true
 {{- end }}
 {{- end }}
