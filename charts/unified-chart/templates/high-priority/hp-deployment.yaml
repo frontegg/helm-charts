@@ -39,7 +39,7 @@ spec:
       volumes :
         - name : vol-secret
           secret :
-            secretName : {{ include "fuc.name" . }}-external-secret
+            secretName : {{ include "external-secret-unique-name" . }}
       {{- end }}
       {{- end }}
       containers:
