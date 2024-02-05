@@ -6,7 +6,7 @@
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: frontegg-{{ include "fuc.name" . }}-service-hp.frontegg.svc.cluster.local
+  name: frontegg-{{ include "fuc.name" $top }}-service-hp.frontegg.svc.cluster.local
   namespace: frontegg
 spec:
   routes:

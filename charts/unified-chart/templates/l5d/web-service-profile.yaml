@@ -11,9 +11,12 @@ metadata:
 spec:
   routes:
     {{- . | toYaml | nindent 4 }}
-   
+{{- end }}
+{{- end }}
+
 {{- $serviceName := (include "fuc.name" .) }}
 {{- if has $serviceName .Values.doubleSVC }}
+{{- with .Values.serviceProfile.routes }}
 ---
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
