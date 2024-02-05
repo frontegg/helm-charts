@@ -11,6 +11,18 @@ metadata:
 spec:
   routes:
     {{- . | toYaml | nindent 4 }}
+   
+{{- $serviceName := (include "fuc.name" .) }}
+{{- if has $serviceName .Values.doubleSVC }}
+---
+apiVersion: linkerd.io/v1alpha2
+kind: ServiceProfile
+metadata:
+  name: frontegg-{{ include "fuc.name" $top }}.frontegg.svc.cluster.local
+  namespace: frontegg
+spec:
+  routes:
+    {{- . | toYaml | nindent 4 }}
 {{- end }}
 {{- end }}
 {{- end }}
