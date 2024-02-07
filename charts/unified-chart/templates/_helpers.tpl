@@ -9,7 +9,22 @@
 
 {{/* Just the serviceName */}}
 {{- define "fuc.name" -}}
-{{- required ".Values.serviceName must be set" .Values.serviceName }}
+{{- required ".Values.serviceName must be set" .Values.serviceName }}-v2
+{{- end -}}
+
+{{/* kubernetes web service name */}}
+{{- define "fuc.web.svc.name" -}}
+{{ include "fuc.name" . }}-service
+{{- end -}}
+
+{{/* kubernetes worker service name */}}
+{{- define "fuc.worker.svc.name" -}}
+{{ include "fuc.name" . }}-worker
+{{- end -}}
+
+{{/* kubernetes high priority service name */}}
+{{- define "fuc.hp.svc.name" -}}
+{{ include "fuc.name" . }}-hp
 {{- end -}}
 
 {{/* Some services include fullname in their values */}}

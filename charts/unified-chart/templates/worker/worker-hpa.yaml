@@ -1,5 +1,5 @@
-{{- if .Values.offline.enabled }}
-{{- if .Values.offline.autoscaling }}
+{{- if .Values.worker.enabled }}
+{{- if .Values.worker.autoscaling }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -18,24 +18,24 @@ spec:
     kind: Deployment
     name: {{ include "fuc.name" . }}-worker-deployment
     {{- end }}
-  minReplicas: {{ .Values.offline.autoscaling.minReplicas }}
-  maxReplicas: {{ .Values.offline.autoscaling.maxReplicas }}
+  minReplicas: {{ .Values.worker.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.worker.autoscaling.maxReplicas }}
   metrics:
-    {{- if .Values.offline.autoscaling.targetCPUUtilizationPercentage }}
+    {{- if .Values.worker.autoscaling.targetCPUUtilizationPercentage }}
     - type: Resource
       resource:
         name: cpu
         target:
           type: Utilization
-          averageUtilization: {{ .Values.offline.autoscaling.targetCPUUtilizationPercentage }}
+          averageUtilization: {{ .Values.worker.autoscaling.targetCPUUtilizationPercentage }}
     {{- end }}
-    {{- if .Values.offline.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- if .Values.worker.autoscaling.targetMemoryUtilizationPercentage }}
     - type: Resource
       resource:
         name: memory
         target:
           type: Utilization
-          averageUtilization: {{ .Values.offline.autoscaling.targetMemoryUtilizationPercentage }}
+          averageUtilization: {{ .Values.worker.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
 {{- end }}

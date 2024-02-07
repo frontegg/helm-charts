@@ -1,4 +1,4 @@
-{{- if .Values.offline.enabled }}
+{{- if .Values.worker.enabled }}
 {{- if .Values.argoRollouts }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -16,7 +16,7 @@ spec:
       {{- include "fuc.workerSelectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: frontegg-{{ include "fuc.name" . }}-worker
+      activeService: {{ include "fuc.worker.svc.name" . }}
       autoPromotionEnabled: true
 {{- end }}
 {{- end }}

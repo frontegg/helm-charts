@@ -1,10 +1,10 @@
-{{- if .Values.offline.enabled }}
+{{- if .Values.worker.enabled }}
 {{- if .Values.argoRollouts }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontegg-{{ include "fuc.name" . }}-worker
+  name: {{ include "fuc.worker.svc.name" . }}
   labels:
     monitoring-metrics: enabled
     {{- include "fuc.workerLabels" . | nindent 4 }}

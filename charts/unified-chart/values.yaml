@@ -50,7 +50,7 @@ web:
   tolerations: []
   affinity: {}
 
-offline:
+worker:
   enabled: false
 
 image:

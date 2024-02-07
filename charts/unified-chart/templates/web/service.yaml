@@ -2,7 +2,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: frontegg-{{ include "fuc.name" . }}-service
+  name: {{ include "fuc.web.svc.name" . }}
   labels:
     monitoring-metrics: enabled
     {{- include "fuc.labels" . | nindent 4 }}
