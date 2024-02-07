@@ -108,11 +108,3 @@ highPriority:
     targetMemoryUtilizationPercentage: 75
 
 serviceProfile: {}
-
-doubleSVC:
-  - security-engines
-  - reporting-scheduler
-  - api-gateway
-  - dashboard
-  - forward-proxy
-  - identity

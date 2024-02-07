@@ -1,12 +1,11 @@
 {{- if .Values.ingress.enabled -}}
-{{- $fullName := include "fuc.name" . -}}
 {{- $name := include "fuc.name" . -}}
 {{- $svcPort := .Values.service.port -}}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}-ingress
+  name: {{ required ".Values.serviceName is required" .Values.serviceName }}-ingress
   labels:
     {{- include "fuc.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
