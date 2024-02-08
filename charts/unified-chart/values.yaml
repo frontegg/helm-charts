@@ -20,6 +20,10 @@ appVersion: master-latest
 argoRollouts: true
 
 web:
+  command: "/bin/bash"
+  args:
+    - "entrypoint.sh"
+    - "service"
   replicaCount: 1
   autoscaling:
     enabled: false
@@ -52,6 +56,10 @@ web:
 
 worker:
   enabled: false
+  command: "/bin/bash"
+  args:
+    - "entrypoint.sh"
+    - "worker"
 
 image:
   repository:

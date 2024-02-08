@@ -85,10 +85,13 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "fuc.name" $top }}-configmap
-          {{- with .args }}
+          command: {{ .command | default "/bin/bash" | quote }}
           args:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- if .args }}
+            {{- toYaml .args | nindent 12 }}
+            {{- else }}
+            - "run-migrations.sh"
+            {{- end }}
           resources:
             {{- toYaml .resources | nindent 12 }}
       {{- if $values.nodeSelector }}

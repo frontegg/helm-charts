@@ -89,10 +89,9 @@ spec:
                 name: {{ include "fuc.name" . }}-configmap
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
+          command: {{ .Values.web.command | quote }}
           args:
-            - "/bin/bash"
-            - "./entrypoint.sh"
-            - "service"
+            {{- toYaml .Values.web.args | nindent 12 }}
       {{- with .Values.web.nodeSelector }}
       nodeSelector:
       {{- toYaml . | nindent 8 }}
