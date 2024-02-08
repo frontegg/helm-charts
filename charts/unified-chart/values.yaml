@@ -21,9 +21,7 @@ argoRollouts: true
 
 web:
   command: ["/bin/bash"]
-  args:
-    - "entrypoint.sh"
-    - "service"
+  args: ["entrypoint.sh", "service"]
   replicaCount: 1
   autoscaling:
     enabled: false

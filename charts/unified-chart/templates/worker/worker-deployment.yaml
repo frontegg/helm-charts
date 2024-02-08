@@ -88,10 +88,14 @@ spec:
                 name: {{ include "fuc.name" . }}-configmap
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
-          command: 
-            {{- .Values.worker.command | toYaml | nindent 12 }}
+          command:
+            {{- range .Values.worker.command }}
+            - {{ . | quote  }}
+            {{- end }}
           args:
-            {{- toYaml .Values.worker.args | nindent 12 }}
+            {{- range .Values.worker.args }}
+            - {{ . | quote  }}
+            {{- end }}
       {{- with .Values.worker.nodeSelector }}
       nodeSelector:
       {{- toYaml . | nindent 8 }}
