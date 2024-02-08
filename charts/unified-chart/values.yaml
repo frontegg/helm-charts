@@ -54,7 +54,7 @@ web:
 
 worker:
   enabled: false
-  command: "/bin/bash"
+  command: ["/bin/bash"]
   args:
     - "entrypoint.sh"
     - "worker"
