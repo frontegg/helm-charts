@@ -85,7 +85,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "fuc.name" $top }}-configmap
-          command: {{ .command | default "/bin/bash" | quote }}
+          command: 
+            {{- .command | toYaml | nindent 12 }}
           args:
             {{- if .args }}
             {{- toYaml .args | nindent 12 }}

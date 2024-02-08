@@ -20,7 +20,7 @@ appVersion: master-latest
 argoRollouts: true
 
 web:
-  command: "/bin/bash"
+  command: ["/bin/bash"]
   args:
     - "entrypoint.sh"
     - "service"
