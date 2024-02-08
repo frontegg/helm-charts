@@ -14,7 +14,7 @@
 
 {{/* kubernetes web service name */}}
 {{- define "fuc.web.svc.name" -}}
-{{ include "fuc.name" . }}-service
+{{ include "fuc.name" . }}-web
 {{- end -}}
 
 {{/* kubernetes worker service name */}}
