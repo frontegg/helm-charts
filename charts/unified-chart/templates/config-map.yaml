@@ -12,5 +12,5 @@ metadata:
 data:
   {{- with .Values.externalSecret.filename }}
   FRONTEGG_CONFIG_FILE_PATH: "/etc/config/{{ . }}"
-  {{- }}
+  {{- end -}}
   {{- toYaml .Values.configmap.data | nindent 2 }}
