@@ -31,23 +31,19 @@ spec:
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if .Values.externalSecret }}
       {{- if .Values.externalSecret.enabled }}
       volumes:
         - name: vol-secret
           secret:
             secretName: {{ include "external-secret-unique-name" . }}
       {{- end }}
-      {{- end }}
       containers:
         - name: {{ include "fuc.name" . }}-worker
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ .Values.appVersion }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
-          {{- if .Values.externalSecret }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts:
             {{- include "fuc.externalsecret.volumemount" . | nindent 12 }}
-          {{- end }}
           {{- end }}
           ports:
             - name: http
@@ -66,11 +62,9 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-          {{- if .Values.externalSecret }}
           {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
-          {{- end }}
           {{- end }}
           {{- range $config_name, $values := .Values.configuration.map }}
           {{- range $key, $value :=  $values}}
