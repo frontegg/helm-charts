@@ -18,7 +18,7 @@ spec:
     kind : Deployment
     name : {{ include "fuc.name" . }}-deployment-hp
     {{- end }}
-  minReplicas: {{ (index .Values.highPriorityMinReplicasOverride .Values.componentsCollectionIdentifier).minReplicas | default .Values.highPriority.autoscaling.minReplicas }}
+  minReplicas: {{ .Values.highPriority.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.highPriority.autoscaling.maxReplicas }}
   metrics:
     {{- if .Values.highPriority.autoscaling.targetCPUUtilizationPercentage }}

@@ -4,17 +4,9 @@
 # serviceName: my-new-awesome-service
 # team: my-team-of-imbeciles
 
-componentsCollectionIdentifier: local
+envID: local
 
-minReplicasOverride:
-  {}
-  # prd-ap-se2:
-  #   minReplicas: 3
-
-highPriorityMinReplicasOverride:
-  {}
-  # prd-ap-se2:
-  #   minReplicas: 2
+nameSuffix: ""
 
 appVersion: master-latest
 argoRollouts: true
@@ -86,6 +78,7 @@ configuration:
 
 externalSecret:
   filename: config.yaml
+  refreshInterval: 1m
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
   enabled: false

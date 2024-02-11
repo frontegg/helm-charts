@@ -1,15 +1,18 @@
 {{/* Hostname is used in services who render ingress */}}
 {{- define "fuc.hostname" -}}
-{{- if .Values.ingress.hostnameOverride -}}
-{{- .Values.ingress.hostnameOverride | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "api-%s.dev.frontegg.com" .Release.Name | trimSuffix "-" -}}
-{{- end -}}
+{{- required ".Values.ingress.hostnameOverride is required when ingress enabled" .Values.ingress.hostnameOverride | trimSuffix "-" }}
 {{- end -}}
 
 {{/* Just the serviceName */}}
 {{- define "fuc.name" -}}
-{{- required ".Values.serviceName must be set" .Values.serviceName }}-v2
+{{- required ".Values.serviceName must be set" .Values.serviceName }}{{ include "fuc.suffix" . }}
+{{- end -}}
+
+{{/* calculate the suffix */}}
+{{- define "fuc.suffix" -}}
+{{- with .Values.nameSuffix -}}
+-{{ . | trunc 10 }}
+{{- end -}}
 {{- end -}}
 
 {{/* kubernetes web service name */}}

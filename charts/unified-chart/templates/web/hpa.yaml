@@ -17,7 +17,7 @@ spec:
     kind : Deployment
     name : {{ include "fuc.name" . }}-deployment
     {{- end }}
-  minReplicas: {{ (index .Values.minReplicasOverride .Values.componentsCollectionIdentifier).minReplicas | default .Values.web.autoscaling.minReplicas }}
+  minReplicas: {{ .Values.web.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.web.autoscaling.maxReplicas }}
   metrics:
     {{- if .Values.web.autoscaling.targetCPUUtilizationPercentage }}
