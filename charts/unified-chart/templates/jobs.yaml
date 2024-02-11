@@ -51,7 +51,7 @@ spec:
       volumes:
         - name: vol-secret
           secret:
-            secretName: {{ include "external-secret-unique-name" $top }}
+            secretName: {{ include "external-secret-unique-name" $ }}
       {{- end }}
       {{- end }}
       containers:
@@ -61,9 +61,7 @@ spec:
           {{- if $values.externalSecret }}
           {{- if $values.externalSecret.enabled }}
           volumeMounts:
-            - name: vol-secret
-              mountPath: /etc/config/config.yaml
-              subPath: config
+            {{- include "fuc.externalsecret.volumemount" $ | nindent 12 }}
           {{- end }}
           {{- end }}
           env:

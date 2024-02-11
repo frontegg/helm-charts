@@ -37,6 +37,12 @@
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{- define "fuc.externalsecret.volumemount" -}}
+- name: vol-secret
+  mountPath: /etc/config/{{ .Values.externalSecret.filename | default "config.yaml"}}
+  subPath: config
+{{- end -}}
+
 {{/* Common labels includes selectorLabels */}}
 {{- define "fuc.labels" -}}
 helm.sh/chart: {{ include "fuc.chart" . }}

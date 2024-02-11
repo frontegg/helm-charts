@@ -47,9 +47,7 @@ spec:
           {{- if .Values.externalSecret }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts:
-            - name: vol-secret
-              mountPath: /etc/config/config.yaml
-              subPath: config
+            {{- include "fuc.externalsecret.volumemount" . | nindent 12 }}
           {{- end }}
           {{- end }}
           ports:

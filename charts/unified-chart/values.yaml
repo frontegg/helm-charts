@@ -85,6 +85,7 @@ configuration:
     config-center:
 
 externalSecret:
+  filename: config.yaml
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
   enabled: false
