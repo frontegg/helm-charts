@@ -10,9 +10,4 @@ metadata:
   labels:
     {{- include "fuc.labels" . | nindent 4 }}
 data:
-  {{- if .Values.externalSecret.enabled }}
-  {{- with .Values.externalSecret.filename }}
-  FRONTEGG_CONFIG_FILE_PATH: "/etc/config/{{ . }}"
-  {{- end -}}
-  {{- end }}
   {{- toYaml .Values.configmap.data | nindent 2 }}

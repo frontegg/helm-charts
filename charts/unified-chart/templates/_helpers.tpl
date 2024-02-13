@@ -42,8 +42,8 @@
 
 {{- define "fuc.externalsecret.volumemount" -}}
 - name: vol-secret
-  mountPath: /etc/config/{{ .Values.externalSecret.filename | default "config.yaml"}}
-  subPath: config
+  mountPath: {{ .Values.externalSecret.mountPath | default "/etc/config/config.yaml" }}
+  subPath: {{ .Values.externalSecret.subPath | default "config" }} 
 {{- end -}}
 
 {{/* Common labels includes selectorLabels */}}
