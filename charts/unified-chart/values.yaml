@@ -99,6 +99,8 @@ albIngress:
 
 highPriority:
   enabled: false
+  command: ["/bin/bash"]
+  args: ["entrypoint.sh", "service"]
   labels:
     priority: "high"
   replicaCount: 1
