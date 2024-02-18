@@ -22,7 +22,7 @@ metadata:
     {{- end }}
     {{- if $defaultSyncWave }}
     # default sync wave for jobs
-    argocd.argoproj.io/sync-wave: "-499"
+    argocd.argoproj.io/sync-wave: "-501"
     {{- end }}
 spec:
   {{- with $job.spec }}
