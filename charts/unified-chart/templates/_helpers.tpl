@@ -40,10 +40,18 @@
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
+{{/* inject env variables directly */}}
+{{- define "fuc.container.env" -}}
+{{- range $envVar := .env -}}
+- name: {{ required "envVar.name required" $envVar.name | quote }}
+  value: {{ required "envVar.value required" $envVar.value | quote }}
+{{- end -}}
+{{- end -}}
+
 {{- define "fuc.externalsecret.volumemount" -}}
 - name: vol-secret
-  mountPath: {{ .Values.externalSecret.mountPath | default "/etc/config/config.yaml" }}
-  subPath: {{ .Values.externalSecret.subPath | default "config" }} 
+  mountPath: {{ .Values.externalSecret.mountPath }}
+  subPath: {{ .Values.externalSecret.subPath }} 
 {{- end -}}
 
 {{/* Common labels includes selectorLabels */}}

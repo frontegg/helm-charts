@@ -46,40 +46,35 @@ spec:
       imagePullSecrets :
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if $values.externalSecret }}
       {{- if $values.externalSecret.enabled }}
       volumes:
         - name: vol-secret
           secret:
             secretName: {{ include "external-secret-unique-name" $ }}
       {{- end }}
-      {{- end }}
       containers:
         - name: {{ include "fuc.name" $top }}-{{ $jobName }}
           image: {{ $values.image.repository }}:{{ $values.appVersion }}
           imagePullPolicy: {{ $values.image.pullPolicy }}
-          {{- if $values.externalSecret }}
           {{- if $values.externalSecret.enabled }}
           volumeMounts:
             {{- include "fuc.externalsecret.volumemount" $ | nindent 12 }}
           {{- end }}
-          {{- end }}
           env:
-          {{- if $values.externalSecret }}
-          {{- if $values.externalSecret.enabled }}
+            {{- include "fuc.container.env" . | nindent 12 }}
+            {{- if $values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
-          {{- end }}
-          {{- end }}
-          {{- range $config_name, $localValues := $values.configuration.map }}
-          {{- range $key, $value :=  $localValues }}
+            {{- end }}
+            {{- range $config_name, $localValues := $values.configuration.map }}
+            {{- range $key, $value :=  $localValues }}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   name: {{ $config_name }}
                   key: {{ $value }}
-          {{- end }}
-          {{- end }}
+            {{- end }}
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "fuc.name" $top }}-configmap

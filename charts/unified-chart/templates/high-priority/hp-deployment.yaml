@@ -65,19 +65,20 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-          {{- if .Values.externalSecret.enabled }}
+            {{- include "fuc.container.env" .Values.highPriority | nindent 12 }}
+            {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
-          {{- end }}
-          {{- range $config_name, $values := .Values.configuration.map }}
-          {{- range $key, $value :=  $values}}
+            {{- end }}
+            {{- range $config_name, $values := .Values.configuration.map }}
+            {{- range $key, $value :=  $values}}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   name: {{ $config_name }}
                   key: {{ $value }}
-          {{- end }}
-          {{- end }}
+            {{- end }}
+            {{- end }}
           envFrom:
             - configMapRef:
                 name: {{ include "fuc.name" . }}-configmap

@@ -15,6 +15,9 @@ argoRollouts: true
 web:
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
+  env:
+    # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
+    #   value: "false"
   replicaCount: 1
   autoscaling:
     enabled: false
@@ -48,9 +51,10 @@ web:
 worker:
   enabled: false
   command: ["/bin/bash"]
-  args:
-    - "entrypoint.sh"
-    - "worker"
+  args: ["entrypoint.sh", "worker"]
+  env:
+    # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
+    #   value: "true"
 
 image:
   repository:
@@ -78,11 +82,12 @@ configuration:
     config-center:
 
 externalSecret:
-  filename: config.yaml
+  enabled: false
+  mountPath: /etc/config/config.yaml
+  subPath: config
   refreshInterval: 1m
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
-  enabled: false
   text: |
     {{- $secret := .contents | fromYaml}}
     apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey| default "x" }}
@@ -100,6 +105,9 @@ albIngress:
 highPriority:
   enabled: false
   command: ["/bin/bash"]
+  env:
+    # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
+    #   value: "false"
   args: ["entrypoint.sh", "service"]
   labels:
     priority: "high"
