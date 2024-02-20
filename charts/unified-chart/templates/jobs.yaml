@@ -54,7 +54,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "fuc.name" $top }}-{{ $jobName }}
-          image: {{ $values.image.repository }}:{{ $values.appVersion }}
+          image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
           imagePullPolicy: {{ $values.image.imagePullPolicy }}
           {{- if $values.externalSecret.enabled }}
           volumeMounts:

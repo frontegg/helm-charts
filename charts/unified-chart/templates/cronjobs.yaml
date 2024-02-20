@@ -1,0 +1,109 @@
+{{- $values := .Values -}}
+{{- $top := . -}}
+{{- range $jobName, $job := $values.cronjobs -}}
+{{- if $job.enabled }}
+{{- $defaultSyncWave := true -}}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+  labels:
+    {{- include "fuc.cronJobLabels" $top | nindent 4 }}
+    app.kubernetes.io/component: {{ $jobName }}
+spec:
+  schedule: {{ required "job.schedule is required" $job.schedule | quote }}
+  {{- with $job.concurrencyPolicy }}
+  concurrencyPolicy: {{ . }}
+  {{- end }}
+  {{- with $job.failedJobsHistoryLimit }}
+  failedJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with $job.successfulJobsHistoryLimit }}
+  successfulJobsHistoryLimit: {{ . }}
+  {{- end }}
+  {{- with $job.startingDeadlineSeconds }}
+  startingDeadlineSeconds: {{ . }}
+  {{- end }}
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: {{ $job.ttlSecondsAfterFinished | default 600 }}
+      backoffLimit: {{ $job.backoffLimit | default 1 }}
+      template:
+        name: {{ include "fuc.name" $top }}-{{ $jobName }}
+        labels:
+          {{- include "fuc.jobLabels" $top | nindent 10 }}
+          app.kubernetes.io/component: {{ $jobName }}
+        {{- with $job.annotations }}
+        annotations:
+          {{- toYaml . | nindent 8 }}
+        {{- end }}
+        spec:
+          {{- with $job.nodeSelector }}
+          nodeSelector:
+          {{ toYaml . | indent 2 }}
+          {{- end }}
+          {{- with $values.imagePullSecrets }}
+          imagePullSecrets:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- if $values.externalSecret.enabled }}
+          volumes:
+            - name: vol-secret
+              secret:
+                secretName: {{ include "external-secret-unique-name" $ }}
+          {{- end }}
+          {{- with $job.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          containers:
+            - name: {{ include "fuc.name" $top }}-{{ $jobName }}
+              image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
+              imagePullPolicy: {{ $values.imagePullPolicy }}
+              {{- if $values.externalSecret.enabled }}
+              volumeMounts:
+                - name: vol-secret
+                  mountPath: /etc/config/config.yaml
+                  subPath: config
+              {{- end }}
+              {{- with $job.resources}}
+              resources:
+                {{- toYaml .Values.cron.resources | nindent 16 }}
+              {{- end }}
+              env:
+              {{- if $values.externalSecret.enabled }}
+                - name: FRONTEGG_CONFIG_DIRECTORY
+                  value: "/etc/config"
+              {{- end }}
+              {{- range $config_name, $values := $values.configuration.map }}
+              {{- range $key, $value :=  $values}}
+                - name: {{ $key }}
+                  valueFrom:
+                    configMapKeyRef:
+                      name: {{ $config_name }}
+                      key: {{ $value }}
+              {{- end }}
+              {{- end }}
+              envFrom:
+                - configMapRef:
+                    name: {{ include "fuc.name" $top }}-configmap
+              command:
+                {{- range .command }}
+                - {{ . | quote  }}
+                {{- end }}
+              args:
+                {{- range .args }}
+                - {{ . | quote  }}
+                {{- end }}
+          {{- with $job.affinity }}
+          affinity:
+          {{ toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with $job.tolerations }}
+          tolerations:
+          {{ toYaml . | indent 12 }}
+          {{- end }}
+          restartPolicy: {{ $job.restartPolicy | default "Never" }}
+{{- end }}
+{{- end }}

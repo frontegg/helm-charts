@@ -75,6 +75,10 @@ app.frontegg.com/name: {{ include "fuc.name" . }}-job
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
+{{- define "fuc.cronJobLabels" -}}
+app.frontegg.com/name: {{ include "fuc.name" . }}-cronjob
+app.frontegg.com/instance: {{ .Release.Name }}
+{{- end -}}
 
 {{- define "fuc.workerLabels" -}}
 app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}

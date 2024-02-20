@@ -72,6 +72,19 @@ service:
 # argocd.argoproj.io/sync-wave: "-500"
 jobs: {}
 
+cronjobs:
+  refresh:
+    enabled: false
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    schedule: "0 * * * *"
+    ttlSecondsAfterFinished: 600
+    concurrencyPolicy: Replace
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 1
+    restartPolicy: Never
+    nodeSelector: {}
+
 configmap:
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
