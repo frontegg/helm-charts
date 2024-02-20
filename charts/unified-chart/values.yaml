@@ -58,7 +58,7 @@ worker:
 
 image:
   repository:
-  pullPolicy: Always
+  imagePullPolicy: Always
 
 revisionHistoryLimit: 3
 
