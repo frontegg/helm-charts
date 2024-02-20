@@ -75,6 +75,9 @@ jobs: {}
 cronjobs:
   refresh:
     enabled: false
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-500"
     command: ["/bin/bash"]
     args: ["entrypoint.sh"]
     schedule: "0 * * * *"
