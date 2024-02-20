@@ -40,7 +40,9 @@ spec:
   {{- end }}
   jobTemplate:
     spec:
-      ttlSecondsAfterFinished: {{ $job.ttlSecondsAfterFinished | default 600 }}
+      {{- with $job.ttlSecondsAfterFinished }}
+      ttlSecondsAfterFinished: {{ . }}
+      {{- end }}
       backoffLimit: {{ $job.backoffLimit | default 1 }}
       template:
         name: {{ include "fuc.name" $top }}-{{ $jobName }}

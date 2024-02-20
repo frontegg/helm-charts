@@ -58,6 +58,9 @@
 {{- define "fuc.labels" -}}
 helm.sh/chart: {{ include "fuc.chart" . }}
 app.frontegg.com/team: {{ .Values.team }}
+{{- with .Values.web.labels }}
+{{ toYaml . }}
+{{- end }}
 {{ include "fuc.selectorLabels" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
@@ -83,6 +86,9 @@ app.frontegg.com/instance: {{ .Release.Name }}
 {{- define "fuc.workerLabels" -}}
 app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
+{{- with .Values.worker.labels }}
+{{ toYaml . }}
+{{- end }}
 {{ include "fuc.workerSelectorLabels" . }}
 {{- end -}}
 
