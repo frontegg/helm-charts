@@ -43,7 +43,7 @@ spec:
       containers:
         - name: {{ include "fuc.name" . }}-hp
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ .Values.appVersion }}"
-          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+          imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts :
             {{- include "fuc.externalsecret.volumemount" . | nindent 12 }}

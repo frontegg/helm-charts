@@ -55,7 +55,7 @@ spec:
       containers:
         - name: {{ include "fuc.name" $top }}-{{ $jobName }}
           image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
-          imagePullPolicy: {{ $values.image.imagePullPolicy }}
+          imagePullPolicy: {{ $values.imagePullPolicy }}
           {{- if $values.externalSecret.enabled }}
           volumeMounts:
             {{- include "fuc.externalsecret.volumemount" $ | nindent 12 }}
