@@ -58,10 +58,10 @@ worker:
 
 image:
   repository:
-  imagePullPolicy: Always
 
 revisionHistoryLimit: 3
 
+imagePullPolicy: Always
 imagePullSecrets:
   - name: regcred
 
