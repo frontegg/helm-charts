@@ -1,8 +1,8 @@
 {{- $values := .Values -}}
 {{- $top := . -}}
-{{- range $jobName, $job := $values.cronjobs -}}
+{{- range $jobName, $job := $values.cronjobs }}
 {{- if $job.enabled }}
-{{- $defaultSyncWave := true -}}
+{{- $defaultSyncWave := true }}
 ---
 apiVersion: batch/v1
 kind: CronJob
