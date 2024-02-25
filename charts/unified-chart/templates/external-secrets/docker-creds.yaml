@@ -1,0 +1,37 @@
+{{- if .Values.regcred.enabled }}
+---
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: {{ include "fuc.name" $ }}-regcred
+  namespace: {{ .Values.regcred.namespace }}
+  annotations:
+    {{- with .Values.regcred.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  refreshInterval: 1m
+  secretStoreRef:
+    name: external-secret-store
+    kind: ClusterSecretStore
+  target:
+    name: regcred
+    template:
+      type: kubernetes.io/dockerconfigjson
+      engineVersion: v2
+      data:
+        .dockerconfigjson: |
+          {{`{{- $secret := .contents | fromYaml}}
+          {"auths": {
+            "{{ $secret.externalServices.regCred.url | toYaml }}": {
+              "username": "{{ $secret.externalServices.regCred.username | toYaml }}",
+              "password": "{{ $secret.externalServices.regCred.password | toYaml }}",
+              "email": "{{ $secret.externalServices.regCred.email | toYaml }}",
+              "auth": "{{ $secret.externalServices.regCred.auth | toYaml }}"
+            }
+          }}`}}
+  data:
+    - secretKey: contents
+      remoteRef:
+        key: {{ .Values.envID }}
+  {{- end }}
