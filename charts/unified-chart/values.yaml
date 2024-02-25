@@ -92,6 +92,7 @@ configmap:
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
   data: {}
+  tplData: ""
 
 configuration:
   map:

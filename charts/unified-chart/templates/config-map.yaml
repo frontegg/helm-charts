@@ -11,3 +11,4 @@ metadata:
     {{- include "fuc.labels" . | nindent 4 }}
 data:
   {{- toYaml .Values.configmap.data | nindent 2 }}
+  {{- tpl .Values.configmap.tplData $ | nindent 2 }}

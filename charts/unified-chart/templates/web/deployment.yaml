@@ -25,6 +25,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- with .Values.web.serviceAccountName }}
+      serviceAccountName: {{ tpl . $ }}
+      {{- end }}
       {{- with .Values.web.terminationGracePeriodSeconds }}
       terminationGracePeriodSeconds: {{ . }}
       {{- end }}
