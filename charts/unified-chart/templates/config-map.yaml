@@ -11,5 +11,5 @@ metadata:
     {{- include "fuc.labels" . | nindent 4 }}
 data:
   {{- range $key,$value := .Values.configmap.data }}
-  {{ tpl $key $ }}: {{ tpl $value $ }}
+  {{ tpl $key $ }}: {{ tpl $value $ | quote }}
   {{- end }}
