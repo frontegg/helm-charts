@@ -1,7 +1,7 @@
 # Default values for frontegg unified chart.
 
 # required
-# serviceName: my-new-awesome-service
+# name: my-new-awesome-service
 # team: my-team-of-imbeciles
 
 envID: local

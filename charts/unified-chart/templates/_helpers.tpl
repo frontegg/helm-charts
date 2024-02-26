@@ -3,9 +3,9 @@
 {{- required ".Values.ingress.hostnameOverride is required when ingress enabled" .Values.ingress.hostnameOverride | trimSuffix "-" }}
 {{- end -}}
 
-{{/* Just the serviceName */}}
+{{/* Just the name */}}
 {{- define "fuc.name" -}}
-{{- required ".Values.serviceName must be set" .Values.serviceName }}{{ include "fuc.suffix" . }}
+{{- required ".Values.name must be set" .Values.name }}{{ include "fuc.suffix" . }}
 {{- end -}}
 
 {{/* calculate the suffix */}}

@@ -5,7 +5,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ required ".Values.serviceName is required" .Values.serviceName }}-alb-ingress
+  name: {{ required ".Values.name is required" .Values.name }}-alb-ingress
   labels:
     {{- include "fuc.labels" . | nindent 4 }}
   {{- with .Values.albIngress.annotations }}
