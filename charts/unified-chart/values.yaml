@@ -156,4 +156,4 @@ highPriority:
 serviceProfile: {}
 
 # additional helm templates to render resources freely
-helmTemplates: ""
+additionalTemplates: ""
