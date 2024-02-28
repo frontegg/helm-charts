@@ -8,6 +8,7 @@ metadata:
   {{- include "fuc.hp.labels" . | nindent 4 }}
   {{- toYaml .Values.highPriority.labels | nindent 4 }}
 spec:
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   {{- if .Values.argoRollouts }}
   replicas: 0
   {{- else if not .Values.web.autoscaling.enabled }}
