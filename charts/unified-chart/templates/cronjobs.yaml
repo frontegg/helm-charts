@@ -47,7 +47,7 @@ spec:
       template:
         metadata:
           labels:
-            {{- include "fuc.jobLabels" $top | nindent 10 }}
+            {{- include "fuc.jobLabels" $top | nindent 12 }}
             app.kubernetes.io/component: {{ $jobName }}
         {{- with $job.annotations }}
         annotations:
