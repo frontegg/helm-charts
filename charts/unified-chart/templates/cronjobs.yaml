@@ -7,7 +7,7 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+  name: {{ include "fuc.name" $top }}-{{ $jobName }}
   labels:
     {{- include "fuc.cronJobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
@@ -78,13 +78,11 @@ spec:
               imagePullPolicy: {{ $values.imagePullPolicy }}
               {{- if $values.externalSecret.enabled }}
               volumeMounts:
-                - name: vol-secret
-                  mountPath: /etc/config/config.yaml
-                  subPath: config
+                {{- include "fuc.externalsecret.volumemount" $ | nindent 16 }}
               {{- end }}
               {{- with $job.resources}}
               resources:
-                {{- toYaml .Values.cron.resources | nindent 16 }}
+                {{- toYaml . | nindent 16 }}
               {{- end }}
               env:
               {{- if $values.externalSecret.enabled }}
