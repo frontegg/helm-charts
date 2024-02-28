@@ -45,10 +45,10 @@ spec:
       {{- end }}
       backoffLimit: {{ $job.backoffLimit | default 1 }}
       template:
-        name: {{ include "fuc.name" $top }}-{{ $jobName }}
-        labels:
-          {{- include "fuc.jobLabels" $top | nindent 10 }}
-          app.kubernetes.io/component: {{ $jobName }}
+        metadata:
+          labels:
+            {{- include "fuc.jobLabels" $top | nindent 10 }}
+            app.kubernetes.io/component: {{ $jobName }}
         {{- with $job.annotations }}
         annotations:
           {{- toYaml . | nindent 8 }}
