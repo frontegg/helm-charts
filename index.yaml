@@ -4594,6 +4594,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/team-management-service-0.1.2/team-management-service-0.1.2.tgz
     version: 0.1.2
+  unified-chart:
+  - apiVersion: v2
+    created: "2024-02-29T12:19:04.920950673Z"
+    description: Frontegg Unified Chart
+    digest: a88e376b47fdafae1c29b4c066ff22092f56aa7076105c314dbf92029b67d655
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-1.0.0/unified-chart-1.0.0.tgz
+    version: 1.0.0
   webhook-service:
   - apiVersion: v2
     created: "2023-12-12T14:22:00.645415586Z"
@@ -4860,4 +4873,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2024-01-03T12:40:04.556074339Z"
+generated: "2024-02-29T12:19:04.921486339Z"
