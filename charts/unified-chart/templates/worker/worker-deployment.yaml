@@ -3,9 +3,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fuc.name" . }}-worker-deployment
+  name: {{ include "unified.name" . }}-worker-deployment
   labels:
-  {{- include "fuc.workerLabels" . | nindent 4 }}
+  {{- include "unified.workerLabels" . | nindent 4 }}
 spec:
   {{- if .Values.argoRollouts }}
   replicas: 0
@@ -15,11 +15,11 @@ spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   selector:
     matchLabels:
-      {{- include "fuc.workerSelectorLabels" . | nindent 6 }}
+      {{- include "unified.workerSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-      {{- include "fuc.workerLabels" . | nindent 8 }}
+      {{- include "unified.workerLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ (print .Values.configmap) | sha256sum }}
         {{- with .Values.worker.podAnnotations }}
@@ -41,12 +41,12 @@ spec:
             secretName: {{ include "external-secret-unique-name" . }}
       {{- end }}
       containers:
-        - name: {{ include "fuc.name" . }}-worker
+        - name: {{ include "unified.name" . }}-worker
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ .Values.appVersion }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts:
-            {{- include "fuc.externalsecret.volumemount" . | nindent 12 }}
+            {{- include "unified.externalsecret.volumemount" . | nindent 12 }}
           {{- end }}
           ports:
             - name: http
@@ -65,7 +65,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            {{- include "fuc.container.env" .Values.worker | nindent 12 }}
+            {{- include "unified.container.env" .Values.worker | nindent 12 }}
             {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
@@ -81,7 +81,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "fuc.name" . }}-configmap
+                name: {{ include "unified.name" . }}-configmap
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           command:

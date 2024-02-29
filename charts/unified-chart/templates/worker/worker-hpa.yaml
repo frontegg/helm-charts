@@ -4,19 +4,19 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "fuc.name" . }}-worker-hpa
+  name: {{ include "unified.name" . }}-worker-hpa
   labels:
-  {{- include "fuc.labels" . | nindent 4 }}
+  {{- include "unified.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if .Values.argoRollouts }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ include "fuc.name" . }}-worker-rollout
+    name: {{ include "unified.name" . }}-worker-rollout
     {{- else }}
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "fuc.name" . }}-worker-deployment
+    name: {{ include "unified.name" . }}-worker-deployment
     {{- end }}
   minReplicas: {{ .Values.worker.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.worker.autoscaling.maxReplicas }}

@@ -1,5 +1,5 @@
 {{- if .Values.ingress.enabled -}}
-{{- $name := include "fuc.name" . -}}
+{{- $name := include "unified.name" . -}}
 {{- $svcPort := .Values.service.port -}}
 ---
 apiVersion: networking.k8s.io/v1
@@ -7,7 +7,7 @@ kind: Ingress
 metadata:
   name: {{ required ".Values.name is required" .Values.name }}-ingress
   labels:
-    {{- include "fuc.labels" . | nindent 4 }}
+    {{- include "unified.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -19,17 +19,17 @@ spec:
 {{- if .Values.ingress.tls.enabled}}
   tls:
     - hosts:
-        - {{ include "fuc.hostname" . | quote }}
+        - {{ include "unified.hostname" . | quote }}
       secretName: {{ .Values.ingress.tls.secretName }}
 {{- end }}
   rules:
-    - host: {{ include "fuc.hostname" . | quote }}
+    - host: {{ include "unified.hostname" . | quote }}
       http:
         paths:
         - path: /
           backend:
             service:
-              name: frontegg-{{ include "fuc.name" . }}
+              name: frontegg-{{ include "unified.name" . }}
               port:
                 number: {{ $svcPort }}
           pathType: ImplementationSpecific

@@ -1,5 +1,5 @@
 {{- if .Values.albIngress.enabled -}}
-{{- $name := include "fuc.name" . -}}
+{{- $name := include "unified.name" . -}}
 {{- $svcPort := .Values.service.port -}}
 ---
 apiVersion: networking.k8s.io/v1
@@ -7,7 +7,7 @@ kind: Ingress
 metadata:
   name: {{ required ".Values.name is required" .Values.name }}-alb-ingress
   labels:
-    {{- include "fuc.labels" . | nindent 4 }}
+    {{- include "unified.labels" . | nindent 4 }}
   {{- with .Values.albIngress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
@@ -17,13 +17,13 @@ spec:
   ingressClassName: {{ . | quote }}
   {{- end }}
   rules:
-    - host: {{ include "fuc.hostname" . | quote }}
+    - host: {{ include "unified.hostname" . | quote }}
       http:
         paths:
         - path: /
           backend:
             service:
-              name: frontegg-{{ include "fuc.name" . }}
+              name: frontegg-{{ include "unified.name" . }}
               port:
                 number: {{ $svcPort }}
           pathType: ImplementationSpecific

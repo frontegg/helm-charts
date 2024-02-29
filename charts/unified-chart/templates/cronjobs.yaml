@@ -7,9 +7,9 @@
 apiVersion: batch/v1
 kind: CronJob
 metadata:
-  name: {{ include "fuc.name" $top }}-{{ $jobName }}
+  name: {{ include "unified.name" $top }}-{{ $jobName }}
   labels:
-    {{- include "fuc.cronJobLabels" $top | nindent 4 }}
+    {{- include "unified.cronJobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
     {{- if $job.metadata }}
@@ -47,7 +47,7 @@ spec:
       template:
         metadata:
           labels:
-            {{- include "fuc.jobLabels" $top | nindent 12 }}
+            {{- include "unified.jobLabels" $top | nindent 12 }}
             app.kubernetes.io/component: {{ $jobName }}
         {{- with $job.annotations }}
         annotations:
@@ -73,12 +73,12 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           containers:
-            - name: {{ include "fuc.name" $top }}-{{ $jobName }}
+            - name: {{ include "unified.name" $top }}-{{ $jobName }}
               image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
               imagePullPolicy: {{ $values.imagePullPolicy }}
               {{- if $values.externalSecret.enabled }}
               volumeMounts:
-                {{- include "fuc.externalsecret.volumemount" $ | nindent 16 }}
+                {{- include "unified.externalsecret.volumemount" $ | nindent 16 }}
               {{- end }}
               {{- with $job.resources}}
               resources:
@@ -100,7 +100,7 @@ spec:
               {{- end }}
               envFrom:
                 - configMapRef:
-                    name: {{ include "fuc.name" $top }}-configmap
+                    name: {{ include "unified.name" $top }}-configmap
               command:
                 {{- range .command }}
                 - {{ . | quote  }}

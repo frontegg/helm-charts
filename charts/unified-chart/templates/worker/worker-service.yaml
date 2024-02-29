@@ -4,10 +4,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fuc.worker.svc.name" . }}
+  name: {{ include "unified.worker.svc.name" . }}
   labels:
     monitoring-metrics: enabled
-    {{- include "fuc.workerLabels" . | nindent 4 }}
+    {{- include "unified.workerLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -16,6 +16,6 @@ spec:
       protocol: {{ .Values.service.protocol }}
       name: {{ .Values.service.name }}
   selector:
-    {{- include "fuc.workerSelectorLabels" . | nindent 4 }}
+    {{- include "unified.workerSelectorLabels" . | nindent 4 }}
 {{- end }}
 {{- end }}

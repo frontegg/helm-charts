@@ -6,7 +6,7 @@
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: {{ include "fuc.web.svc.name" $top }}.frontegg.svc.cluster.local
+  name: {{ include "unified.web.svc.name" $top }}.frontegg.svc.cluster.local
   namespace: frontegg
 spec:
   routes:
@@ -14,14 +14,14 @@ spec:
 {{- end }}
 {{- end }}
 
-{{- $name := (include "fuc.name" .) }}
+{{- $name := (include "unified.name" .) }}
 {{- if has $name .Values.doubleSVC }}
 {{- with .Values.serviceProfile.routes }}
 ---
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: frontegg-{{ include "fuc.name" $top }}.frontegg.svc.cluster.local
+  name: frontegg-{{ include "unified.name" $top }}.frontegg.svc.cluster.local
   namespace: frontegg
 spec:
   routes:

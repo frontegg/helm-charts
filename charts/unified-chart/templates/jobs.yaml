@@ -7,9 +7,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+  name: {{ include "unified.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
   labels:
-    {{- include "fuc.jobLabels" $top | nindent 4 }}
+    {{- include "unified.jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
     {{- if $job.metadata }}
@@ -31,9 +31,9 @@ spec:
   backoffLimit: {{ .backoffLimit | default 1 }}
   template:
     metadata:
-      name: {{ include "fuc.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
+      name: {{ include "unified.name" $top }}-{{ $jobName }}-{{ now | unixEpoch }}
       labels:
-        {{- include "fuc.jobLabels" $top | nindent 8 }}
+        {{- include "unified.jobLabels" $top | nindent 8 }}
         app.kubernetes.io/component: {{ $jobName }}
       {{- with .annotations }}
       annotations:
@@ -52,15 +52,15 @@ spec:
             secretName: {{ include "external-secret-unique-name" $ }}
       {{- end }}
       containers:
-        - name: {{ include "fuc.name" $top }}-{{ $jobName }}
+        - name: {{ include "unified.name" $top }}-{{ $jobName }}
           image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
           imagePullPolicy: {{ $values.imagePullPolicy }}
           {{- if $values.externalSecret.enabled }}
           volumeMounts:
-            {{- include "fuc.externalsecret.volumemount" $ | nindent 12 }}
+            {{- include "unified.externalsecret.volumemount" $ | nindent 12 }}
           {{- end }}
           env:
-            {{- include "fuc.container.env" . | nindent 12 }}
+            {{- include "unified.container.env" . | nindent 12 }}
             {{- if $values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
@@ -76,7 +76,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "fuc.name" $top }}-configmap
+                name: {{ include "unified.name" $top }}-configmap
           command:
             {{- range .command }}
             - {{ . | quote  }}

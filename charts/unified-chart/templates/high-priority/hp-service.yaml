@@ -3,10 +3,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fuc.hp.svc.name" . }}
+  name: {{ include "unified.hp.svc.name" . }}
   labels:
     monitoring-metrics: enabled
-    {{- include "fuc.labels" . | nindent 4 }}
+    {{- include "unified.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -15,5 +15,5 @@ spec:
       protocol: {{ .Values.service.protocol }}
       name: {{ .Values.service.name }}
   selector:
-    {{- include "fuc.hp.selectorLabels" . | nindent 4 }}
+    {{- include "unified.hp.selectorLabels" . | nindent 4 }}
 {{- end }}

@@ -1,103 +1,103 @@
 {{/* Hostname is used in services who render ingress */}}
-{{- define "fuc.hostname" -}}
+{{- define "unified.hostname" -}}
 {{- required ".Values.ingress.hostnameOverride is required when ingress enabled" .Values.ingress.hostnameOverride | trimSuffix "-" }}
 {{- end -}}
 
 {{/* Just the name */}}
-{{- define "fuc.name" -}}
-{{- required ".Values.name must be set" .Values.name }}{{ include "fuc.suffix" . }}
+{{- define "unified.name" -}}
+{{- required ".Values.name must be set" .Values.name }}{{ include "unified.suffix" . }}
 {{- end -}}
 
 {{/* calculate the suffix */}}
-{{- define "fuc.suffix" -}}
+{{- define "unified.suffix" -}}
 {{- with .Values.nameSuffix -}}
 -{{ . | trunc 10 }}
 {{- end -}}
 {{- end -}}
 
 {{/* kubernetes web service name */}}
-{{- define "fuc.web.svc.name" -}}
-{{ include "fuc.name" . }}-web
+{{- define "unified.web.svc.name" -}}
+{{ include "unified.name" . }}-web
 {{- end -}}
 
 {{/* kubernetes worker service name */}}
-{{- define "fuc.worker.svc.name" -}}
-{{ include "fuc.name" . }}-worker
+{{- define "unified.worker.svc.name" -}}
+{{ include "unified.name" . }}-worker
 {{- end -}}
 
 {{/* kubernetes high priority service name */}}
-{{- define "fuc.hp.svc.name" -}}
-{{ include "fuc.name" . }}-hp
+{{- define "unified.hp.svc.name" -}}
+{{ include "unified.name" . }}-hp
 {{- end -}}
 
 {{/* Some services include fullname in their values */}}
 {{- define "fullname" -}}
-{{ include "fuc.name" . }}
+{{ include "unified.name" . }}
 {{- end -}}
 
 {{/* Create chart name and version as used by the chart label. */}}
-{{- define "fuc.chart" -}}
+{{- define "unified.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/* inject env variables directly */}}
-{{- define "fuc.container.env" -}}
+{{- define "unified.container.env" -}}
 {{- range $envVar := .env -}}
 - name: {{ required "envVar.name required" $envVar.name | quote }}
   value: {{ required "envVar.value required" $envVar.value | quote }}
 {{- end -}}
 {{- end -}}
 
-{{- define "fuc.externalsecret.volumemount" -}}
+{{- define "unified.externalsecret.volumemount" -}}
 - name: vol-secret
   mountPath: {{ .Values.externalSecret.mountPath }}
   subPath: {{ .Values.externalSecret.subPath }} 
 {{- end -}}
 
 {{/* Common labels includes selectorLabels */}}
-{{- define "fuc.labels" -}}
-helm.sh/chart: {{ include "fuc.chart" . }}
+{{- define "unified.labels" -}}
+helm.sh/chart: {{ include "unified.chart" . }}
 app.frontegg.com/team: {{ .Values.team }}
 {{- with .Values.web.labels }}
 {{ toYaml . }}
 {{- end }}
-{{ include "fuc.selectorLabels" . }}
+{{ include "unified.selectorLabels" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
 {{- end -}}
 
 {{/* Selector labels */}}
-{{- define "fuc.selectorLabels" -}}
-app.frontegg.com/name: {{ include "fuc.name" . }}
+{{- define "unified.selectorLabels" -}}
+app.frontegg.com/name: {{ include "unified.name" . }}
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "fuc.jobLabels" -}}
-app.frontegg.com/name: {{ include "fuc.name" . }}-job
+{{- define "unified.jobLabels" -}}
+app.frontegg.com/name: {{ include "unified.name" . }}-job
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "fuc.cronJobLabels" -}}
-app.frontegg.com/name: {{ include "fuc.name" . }}-cronjob
+{{- define "unified.cronJobLabels" -}}
+app.frontegg.com/name: {{ include "unified.name" . }}-cronjob
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "fuc.workerLabels" -}}
+{{- define "unified.workerLabels" -}}
 app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
 {{- with .Values.worker.labels }}
 {{ toYaml . }}
 {{- end }}
-{{ include "fuc.workerSelectorLabels" . }}
+{{ include "unified.workerSelectorLabels" . }}
 {{- end -}}
 
-{{- define "fuc.workerSelectorLabels" -}}
-app.frontegg.com/name: {{ include "fuc.name" . }}-worker
+{{- define "unified.workerSelectorLabels" -}}
+app.frontegg.com/name: {{ include "unified.name" . }}-worker
 {{- end -}}
 
 {{- define "external-secret-unique-name" -}}
-{{ include "fuc.name" . }}-secret-{{ now | unixEpoch }}
+{{ include "unified.name" . }}-secret-{{ now | unixEpoch }}
 {{- end -}}
 
 {{- define "isLinkerdInjectEnabled" -}}
@@ -111,19 +111,19 @@ app.frontegg.com/name: {{ include "fuc.name" . }}-worker
 {{/*
 Common labels includes HP selectorLabels
 */}}
-{{- define "fuc.hp.labels" -}}
+{{- define "unified.hp.labels" -}}
 app.frontegg.com/team: {{ .Values.team }}
-helm.sh/chart: {{ include "fuc.chart" . }}
+helm.sh/chart: {{ include "unified.chart" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
 app.frontegg.com/appVersion: {{ .Values.appVersion | quote }}
-{{ include "fuc.hp.selectorLabels" . }}
+{{ include "unified.hp.selectorLabels" . }}
 {{- end -}}
 
 {{/*
 Selector labels for high priority pods
 */}}
-{{- define "fuc.hp.selectorLabels" -}}
-app.frontegg.com/name: {{ include "fuc.name" . }}-hp
+{{- define "unified.hp.selectorLabels" -}}
+app.frontegg.com/name: {{ include "unified.name" . }}-hp
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
