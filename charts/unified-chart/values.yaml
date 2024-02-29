@@ -10,7 +10,18 @@ envID: local
 nameSuffix: v2
 
 appVersion: master-latest
+
 argoRollouts: true
+
+image:
+  repository:
+
+revisionHistoryLimit: 3
+
+imagePullPolicy: Always
+
+imagePullSecrets:
+  - name: regcred
 
 web:
   command: ["/bin/bash"]
@@ -56,21 +67,22 @@ worker:
     # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
     #   value: "true"
 
-image:
-  repository:
-
-revisionHistoryLimit: 3
-
-imagePullPolicy: Always
-imagePullSecrets:
-  - name: regcred
-
 service:
   type: ClusterIP
 
-# default job annotation
-# argocd.argoproj.io/sync-wave: "-500"
-jobs: {}
+jobs:
+  # migrate:
+  #   enabled: true
+  #   metadata:
+  #     annotations:
+  #       argocd.argoproj.io/sync-wave: "-500"
+  #   spec:
+  #     command: ["/bin/bash"]
+  #     args: ["run-migrations.sh"]
+  #     resources:
+  #       requests:
+  #         cpu: 500m
+  #         memory: 500Mi
 
 cronjobs:
   refresh:
@@ -91,8 +103,8 @@ cronjobs:
 configmap:
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
-  data: {}
-  tplData: ""
+  data:
+    # EXAMPLE: '{{ include "fullname" $ }}-example'
 
 configuration:
   map:
@@ -106,27 +118,9 @@ externalSecret:
   annotations:
     argocd.argoproj.io/sync-wave: "-1000"
   text: |
-    {{- $secret := .contents | fromYaml}}
+    {{- $secret := .contents | fromYaml }}
     apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey| default "x" }}
   additionalSecrets: ""
-
-regcred:
-  enabled: false
-  namespace: frontegg
-  annotations:
-    argocd.argoproj.io/sync-wave: "-500"
-
-authorization:
-  enabled: true
-  role:
-    namespace: frontegg
-    rules:
-      - apiGroups: ["*"]
-        resources: ["*"]
-        verbs: ["*"]
-  roleBinding:
-    namespace: frontegg
-  serviceAccount:
 
 prometheusRule:
   enabled: false
@@ -153,7 +147,20 @@ highPriority:
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 75
 
-serviceProfile: {}
+serviceProfile:
+  # routes:
+  #   - condition:
+  #       method: EXAMPLE
+  #       pathRegex: /example/test/
+  #     name: EXAMPLE /example/test/
 
 # additional helm templates to render resources freely
-additionalTemplates: ""
+additionalTemplates: |
+
+# ---
+# apiVersion: v1
+# kind: ServiceAccount
+# metadata:
+#   name: {{ include "fullname" $ }}-sa
+#   labels:
+#     {{- include "unified.labels" $ | nindent 4 }}
