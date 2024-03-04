@@ -100,6 +100,10 @@ app.frontegg.com/name: {{ include "unified.name" . }}-worker
 {{ include "unified.name" . }}-secret-{{ now | unixEpoch }}
 {{- end -}}
 
+{{- define "configmap.checksum" -}}
+{{ include "unified.name" . }}-cm-{{ print .Values.configmap.data | sha1sum }}
+{{- end -}}
+
 {{- define "isLinkerdInjectEnabled" -}}
 {{- if and .podAnnotations (eq (index .podAnnotations "linkerd.io/inject") "enabled") -}}
   true
