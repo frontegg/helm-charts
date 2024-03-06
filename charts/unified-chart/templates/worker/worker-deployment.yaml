@@ -81,7 +81,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" . }}-configmap
+                name: {{ include "configmap.checksum" $ | trunc 63 }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           command:
