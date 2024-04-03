@@ -3713,6 +3713,23 @@ entries:
     version: 1.1.6
   - apiVersion: v2
     appVersion: 2.6.1
+    created: "2024-04-03T18:44:32.198042391Z"
+    description: A proxysql Helm chart for Kubernetes. Offers option to expose web
+      interface. through Ingress. Uses ServiceMonitor to collect metrics. Forked from
+      christianhuth/proxysql
+    digest: fc39011c963db95fd25913b5d583291f768a3a13e137e53a4dbee494a75709f1
+    maintainers:
+    - email: platform@frontegg.com
+      name: Frontegg Platform
+    name: proxysql
+    sources:
+    - https://github.com/sysown/proxysql
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/proxysql-1.1.6-beta.2/proxysql-1.1.6-beta.2.tgz
+    version: 1.1.6-beta.2
+  - apiVersion: v2
+    appVersion: 2.6.1
     created: "2024-04-03T18:31:48.693583781Z"
     description: A proxysql Helm chart for Kubernetes. Offers option to expose web
       interface. through Ingress. Uses ServiceMonitor to collect metrics. Forked from
@@ -4980,4 +4997,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2024-04-03T18:31:48.694190138Z"
+generated: "2024-04-03T18:44:32.198716585Z"
