@@ -3693,6 +3693,24 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/notification-service-0.1.5/notification-service-0.1.5.tgz
     version: 0.1.5
+  proxysql:
+  - apiVersion: v2
+    appVersion: 2.6.1
+    created: "2024-04-03T15:14:09.481880146Z"
+    description: A proxysql Helm chart for Kubernetes. Offers option to expose web
+      interface. through Ingress. Uses ServiceMonitor to collect metrics. Forked from
+      christianhuth/proxysql
+    digest: 6511cd234556b8c85bcfd222c40b7064ae086a5a9ddc615feae022815a2f4422
+    maintainers:
+    - email: platform@frontegg.com
+      name: Frontegg Platform
+    name: proxysql
+    sources:
+    - https://github.com/sysown/proxysql
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/proxysql-1.1.6/proxysql-1.1.6.tgz
+    version: 1.1.6
   secire-access:
   - apiVersion: v2
     created: "2020-10-21T06:59:39.058409376Z"
@@ -4945,4 +4963,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2024-03-17T09:15:18.202329014Z"
+generated: "2024-04-03T15:14:09.482511084Z"
