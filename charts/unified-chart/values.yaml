@@ -25,6 +25,7 @@ imagePullSecrets:
   - name: regcred
 
 web:
+  enabled: true
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   env:
