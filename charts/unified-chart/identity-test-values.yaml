@@ -1,3 +1,5 @@
+appVersion: staging-20240521.173819-eba032b
+
 worker:
   autoscaling:
     enabled: true
