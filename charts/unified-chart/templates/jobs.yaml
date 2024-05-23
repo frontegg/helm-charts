@@ -6,7 +6,7 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "unified.name" $top | sha256sum | trunc 10 }}-{{ $jobName | trunc 10 }}-{{ $values.appVersion | trunc 41 }}
+  name: {{ include "unified.name" $top | trunc 30 }}-{{ $jobName | trunc 30 }}
   labels:
     {{- include "unified.jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
@@ -18,7 +18,7 @@ metadata:
     {{- end }}
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-weight: "-2"
-    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded
+    helm.sh/hook-delete-policy: before-hook-creation
 spec:
   {{- with $job.spec }}
   completions: {{ .completions | default 1 }}

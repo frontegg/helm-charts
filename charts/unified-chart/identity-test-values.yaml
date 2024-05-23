@@ -1,0 +1,9 @@
+appVersion: staging-20240521.173819-eba032b
+
+worker:
+  autoscaling:
+    enabled: true
+    minReplicas: 4
+    maxReplicas: 4
+    targetCPUUtilizationPercentage: 50
+    targetMemoryUtilizationPercentage: 75
