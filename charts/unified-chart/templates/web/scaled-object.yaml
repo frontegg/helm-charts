@@ -1,0 +1,40 @@
+{{- $values := .Values -}}
+{{- $top := . -}}
+{{- with $values.autoscaling }}
+{{- if .scaledObject.enabled }}
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: {{ include "identity-service.fullname" $top }}
+  annotations:
+  {{- include "keda-annotations" $top | nindent 4 }}
+  labels:
+  {{- include "identity-service.labels" $top | nindent 4 }}
+spec:
+  scaleTargetRef:
+    {{- if $values.argoRollouts }}
+    apiVersion: argoproj.io/v1alpha1
+    kind: Rollout
+    name: {{ include "identity-service.fullname" $top }}-rollout
+    {{- else }}
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "identity-service.fullname" $top }}-deployment
+    {{- end }}
+  minReplicaCount: {{.minReplicas }}
+  maxReplicaCount: {{ .maxReplicas }}
+  {{- with .scaledObject.fallback }}
+  fallback:                                                 # Optional. Section to specify fallback options
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .scaledObject.triggers }}
+  triggers:
+    {{- toYaml . | nindent 4 }}
+  {{- end}}
+  {{- with .scaledObject.advanced }}
+  advanced:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }}
+{{- end }}
