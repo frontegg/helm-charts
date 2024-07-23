@@ -26,7 +26,7 @@
 {{- end -}}
 
 {{/* kubernetes high priority service name */}}
-{{- define "unified.hp.svc.name" -}}
+{{- define "unified.hp.name" -}}
 {{ include "unified.name" . }}-hp
 {{- end -}}
 
@@ -130,4 +130,9 @@ Selector labels for high priority pods
 {{- define "unified.hp.selectorLabels" -}}
 app.frontegg.com/name: {{ include "unified.name" . }}-hp
 app.frontegg.com/instance: {{ .Release.Name }}
+{{- end -}}
+
+
+{{- define "keda-annotations" -}}
+{{- .Values.keda.annotations | toYaml }}
 {{- end -}}

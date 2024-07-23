@@ -26,6 +26,9 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "unified.name" . }}
+      {{- end }}
       {{- with .Values.web.serviceAccountName }}
       serviceAccountName: {{ tpl . $ }}
       {{- end }}
@@ -52,7 +55,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.targetPort }} # change this to 80 in the future
+              containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           {{- with .Values.web.livenessProbe }}
           livenessProbe:

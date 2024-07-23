@@ -7,16 +7,20 @@ metadata:
   name: {{ include "unified.web.name" . }}
   labels:
   {{- include "unified.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.web.autoscaling.scaledObject.enabled }}
+    {{- include "keda-annotations" . | nindent 4 }}
+    {{- end }}
 spec:
   scaleTargetRef:
     {{- if .Values.argoRollouts }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ include "unified.name" . }}
+    name: {{ include "unified.web.name" . }}
     {{- else }}
     apiVersion : apps/v1
     kind : Deployment
-    name : {{ include "unified.name" . }}
+    name : {{ include "unified.web.name" . }}
     {{- end }}
   minReplicas: {{ .Values.web.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.web.autoscaling.maxReplicas }}

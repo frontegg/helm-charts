@@ -6,7 +6,7 @@ kind: Rollout
 metadata:
   name: {{ include "unified.worker.name" . }}
 spec:
-  workloadRef: # Reference an existing Deployment using workloadRef field
+  workloadRef:
     apiVersion: apps/v1
     kind: Deployment
     name: {{ include "unified.worker.name" . }}

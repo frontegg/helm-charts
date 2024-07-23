@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unified.name" . }}-hp
+  name: {{ include "unified.hp.name" . }}
   labels:
   {{- include "unified.hp.labels" . | nindent 4 }}
   {{- toYaml .Values.highPriority.labels | nindent 4 }}
@@ -30,8 +30,8 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.highPriority.serviceAccountName }}
-      serviceAccountName: {{ tpl . $ }}
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "unified.name" . }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.highPriority.terminationGracePeriodSeconds | default 30 }}
       {{- with .Values.imagePullSecrets }}
@@ -45,7 +45,7 @@ spec:
             secretName : {{ include "name-app-version" . }}
       {{- end }}
       containers:
-        - name: {{ include "unified.name" . }}-hp
+        - name: {{ include "unified.hp.name" . }}
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
@@ -54,7 +54,7 @@ spec:
           {{- end }}
           ports:
             - name: http
-              containerPort: {{ .Values.service.targetPort }} # change this to 80 in the future
+              containerPort: {{ .Values.service.targetPort }}
               protocol: TCP
           {{- with .Values.web.livenessProbe }}
           livenessProbe:

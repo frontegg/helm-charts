@@ -6,7 +6,11 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "unified.worker.name" . }}
   labels:
-  {{- include "unified.labels" . | nindent 4 }}
+    {{- include "unified.labels" . | nindent 4 }}
+  annotations:
+    {{- if .Values.worker.autoscaling.scaledObject.enabled }}
+    {{- include "keda-annotations" . | nindent 4 }}
+    {{- end }}
 spec:
   scaleTargetRef:
     {{- if .Values.argoRollouts }}

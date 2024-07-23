@@ -5,7 +5,7 @@ kind: Deployment
 metadata:
   name: {{ include "unified.worker.name" . }}
   labels:
-  {{- include "unified.workerLabels" . | nindent 4 }}
+    {{- include "unified.workerLabels" . | nindent 4 }}
 spec:
   {{- if .Values.argoRollouts }}
   replicas: 0
@@ -19,15 +19,15 @@ spec:
   template:
     metadata:
       labels:
-      {{- include "unified.workerLabels" . | nindent 8 }}
+        {{- include "unified.workerLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ (print .Values.configmap) | sha256sum }}
         {{- with .Values.worker.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- with .Values.worker.serviceAccountName }}
-      serviceAccountName: {{ tpl . $ }}
+      {{- if .Values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "unified.name" . }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.worker.terminationGracePeriodSeconds | default 30 }}
       {{- with .Values.imagePullSecrets }}
@@ -81,7 +81,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" . }}-configmap
+                name: {{ include "unified.name" . }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
           command:

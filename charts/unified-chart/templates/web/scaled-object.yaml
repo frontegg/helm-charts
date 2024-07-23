@@ -8,19 +8,19 @@ kind: ScaledObject
 metadata:
   name: {{ include "unified.web.name" $top }}
   annotations:
-  {{- include "keda-annotations" $top | nindent 4 }}
+    {{- include "keda-annotations" $top | nindent 4 }}
   labels:
-  {{- include "identity-service.labels" $top | nindent 4 }}
+    {{- include "identity-service.labels" $top | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if $values.argoRollouts }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ include "identity-service.fullname" $top }}-rollout
+    name: {{ include "unified.web.name" $top }}
     {{- else }}
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "identity-service.fullname" $top }}-deployment
+    name: {{ include "unified.web.name" $top }}
     {{- end }}
   minReplicaCount: {{.minReplicas }}
   maxReplicaCount: {{ .maxReplicas }}

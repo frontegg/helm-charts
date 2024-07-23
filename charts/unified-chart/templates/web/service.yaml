@@ -5,15 +5,15 @@ kind: Service
 metadata:
   name: {{ include "unified.web.name" . }}
   labels:
-    monitoring-metrics: enabled
+    {{- toYaml .Values.service.labels | nindent 4 }}
     {{- include "unified.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
+      targetPort: {{ required ".Values.service.targetPort is required" .Values.service.targetPort }}
       protocol: {{ .Values.service.protocol }}
-      name: {{ .Values.service.name }}
+      name: {{ .Values.service.name | default "http" }}
   selector:
     {{- include "unified.selectorLabels" . | nindent 4 }}
 {{- end }}

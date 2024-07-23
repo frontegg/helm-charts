@@ -73,7 +73,11 @@ worker:
     #   value: "true"
 
 service:
+  labels:
+    monitoring-metrics: enabled
   type: ClusterIP
+  protocol: TCP
+  port: 80
 
 jobs:
   # migrate:
@@ -175,3 +179,12 @@ additionalTemplates: |
 #   name: {{ include "fullname" $ }}-sa
 #   labels:
 #     {{- include "unified.labels" $ | nindent 4 }}
+
+keda:
+  annotations:
+    scaledobject.keda.sh/transfer-hpa-ownership: "true"
+    validations.keda.sh/hpa-ownership: "false"
+
+serviceAccount:
+  enabled: false
+  annotations: {}
