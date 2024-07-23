@@ -16,7 +16,7 @@ spec:
       {{- include "unified.hp.selectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: {{ include "unified.hp.svc.name" . }}
+      activeService: {{ include "unified.hp.name" . }}
       autoPromotionEnabled: true
 {{- end }}
 {{- end }}

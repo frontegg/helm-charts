@@ -1,12 +1,13 @@
 {{- if .Values.highPriority.enabled }}
-{{- if .Values.web.autoscaling.enabled }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "unified.hp.name" . }}
   labels:
-  {{- include "unified.labels" . | nindent 4 }}
+    {{- include "unified.labels" . | nindent 4 }}
+  annotations:
+    {{- include "keda-annotations" . | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if .Values.argoRollouts }}
@@ -18,6 +19,7 @@ spec:
     kind : Deployment
     name : {{ include "unified.hp.name" . }}
     {{- end }}
+  {{- if not .Values.autoscaling.scaledObject.enabled }}
   minReplicas: {{ .Values.highPriority.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.highPriority.autoscaling.maxReplicas }}
   metrics:
@@ -37,5 +39,5 @@ spec:
           type: Utilization
           averageUtilization: {{ .Values.web.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
-{{- end }}
+  {{- end }}
 {{- end }}

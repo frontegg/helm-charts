@@ -71,10 +71,10 @@ spec:
           {{- end }}
           env:
             {{- include "unified.container.env" .Values.web | nindent 12 }}
-          {{- if .Values.externalSecret.enabled }}
+            {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
-          {{- end }}
+            {{- end }}
           {{- range $config_name, $values := .Values.configuration.map }}
           {{- range $key, $value :=  $values}}
             - name: {{ $key }}

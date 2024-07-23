@@ -6,8 +6,8 @@ kind: Service
 metadata:
   name: {{ include "unified.worker.name" . }}
   labels:
-    monitoring-metrics: enabled
-      {{- include "unified.workerLabels" . | nindent 4 }}
+    {{- toYaml .Values.service.labels | nindent 4 }}
+    {{- include "unified.workerLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:

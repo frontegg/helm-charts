@@ -57,7 +57,7 @@
 {{/* Common labels includes selectorLabels */}}
 {{- define "unified.labels" -}}
 helm.sh/chart: {{ include "unified.chart" . }}
-app.frontegg.com/team: {{ .Values.team }}
+app.frontegg.com/team: {{ required "Every service needs to have responsible parents. .Values.team is required." .Values.team }}
 {{- with .Values.web.labels }}
 {{ toYaml . }}
 {{- end }}

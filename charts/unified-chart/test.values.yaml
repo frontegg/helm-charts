@@ -1,22 +1,81 @@
-name: identity
-
-envID: test-local
+name: crappy
+team: shitballz
+envID: local
 
 image:
-  repository: frontegg/identity-service
+  repository: frontegg/crappy-service
 
-appVersion: staging-20240521.173819-eba032b
+appVersion: production-global-20240521.173819-eba032b
 
 service:
   targetPort: 3003
 
+externalSecret:
+  enabled: true
+
+configuration:
+  map:
+    config-center:
+      someKey: keykeykey
+
+prometheusRule:
+  enabled: true
+
+ingress:
+  enabled: true
+
+albIngress:
+  enabled: true
+
+highPriority:
+  enabled: true
+web:
+
 worker:
+  enabled: false
   autoscaling:
     enabled: true
-    minReplicas: 4
+    minReplicas: 2
     maxReplicas: 4
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 75
+    scaledObject:
+      enabled: true
+      triggers:
+        - type: cpu
+          metadata:
+            type: Utilization
+            value: "80"
+        - type: memory
+          metadata:
+            type: Utilization
+            value: "75"
+        - type: prometheus
+          name: kafka time lag
+          metadata:
+            serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
+            query: max(sum(aws_kafka_estimated_max_time_lag_maximum{dimension_Consumer_Group=~".*api-gateway.*" }) by (dimension_Consumer_Group))
+            threshold: "50"
+      advanced:
+        horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
+          name: api-gateway-worker-hpa
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 300
+              policies:
+                - type: Pods
+                  value: 1
+                  periodSeconds: 60
+            scaleUp:
+              stabilizationWindowSeconds: 0
+              policies:
+                - type: Pods
+                  value: 1
+                  periodSeconds: 15
+
+cronjobs:
+  refresh:
+    enabled: true
 
 serviceAccount:
   enabled: true
