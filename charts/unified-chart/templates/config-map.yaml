@@ -6,7 +6,7 @@ metadata:
     {{- with .Values.configmap.annotations }}
     {{- . | toYaml | nindent 4 }}
     {{- end }}
-  name: {{ include "unified.name" . }}-configmap
+  name: {{ include "unified.name" . }}
   labels:
     {{- include "unified.labels" . | nindent 4 }}
 data:

@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unified.name" . }}-deployment
+  name: {{ include "unified.web.name" . }}
   labels:
   {{- include "unified.labels" . | nindent 4 }}
 spec:
@@ -40,10 +40,10 @@ spec:
       volumes:
         - name: vol-secret
           secret:
-            secretName: {{ include "external-secret-unique-name" . }}
+            secretName: {{ include "name-app-version" . }}
       {{- end }}
       containers:
-        - name: {{ include "unified.name" . }}-web
+        - name: {{ include "unified.web.name" . }}
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
@@ -83,7 +83,7 @@ spec:
           {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" . }}-configmap
+                name: {{ include "unified.name" . }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           command:

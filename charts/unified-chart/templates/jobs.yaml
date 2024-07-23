@@ -44,7 +44,7 @@ spec:
       volumes:
         - name: vol-secret
           secret:
-            secretName: {{ include "external-secret-unique-name" $ }}
+            secretName: {{ include "name-app-version" $ }}
       {{- end }}
       containers:
         - name: {{ include "unified.name" $top }}-{{ $jobName }}

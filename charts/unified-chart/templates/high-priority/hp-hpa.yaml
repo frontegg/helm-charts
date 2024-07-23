@@ -12,11 +12,11 @@ spec:
     {{- if .Values.argoRollouts }}
     apiVersion : argoproj.io/v1alpha1
     kind : Rollout
-    name : {{ include "unified.name" . }}-rollout-hp
+    name : {{ include "unified.name" . }}-hp
     {{- else }}
     apiVersion : apps/v1
     kind : Deployment
-    name : {{ include "unified.name" . }}-deployment-hp
+    name : {{ include "unified.name" . }}-hp
     {{- end }}
   minReplicas: {{ .Values.highPriority.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.highPriority.autoscaling.maxReplicas }}

@@ -16,12 +16,12 @@
 {{- end -}}
 
 {{/* kubernetes web service name */}}
-{{- define "unified.web.svc.name" -}}
+{{- define "unified.web.name" -}}
 {{ include "unified.name" . }}-web
 {{- end -}}
 
 {{/* kubernetes worker service name */}}
-{{- define "unified.worker.svc.name" -}}
+{{- define "unified.worker.name" -}}
 {{ include "unified.name" . }}-worker
 {{- end -}}
 
@@ -100,7 +100,7 @@ app.frontegg.com/name: {{ include "unified.name" . }}-worker
 {{ required ".Values.appVersion is required cant run without it" .Values.appVersion }}
 {{- end -}}
 
-{{- define "external-secret-unique-name" -}}
+{{- define "name-app-version" -}}
 {{ include "unified.name" . }}-{{ include "appVersion" . }}
 {{- end -}}
 

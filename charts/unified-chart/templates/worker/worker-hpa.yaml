@@ -4,7 +4,7 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "unified.name" . }}-worker-hpa
+  name: {{ include "unified.worker.name" . }}
   labels:
   {{- include "unified.labels" . | nindent 4 }}
 spec:
@@ -12,11 +12,11 @@ spec:
     {{- if .Values.argoRollouts }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ include "unified.name" . }}-worker-rollout
+    name: {{ include "unified.worker.name" . }}
     {{- else }}
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "unified.name" . }}-worker-deployment
+    name: {{ include "unified.worker.name" . }}
     {{- end }}
   minReplicas: {{ .Values.worker.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.worker.autoscaling.maxReplicas }}

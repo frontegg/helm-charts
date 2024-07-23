@@ -3,7 +3,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unified.name" . }}-deployment-hp
+  name: {{ include "unified.name" . }}-hp
   labels:
   {{- include "unified.hp.labels" . | nindent 4 }}
   {{- toYaml .Values.highPriority.labels | nindent 4 }}
@@ -42,7 +42,7 @@ spec:
       volumes :
         - name : vol-secret
           secret :
-            secretName : {{ include "external-secret-unique-name" . }}
+            secretName : {{ include "name-app-version" . }}
       {{- end }}
       containers:
         - name: {{ include "unified.name" . }}-hp
@@ -85,7 +85,7 @@ spec:
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" . }}-configmap
+                name: {{ include "unified.name" . }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           command:

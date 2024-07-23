@@ -1,3 +1,10 @@
+name: identity
+
+envID: test-local
+
+image:
+  repository: frontegg/identity-service
+
 appVersion: staging-20240521.173819-eba032b
 
 worker:

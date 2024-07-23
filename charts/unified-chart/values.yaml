@@ -65,6 +65,9 @@ worker:
   enabled: false
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "worker"]
+  autoscaling:
+    scaledObject:
+      enabled: false
   env:
     # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
     #   value: "true"

@@ -4,7 +4,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unified.worker.svc.name" . }}
+  name: {{ include "unified.worker.name" . }}
   labels:
     monitoring-metrics: enabled
     {{- include "unified.workerLabels" . | nindent 4 }}
