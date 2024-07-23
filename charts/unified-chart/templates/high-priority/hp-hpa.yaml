@@ -19,7 +19,7 @@ spec:
     kind : Deployment
     name : {{ include "unified.hp.name" . }}
     {{- end }}
-  {{- if not .Values.autoscaling.scaledObject.enabled }}
+  {{- if not .Values.highPriority.autoscaling.scaledObject.enabled }}
   minReplicas: {{ .Values.highPriority.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.highPriority.autoscaling.maxReplicas }}
   metrics:

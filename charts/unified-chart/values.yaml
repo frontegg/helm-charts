@@ -44,6 +44,11 @@ web:
     maxReplicas: 2
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 75
+    triggers: []
+    advanced:
+      horizontalPodAutoscalerConfig:
+        name: '{{ include "unified.web.name" $ }}'
+
   podAnnotations: {}
   resources: {}
   terminationGracePeriodSeconds: 30
@@ -79,6 +84,10 @@ worker:
     targetMemoryUtilizationPercentage: 75
     scaledObject:
       enabled: false
+      triggers: []
+      advanced:
+        horizontalPodAutoscalerConfig:
+          name: '{{ include "unified.worker.name" $ }}'
   env:
     # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
     #   value: "true"
@@ -114,48 +123,9 @@ highPriority:
     scaledObject:
       enabled: false
       triggers: []
-        - type: cpu
-          metadata:
-            type: Utilization
-            value: "80"
-        - type: memory
-          metadata:
-            type: Utilization
-            value: "75"
-        - type: prometheus
-          name: P90 latency
-          metadata:
-            serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
-            query: max(histogram_quantile(0.90, sum(rate(route_response_latency_ms_bucket{direction="inbound",namespace="frontegg", pod=~"identity-identity-service-rollout-hp.*"}[1m]) ) by (le, pod)))
-            threshold: "1000"
-        - type: prometheus
-          name: eventloop lag
-          metadata:
-            serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
-            query: sum(nodejs_eventloop_lag_seconds{pod=~"identity-identity-service-rollout-hp.*"})
-            threshold: "1"
-        - type: prometheus
-          name: active handlers
-          metadata:
-            serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
-            query: max(nodejs_active_handles_total{pod=~"identity-identity-service-rollout-hp.*"}[5m])
-            threshold: "750"
       advanced:
-        horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
-          name: identity-identity-service-hp-rollout-hpa
-          behavior:
-            scaleDown:
-              stabilizationWindowSeconds: 300
-              policies:
-                - type: Pods
-                  value: 1
-                  periodSeconds: 60
-            scaleUp:
-              stabilizationWindowSeconds: 0
-              policies:
-                - type: Pods
-                  value: 3
-                  periodSeconds: 10
+        horizontalPodAutoscalerConfig:
+          name: '{{ include "unified.hp.name" $ }}'
 
 jobs:
   # migrate:
@@ -256,22 +226,6 @@ albIngress:
         deny all;
         return 403;
       }
-
-highPriority:
-  enabled: false
-  command: ["/bin/bash"]
-  args: ["entrypoint.sh", "service"]
-  env:
-    # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
-    #   value: "false"
-  labels:
-    priority: "high"
-  replicaCount: 1
-  autoscaling:
-    minReplicas: 1
-    maxReplicas: 2
-    targetCPUUtilizationPercentage: 50
-    targetMemoryUtilizationPercentage: 75
 
 serviceProfile:
   # routes:

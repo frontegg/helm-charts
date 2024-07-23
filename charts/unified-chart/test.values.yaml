@@ -29,10 +29,15 @@ albIngress:
 
 highPriority:
   enabled: true
+
 web:
+  enabled: true
+  autoscaling:
+    scaledObject:
+      enabled: true
 
 worker:
-  enabled: false
+  enabled: true
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -57,8 +62,7 @@ worker:
             query: max(sum(aws_kafka_estimated_max_time_lag_maximum{dimension_Consumer_Group=~".*api-gateway.*" }) by (dimension_Consumer_Group))
             threshold: "50"
       advanced:
-        horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
-          name: api-gateway-worker-hpa
+        horizontalPodAutoscalerConfig:
           behavior:
             scaleDown:
               stabilizationWindowSeconds: 300
