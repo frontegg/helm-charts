@@ -46,7 +46,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "unified.hp.name" . }}
-          image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
+          image: "{{ required "what do you wanna run: .Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts:

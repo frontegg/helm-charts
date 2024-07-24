@@ -11,7 +11,7 @@ spec:
   type: {{ .Values.service.type }}
   ports:
     - port: {{ .Values.service.port }}
-      targetPort: {{ required ".Values.service.targetPort is required" .Values.service.targetPort }}
+      targetPort: {{ required "need to know if someone listening: .Values.service.targetPort is required" .Values.service.targetPort }}
       protocol: {{ .Values.service.protocol }}
       name: {{ .Values.service.name | default "http" }}
   selector:

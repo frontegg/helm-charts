@@ -1,11 +1,11 @@
 {{/* Hostname is used in services who render ingress */}}
 {{- define "unified.hostname" -}}
-{{- required ".Values.ingress.hostnameOverride is required when ingress enabled" .Values.ingress.hostnameOverride | trimSuffix "-" }}
+{{- required "I need to know the host: .Values.ingress.hostnameOverride is required when ingress enabled" .Values.ingress.hostnameOverride | trimSuffix "-" }}
 {{- end -}}
 
 {{/* Just the name */}}
 {{- define "unified.name" -}}
-{{- required ".Values.name must be set" .Values.name }}{{ include "unified.suffix" . }}
+{{- required "I cant live without a name: .Values.name must be set" .Values.name }}{{ include "unified.suffix" . }}
 {{- end -}}
 
 {{/* calculate the suffix */}}
@@ -97,7 +97,7 @@ app.frontegg.com/name: {{ include "unified.name" . }}-worker
 {{- end -}}
 
 {{- define "appVersion" -}}
-{{ required ".Values.appVersion is required cant run without it" .Values.appVersion }}
+{{ required "NEED APPVERSION: .Values.appVersion is required cant run without it" .Values.appVersion }}
 {{- end -}}
 
 {{- define "name-app-version" -}}
