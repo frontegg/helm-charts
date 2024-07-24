@@ -42,10 +42,10 @@
 
 {{/* inject env variables directly */}}
 {{- define "unified.container.env" -}}
-{{- range $envVar := .env -}}
+{{- range $envVar := .env }}
 - name: {{ required "envVar.name required" $envVar.name | quote }}
   value: {{ required "envVar.value required" $envVar.value | quote }}
-{{- end -}}
+{{- end }}
 {{- end -}}
 
 {{- define "unified.externalsecret.volumemount" -}}

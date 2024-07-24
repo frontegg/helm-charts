@@ -5,7 +5,7 @@ envID: local
 image:
   repository: frontegg/crappy-service
 
-appVersion: production-global-20240521.173819-eba032b
+appVersion: production-global-19900101.101010-zxc111y
 
 service:
   targetPort: 3003
@@ -16,7 +16,7 @@ externalSecret:
 configuration:
   map:
     config-center:
-      someKey: keykeykey
+      ENV_VAR: key-in-config-center
 
 prometheusRule:
   enabled: true
@@ -27,17 +27,23 @@ ingress:
 albIngress:
   enabled: true
 
-highPriority:
-  enabled: true
-
 web:
   enabled: true
   autoscaling:
     scaledObject:
       enabled: true
 
+highPriority:
+  enabled: true
+  env:
+    - name: SOME_ENV
+      value: some_val
+
 worker:
   enabled: true
+  env:
+    - name: SOME_ENV
+      value: some_val
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -76,6 +82,24 @@ worker:
                 - type: Pods
                   value: 1
                   periodSeconds: 15
+
+jobs:
+  mgr:
+    enabled: false
+    metadata:
+      annotations:
+        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook-weight: "-2"
+        helm.sh/hook-delete-policy: "before-hook-creation"
+    spec:
+      annotations: {}
+      args:
+        - "/bin/bash"
+        - "./run-migrations.sh"
+      resources:
+        requests:
+          cpu: 500m
+          memory: 500Mi
 
 cronjobs:
   refresh:

@@ -55,7 +55,7 @@ spec:
             {{- include "unified.externalsecret.volumemount" $ | nindent 12 }}
           {{- end }}
           env:
-            {{- include "unified.container.env" . | nindent 12 }}
+            {{- include "unified.container.env" . | indent 12 -}}
             {{- if $values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"

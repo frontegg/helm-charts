@@ -34,9 +34,7 @@ web:
   enabled: false
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
-  env:
-    # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
-    #   value: "false"
+  env: []
   replicaCount: 1
   autoscaling:
     enabled: false
@@ -88,9 +86,7 @@ worker:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "unified.worker.name" $ }}'
-  env:
-    # - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
-    #   value: "true"
+  env: []
   livenessProbe:
     failureThreshold: 3
     httpGet:
@@ -98,7 +94,6 @@ worker:
       port: http
     initialDelaySeconds: 40
     periodSeconds: 60
-  # decides when to forward requests (not offline)
   readinessProbe:
     failureThreshold: 1
     httpGet:
@@ -115,6 +110,7 @@ highPriority:
   labels:
     priority: "high"
   replicaCount: 1
+  env: []
   autoscaling:
     minReplicas: 1
     maxReplicas: 10
@@ -128,18 +124,18 @@ highPriority:
           name: '{{ include "unified.hp.name" $ }}'
 
 jobs:
-  # migrate:
-  #   enabled: true
-  #   metadata:
-  #     annotations:
-  #       argocd.argoproj.io/sync-wave: "-500"
-  #   spec:
-  #     command: ["/bin/bash"]
-  #     args: ["run-migrations.sh"]
-  #     resources:
-  #       requests:
-  #         cpu: 500m
-  #         memory: 500Mi
+  migrate:
+    enabled: true
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-500"
+    spec:
+      command: ["/bin/bash"]
+      args: ["run-migrations.sh"]
+      resources:
+        requests:
+          cpu: 500m
+          memory: 500Mi
 
 cronjobs:
   refresh:
@@ -164,11 +160,12 @@ configmap:
     helm.sh/hook-weight: "-2"
     helm.sh/hook-delete-policy: "before-hook-creation"
   data:
-    # EXAMPLE: '{{ include "fullname" $ }}-example'
+    EXAMPLE: '{{ include "fullname" $ }}-example'
 
 configuration:
   map:
     config-center:
+      key-in-config-center: key
 
 externalSecret:
   enabled: false

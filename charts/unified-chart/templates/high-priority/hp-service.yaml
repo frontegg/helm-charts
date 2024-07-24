@@ -13,7 +13,7 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
       protocol: {{ .Values.service.protocol }}
-      name: {{ .Values.service.name }}
+      name: {{ .Values.service.name | default "http" }}
   selector:
     {{- include "unified.hp.selectorLabels" . | nindent 4 }}
 {{- end }}

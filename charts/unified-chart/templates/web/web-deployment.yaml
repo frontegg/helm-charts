@@ -7,12 +7,12 @@ metadata:
   labels:
   {{- include "unified.labels" . | nindent 4 }}
 spec:
+  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   {{- if .Values.argoRollouts }}
   replicas: 0
   {{- else if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.web.replicaCount }}
   {{- end }}
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   selector:
     matchLabels:
       {{- include "unified.selectorLabels" . | nindent 6 }}
@@ -29,12 +29,10 @@ spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "unified.name" . }}
       {{- end }}
-      {{- with .Values.web.serviceAccountName }}
+      {{- if .Values.serviceAccountName }}
       serviceAccountName: {{ tpl . $ }}
       {{- end }}
-      {{- with .Values.web.terminationGracePeriodSeconds }}
-      terminationGracePeriodSeconds: {{ . }}
-      {{- end }}
+      terminationGracePeriodSeconds: {{ .Values.web.terminationGracePeriodSeconds | default 30 }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
@@ -59,18 +57,18 @@ spec:
               protocol: TCP
           {{- with .Values.web.livenessProbe }}
           livenessProbe:
-          {{- . | toYaml | nindent  12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.web.readinessProbe }}
           readinessProbe:
-          {{- . | toYaml | nindent  12 }}
+            {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.web.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            {{- include "unified.container.env" .Values.web | nindent 12 }}
+            {{- include "unified.container.env" .Values.web | indent 12 -}}
             {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
