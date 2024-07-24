@@ -82,9 +82,11 @@ spec:
                   key: {{ $value }}
           {{- end }}
           {{- end }}
+          {{- if .Values.configmap.data }}
           envFrom:
             - configMapRef:
                 name: {{ include "unified.name" . }}
+          {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
           command:

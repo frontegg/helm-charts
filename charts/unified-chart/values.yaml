@@ -160,7 +160,7 @@ configmap:
     helm.sh/hook-weight: "-2"
     helm.sh/hook-delete-policy: "before-hook-creation"
   data:
-    EXAMPLE: '{{ include "fullname" $ }}-example'
+    # EXAMPLE: '{{ include "fullname" $ }}-example'
 
 configuration:
   map:
@@ -200,7 +200,7 @@ prometheusRule:
         summary: EXAMPLE RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
 
 ingress:
-  enabled: true
+  enabled: false
   ingressClassName: nginx
   hostnameOverride: "example.changeme"
   annotations:
@@ -214,7 +214,7 @@ ingress:
     secretName: frontegg-secret-2020
 
 albIngress:
-  enabled: true
+  enabled: false
   ingressClassName: nginx2
   hostnameOverride: ""
   annotations:

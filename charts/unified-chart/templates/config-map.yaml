@@ -1,3 +1,4 @@
+{{- if .Values.configmap.data }}
 ---
 kind: ConfigMap
 apiVersion: v1
@@ -13,3 +14,4 @@ data:
   {{- range $key,$value := .Values.configmap.data }}
   {{ tpl $key $ }}: {{ tpl $value $ | quote }}
   {{- end }}
+{{- end }}
