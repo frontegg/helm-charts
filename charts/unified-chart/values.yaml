@@ -46,6 +46,13 @@ web:
     advanced:
       horizontalPodAutoscalerConfig:
         name: '{{ include "unified.web.name" $ }}'
+  serviceProfile:
+    enabled: false
+    # routes:
+    #   - condition:
+    #       method: EXAMPLE
+    #       pathRegex: /example/test/
+    #     name: EXAMPLE /example/test/
 
   podAnnotations: {}
   resources: {}
@@ -111,6 +118,13 @@ highPriority:
     priority: "high"
   replicaCount: 1
   env: []
+  serviceProfile:
+    enabled: false
+    # routes:
+    #   - condition:
+    #       method: EXAMPLE
+    #       pathRegex: /example/test/
+    #     name: EXAMPLE /example/test/
   autoscaling:
     minReplicas: 1
     maxReplicas: 10
@@ -226,13 +240,6 @@ albIngress:
         deny all;
         return 403;
       }
-
-serviceProfile:
-  # routes:
-  #   - condition:
-  #       method: EXAMPLE
-  #       pathRegex: /example/test/
-  #     name: EXAMPLE /example/test/
 
 # additional helm templates to render resources freely
 additionalTemplates: |
