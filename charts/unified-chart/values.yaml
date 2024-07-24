@@ -124,12 +124,15 @@ highPriority:
           name: '{{ include "unified.hp.name" $ }}'
 
 jobs:
-  migrate:
-    enabled: true
+  mgr:
+    enabled: false
     metadata:
       annotations:
-        argocd.argoproj.io/sync-wave: "-500"
+        helm.sh/hook: pre-install,pre-upgrade
+        helm.sh/hook-weight: "-2"
+        helm.sh/hook-delete-policy: "before-hook-creation"
     spec:
+      annotations: {}
       command: ["/bin/bash"]
       args: ["run-migrations.sh"]
       resources:

@@ -85,7 +85,7 @@ worker:
 
 jobs:
   mgr:
-    enabled: false
+    enabled: true
     metadata:
       annotations:
         helm.sh/hook: pre-install,pre-upgrade
@@ -93,9 +93,8 @@ jobs:
         helm.sh/hook-delete-policy: "before-hook-creation"
     spec:
       annotations: {}
-      args:
-        - "/bin/bash"
-        - "./run-migrations.sh"
+      command: ["/bin/bash"]
+      args: ["run-migrations.sh"]
       resources:
         requests:
           cpu: 500m
