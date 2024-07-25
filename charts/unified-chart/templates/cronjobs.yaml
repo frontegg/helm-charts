@@ -11,21 +11,14 @@ metadata:
   labels:
     {{- include "unified.cronJobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
+  {{- if $job.metadata }}
+  {{- with $job.metadata.annotations }}
   annotations:
-    {{- if $job.metadata }}
-    {{- with $job.metadata.annotations }}
     {{- toYaml . | nindent 4 }}
-    {{- if (index . "argocd.argoproj.io/sync-wave") }}
-    {{- $defaultSyncWave = false }}
-    {{- end }}
-    {{- end }}
-    {{- end }}
-    {{- if $defaultSyncWave }}
-    # default sync wave for jobs
-    argocd.argoproj.io/sync-wave: "-501"
-    {{- end }}
+  {{- end }}
+  {{- end }}
 spec:
-  schedule: {{ required "$job.schedule is required" $job.schedule | quote }}
+  schedule: {{ required "when? what? how? $job.schedule is required" $job.schedule | quote }}
   {{- with $job.concurrencyPolicy }}
   concurrencyPolicy: {{ . }}
   {{- end }}
@@ -98,9 +91,11 @@ spec:
                       key: {{ $value }}
               {{- end }}
               {{- end }}
+              {{- if $values.configmap.data }}
               envFrom:
                 - configMapRef:
                     name: {{ include "unified.name" $top }}-configmap
+              {{- end }}
               command:
                 {{- range .command }}
                 - {{ . | quote  }}

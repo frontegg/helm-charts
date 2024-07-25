@@ -158,10 +158,9 @@ cronjobs:
   refresh:
     enabled: false
     metadata:
-      annotations:
-        argocd.argoproj.io/sync-wave: "-500"
+      annotations: {}
     command: ["/bin/bash"]
-    args: ["entrypoint.sh"]
+    args: ["cron.sh"]
     schedule: "0 * * * *"
     ttlSecondsAfterFinished: 600
     concurrencyPolicy: Replace
@@ -190,7 +189,6 @@ externalSecret:
   subPath: config
   refreshInterval: 1m
   annotations:
-    # argocd.argoproj.io/sync-wave: "-1000"
     helm.sh/hook: pre-install,pre-upgrade
     helm.sh/hook-weight: "-4"
     helm.sh/hook-delete-policy: "before-hook-creation"
@@ -241,6 +239,15 @@ albIngress:
         return 403;
       }
 
+keda:
+  annotations:
+    scaledobject.keda.sh/transfer-hpa-ownership: "true"
+    validations.keda.sh/hpa-ownership: "false"
+
+serviceAccount:
+  enabled: false
+  annotations: {}
+
 # additional helm templates to render resources freely
 additionalTemplates: |
 
@@ -251,12 +258,3 @@ additionalTemplates: |
 #   name: {{ include "fullname" $ }}-sa
 #   labels:
 #     {{- include "unified.labels" $ | nindent 4 }}
-
-keda:
-  annotations:
-    scaledobject.keda.sh/transfer-hpa-ownership: "true"
-    validations.keda.sh/hpa-ownership: "false"
-
-serviceAccount:
-  enabled: false
-  annotations: {}
