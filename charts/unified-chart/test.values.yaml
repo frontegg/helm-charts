@@ -1,14 +1,16 @@
 name: crappy
 team: shitballz
 envID: local
+appVersion: production-global-19900101.101010-zxc111y
 
 image:
   repository: frontegg/crappy-service
 
-appVersion: production-global-19900101.101010-zxc111y
-
 service:
+  name: access-port
   targetPort: 3003
+  labels:
+    monitoring-metrics: enabled
 
 externalSecret:
   enabled: true
@@ -29,6 +31,10 @@ albIngress:
 
 web:
   enabled: true
+  labels:
+    scrape-for-metrics: enabled
+  podAnnotations:
+    linkerd.io/inject: enabled
   autoscaling:
     scaledObject:
       enabled: true
@@ -44,6 +50,12 @@ worker:
   env:
     - name: SOME_ENV
       value: some_val
+  labels:
+    scrape-for-metrics: enabled
+  podAnnotations:
+    linkerd.io/inject: enabled
+  nodeSelector:
+    workload: general
   autoscaling:
     enabled: true
     minReplicas: 2
@@ -102,7 +114,19 @@ jobs:
 
 cronjobs:
   refresh:
-    enabled: true
+    enabled: false
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-500"
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    schedule: "0 * * * *"
+    ttlSecondsAfterFinished: 600
+    concurrencyPolicy: Replace
+    failedJobsHistoryLimit: 1
+    successfulJobsHistoryLimit: 1
+    restartPolicy: Never
+    nodeSelector: {}
 
 serviceAccount:
   enabled: true

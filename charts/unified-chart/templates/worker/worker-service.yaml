@@ -6,7 +6,9 @@ kind: Service
 metadata:
   name: {{ include "unified.worker.name" . }}
   labels:
-    {{- toYaml .Values.service.labels | nindent 4 }}
+    {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     {{- include "unified.workerLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
@@ -14,7 +16,7 @@ spec:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
       protocol: {{ .Values.service.protocol }}
-      name: {{ .Values.service.name | default "http" }}
+      name: {{ .Values.service.name | default "http" }} 
   selector:
     {{- include "unified.workerSelectorLabels" . | nindent 4 }}
 {{- end }}

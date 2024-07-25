@@ -5,7 +5,9 @@ kind: Service
 metadata:
   name: {{ include "unified.web.name" . }}
   labels:
-    {{- toYaml .Values.service.labels | nindent 4 }}
+    {{- with .Values.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
     {{- include "unified.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}

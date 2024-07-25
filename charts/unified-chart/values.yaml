@@ -1,15 +1,13 @@
 # Default values for frontegg unified chart.
 
-# required
+# required values
 # name: my-new-awesome-service
 # team: my-team-of-imbeciles
 # envID: local
+# appVersion: production-global-19900101.101010-zxc111y
 
 # CAUTION this will change name of all manifests
 nameSuffix: v2
-
-# appVersion is required
-# appVersion: master-latest
 
 argoRollouts: true
 
@@ -24,8 +22,7 @@ imagePullSecrets:
   - name: regcred
 
 service:
-  labels:
-    monitoring-metrics: enabled
+  labels: {}
   type: ClusterIP
   protocol: TCP
   port: 80
@@ -181,7 +178,7 @@ configmap:
 configuration:
   map:
     config-center:
-      key-in-config-center: key
+      ENV_VARIABLE_NAME: key-in-config-center
 
 externalSecret:
   enabled: false
@@ -194,7 +191,7 @@ externalSecret:
     helm.sh/hook-delete-policy: "before-hook-creation"
   text: |
     {{- $secret := .contents | fromYaml }}
-    apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey| default "x" }}
+    apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}
   additionalSecrets: ""
 
 prometheusRule:
