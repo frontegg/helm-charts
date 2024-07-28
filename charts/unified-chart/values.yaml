@@ -178,7 +178,7 @@ configmap:
 configuration:
   map:
     config-center:
-      ENV_VARIABLE_NAME: key-in-config-center
+      # ENV_VARIABLE_NAME: key-in-config-center
 
 externalSecret:
   enabled: false
