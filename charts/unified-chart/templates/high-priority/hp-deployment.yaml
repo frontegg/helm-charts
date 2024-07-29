@@ -3,9 +3,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unified.hp.name" . }}
+  name: {{ include "hp.name" . }}
   labels:
-  {{- include "unified.hp.labels" . | nindent 4 }}
+  {{- include "hp.labels" . | nindent 4 }}
   {{- toYaml .Values.highPriority.labels | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
@@ -16,11 +16,11 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "unified.hp.selectorLabels" . | nindent 6 }}
+      {{- include "hp.selectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "unified.hp.labels" . | nindent 8 }}
+        {{- include "hp.labels" . | nindent 8 }}
       annotations:
         checksum/config: {{ (print .Values.configmap) | sha256sum }}
         {{- with .Values.web.podAnnotations }}
@@ -28,10 +28,7 @@ spec:
         {{- end }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
-      serviceAccountName: {{ include "unified.name" . }}
-      {{- end }}
-       {{- if .Values.serviceAccountName }}
-      serviceAccountName: {{ tpl . $ }}
+      serviceAccountName: {{ include "name" . }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.highPriority.terminationGracePeriodSeconds | default 30 }}
       {{- with .Values.imagePullSecrets }}
@@ -45,12 +42,12 @@ spec:
             secretName: {{ include "name-app-version" . }}
       {{- end }}
       containers:
-        - name: {{ include "unified.hp.name" . }}
+        - name: {{ include "hp.name" . }}
           image: "{{ required "what do you wanna run: .Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts:
-            {{- include "unified.externalsecret.volumemount" . | nindent 12 }}
+            {{- include "externalsecret.volumemount" . | nindent 12 }}
           {{- end }}
           ports:
             - name: http
@@ -69,7 +66,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            {{- include "unified.container.env" .Values.highPriority | indent 12 -}}
+            {{- include "container.env" .Values.highPriority | indent 12 -}}
             {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
@@ -86,7 +83,7 @@ spec:
           {{- if .Values.configmap.data }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" . }}
+                name: {{ include "name" . }}
           {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}

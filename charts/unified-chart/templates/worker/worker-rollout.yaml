@@ -4,19 +4,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ include "unified.worker.name" . }}
+  name: {{ include "worker.name" . }}
 spec:
   workloadRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "unified.worker.name" . }}
+    name: {{ include "worker.name" . }}
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      {{- include "unified.workerSelectorLabels" . | nindent 6 }}
+      {{- include "workerSelectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: {{ include "unified.worker.name" . }}
+      activeService: {{ include "worker.name" . }}
       autoPromotionEnabled: true
 {{- end }}
 {{- end }}

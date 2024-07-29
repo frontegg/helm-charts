@@ -7,9 +7,9 @@ metadata:
     {{- with .Values.configmap.annotations }}
     {{- . | toYaml | nindent 4 }}
     {{- end }}
-  name: {{ include "unified.name" . }}
+  name: {{ include "name" . }}
   labels:
-    {{- include "unified.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 data:
   {{- range $key,$value := .Values.configmap.data }}
   {{ tpl $key $ }}: {{ tpl $value $ | quote }}

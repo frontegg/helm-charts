@@ -3,12 +3,12 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "unified.web.name" . }}
+  name: {{ include "web.name" . }}
   labels:
     {{- with .Values.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- include "unified.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -17,5 +17,5 @@ spec:
       protocol: {{ .Values.service.protocol }}
       name: {{ .Values.service.name | default "http" }}
   selector:
-    {{- include "unified.selectorLabels" . | nindent 4 }}
+    {{- include "selectorLabels" . | nindent 4 }}
 {{- end }}

@@ -6,9 +6,9 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: {{ include "unified.web.name" $top }}
+  name: {{ include "web.name" $top }}
   annotations:
-    {{- include "keda-annotations" $top | nindent 4 }}
+    {{- include "keda.annotations" $top | nindent 4 }}
   labels:
     {{- include "identity-service.labels" $top | nindent 4 }}
 spec:
@@ -16,11 +16,11 @@ spec:
     {{- if $values.argoRollouts }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
-    name: {{ include "unified.web.name" $top }}
+    name: {{ include "web.name" $top }}
     {{- else }}
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "unified.web.name" $top }}
+    name: {{ include "web.name" $top }}
     {{- end }}
   minReplicaCount: {{.minReplicas }}
   maxReplicaCount: {{ .maxReplicas }}

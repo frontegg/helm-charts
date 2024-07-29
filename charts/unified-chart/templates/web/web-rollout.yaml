@@ -4,19 +4,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ include "unified.web.name" . }}
+  name: {{ include "web.name" . }}
 spec:
   workloadRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "unified.web.name" . }}
+    name: {{ include "web.name" . }}
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      {{- include "unified.selectorLabels" . | nindent 6 }}
+      {{- include "selectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: {{ include "unified.web.name" . }}
+      activeService: {{ include "web.name" . }}
       autoPromotionEnabled: true
 {{- end }}
 {{- end }}

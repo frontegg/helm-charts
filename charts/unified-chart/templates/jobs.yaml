@@ -6,9 +6,9 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: {{ include "unified.name" $top }}-{{ $jobName }}
+  name: {{ include "name" $top }}-{{ $jobName }}
   labels:
-    {{- include "unified.jobLabels" $top | nindent 4 }}
+    {{- include "jobLabels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   {{- if $job.metadata }}
   {{- with $job.metadata.annotations }}
@@ -24,9 +24,9 @@ spec:
   backoffLimit: {{ .backoffLimit | default 1 }}
   template:
     metadata:
-      name: {{ include "unified.name" $top }}-{{ $jobName }}-{{ $values.appVersion }}
+      name: {{ include "name" $top }}-{{ $jobName }}-{{ $values.appVersion }}
       labels:
-        {{- include "unified.jobLabels" $top | nindent 8 }}
+        {{- include "jobLabels" $top | nindent 8 }}
         app.kubernetes.io/component: {{ $jobName }}
       {{- with .annotations }}
       annotations:
@@ -45,15 +45,15 @@ spec:
             secretName: {{ include "name-app-version" $ }}
       {{- end }}
       containers:
-        - name: {{ include "unified.name" $top }}-{{ $jobName }}
+        - name: {{ include "name" $top }}-{{ $jobName }}
           image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
           imagePullPolicy: {{ $values.imagePullPolicy }}
           {{- if $values.externalSecret.enabled }}
           volumeMounts:
-            {{- include "unified.externalsecret.volumemount" $ | nindent 12 }}
+            {{- include "externalsecret.volumemount" $ | nindent 12 }}
           {{- end }}
           env:
-            {{- include "unified.container.env" . | indent 12 -}}
+            {{- include "container.env" . | indent 12 -}}
             {{- if $values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
@@ -70,7 +70,7 @@ spec:
           {{- if $values.configmap.data }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" $top }}-configmap
+                name: {{ include "name" $top }}-configmap
           {{- end }}
           command:
             {{- range .command }}

@@ -42,7 +42,7 @@ web:
     triggers: []
     advanced:
       horizontalPodAutoscalerConfig:
-        name: '{{ include "unified.web.name" $ }}'
+        name: '{{ include "web.name" $ }}'
   serviceProfile:
     enabled: false
     # routes:
@@ -89,7 +89,7 @@ worker:
       triggers: []
       advanced:
         horizontalPodAutoscalerConfig:
-          name: '{{ include "unified.worker.name" $ }}'
+          name: '{{ include "worker.name" $ }}'
   env: []
   livenessProbe:
     failureThreshold: 3
@@ -132,7 +132,7 @@ highPriority:
       triggers: []
       advanced:
         horizontalPodAutoscalerConfig:
-          name: '{{ include "unified.hp.name" $ }}'
+          name: '{{ include "hp.name" $ }}'
 
 jobs:
   mgr:
@@ -203,7 +203,7 @@ prometheusRule:
   rules:
     - alert: EXAMPLE
       expr: |
-        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "unified.name" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+        round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "name" . }}-ingress"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
       for: 1m
       labels:
         severity: critical
@@ -254,4 +254,4 @@ additionalTemplates: |
 # metadata:
 #   name: {{ include "fullname" $ }}-sa
 #   labels:
-#     {{- include "unified.labels" $ | nindent 4 }}
+#     {{- include "labels" $ | nindent 4 }}

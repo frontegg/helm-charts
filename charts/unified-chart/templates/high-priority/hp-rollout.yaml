@@ -4,19 +4,19 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: {{ include "unified.hp.name" . }}
+  name: {{ include "hp.name" . }}
 spec:
   workloadRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "unified.hp.name" . }}
+    name: {{ include "hp.name" . }}
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      {{- include "unified.hp.selectorLabels" . | nindent 6 }}
+      {{- include "hp.selectorLabels" . | nindent 6 }}
   strategy:
     blueGreen:
-      activeService: {{ include "unified.hp.name" . }}
+      activeService: {{ include "hp.name" . }}
       autoPromotionEnabled: true
 {{- end }}
 {{- end }}

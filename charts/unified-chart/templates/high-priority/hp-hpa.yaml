@@ -3,21 +3,21 @@
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
 metadata:
-  name: {{ include "unified.hp.name" . }}
+  name: {{ include "hp.name" . }}
   labels:
-    {{- include "unified.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
   annotations:
-    {{- include "keda-annotations" . | nindent 4 }}
+    {{- include "keda.annotations" . | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if .Values.argoRollouts }}
     apiVersion : argoproj.io/v1alpha1
     kind : Rollout
-    name : {{ include "unified.hp.name" . }}
+    name : {{ include "hp.name" . }}
     {{- else }}
     apiVersion : apps/v1
     kind : Deployment
-    name : {{ include "unified.hp.name" . }}
+    name : {{ include "hp.name" . }}
     {{- end }}
   {{- if not .Values.highPriority.autoscaling.scaledObject.enabled }}
   minReplicas: {{ .Values.highPriority.autoscaling.minReplicas }}

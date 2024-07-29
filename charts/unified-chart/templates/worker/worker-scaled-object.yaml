@@ -6,16 +6,16 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: {{ include "unified.worker.name" $top }}
+  name: {{ include "worker.name" $top }}
   annotations:
-    {{- include "keda-annotations" $top | nindent 4 }}
+    {{- include "keda.annotations" $top | nindent 4 }}
   labels:
-    {{- include "unified.workerLabels" $top | nindent 4 }}
+    {{- include "workerLabels" $top | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "unified.worker.name" $top }}
+    name: {{ include "worker.name" $top }}
   minReplicaCount: {{.minReplicas }}
   maxReplicaCount: {{ .maxReplicas }}
   {{- with .scaledObject.fallback }}

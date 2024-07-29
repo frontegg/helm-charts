@@ -3,9 +3,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "unified.worker.name" . }}
+  name: {{ include "worker.name" . }}
   labels:
-    {{- include "unified.workerLabels" . | nindent 4 }}
+    {{- include "workerLabels" . | nindent 4 }}
 spec:
   {{- if .Values.argoRollouts }}
   replicas: 0
@@ -15,11 +15,11 @@ spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 3 }}
   selector:
     matchLabels:
-      {{- include "unified.workerSelectorLabels" . | nindent 6 }}
+      {{- include "workerSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "unified.workerLabels" . | nindent 8 }}
+        {{- include "workerLabels" . | nindent 8 }}
       annotations:
         checksum/config: {{ (print .Values.configmap) | sha256sum }}
         {{- with .Values.worker.podAnnotations }}
@@ -27,7 +27,7 @@ spec:
         {{- end }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
-      serviceAccountName: {{ include "unified.name" . }}
+      serviceAccountName: {{ include "name" . }}
       {{- end }}
       terminationGracePeriodSeconds: {{ .Values.worker.terminationGracePeriodSeconds | default 30 }}
       {{- with .Values.imagePullSecrets }}
@@ -41,12 +41,12 @@ spec:
             secretName: {{ include "name-app-version" . }}
       {{- end }}
       containers:
-        - name: {{ include "unified.worker.name" . }}
+        - name: {{ include "worker.name" . }}
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
           volumeMounts:
-            {{- include "unified.externalsecret.volumemount" . | nindent 12 }}
+            {{- include "externalsecret.volumemount" . | nindent 12 }}
           {{- end }}
           ports:
             - name: http
@@ -65,7 +65,7 @@ spec:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            {{- include "unified.container.env" .Values.worker | indent 12 -}}
+            {{- include "container.env" .Values.worker | indent 12 -}}
             {{- if .Values.externalSecret.enabled }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
@@ -82,7 +82,7 @@ spec:
           {{- if .Values.configmap.data }}
           envFrom:
             - configMapRef:
-                name: {{ include "unified.name" . }}
+                name: {{ include "name" . }}
           {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
