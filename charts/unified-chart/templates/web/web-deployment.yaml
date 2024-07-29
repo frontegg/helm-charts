@@ -38,7 +38,7 @@ spec:
       volumes:
         - name: vol-secret
           secret:
-            secretName: {{ include "name-app-version" . }}
+            secretName: {{ include "secret.name" . }}
       {{- end }}
       containers:
         - name: {{ include "web.name" . }}

@@ -59,7 +59,7 @@ spec:
           volumes:
             - name: vol-secret
               secret:
-                secretName: {{ include "name-app-version" $ }}
+                secretName: {{ include "secret.name" $ }}
           {{- end }}
           {{- with $job.securityContext }}
           securityContext:
