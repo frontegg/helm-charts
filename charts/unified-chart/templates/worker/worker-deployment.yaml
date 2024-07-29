@@ -21,7 +21,6 @@ spec:
       labels:
         {{- include "workerLabels" . | nindent 8 }}
       annotations:
-        checksum/config: {{ (print .Values.configmap) | sha256sum }}
         {{- with .Values.worker.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
