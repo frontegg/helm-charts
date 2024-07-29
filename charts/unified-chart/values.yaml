@@ -80,6 +80,7 @@ worker:
   args: ["entrypoint.sh", "worker"]
   replicaCount: 1
   autoscaling:
+    enabled: false
     minReplicas: 1
     maxReplicas: 2
     targetCPUUtilizationPercentage: 50
@@ -125,6 +126,7 @@ highPriority:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
   autoscaling:
+    enabled: false
     minReplicas: 1
     maxReplicas: 10
     targetCPUUtilizationPercentage: 50

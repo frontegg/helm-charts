@@ -36,11 +36,16 @@ web:
   podAnnotations:
     linkerd.io/inject: enabled
   autoscaling:
+    enabled: true
     scaledObject:
       enabled: true
 
 highPriority:
   enabled: true
+  autoscaling:
+    enabled: true
+    scaledObject:
+      enabled: true
   env:
     - name: SOME_ENV
       value: some_val
