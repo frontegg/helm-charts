@@ -9,7 +9,7 @@ kind: CronJob
 metadata:
   name: {{ include "name" $top }}-{{ $jobName }}
   labels:
-    {{- include "cronJobLabels" $top | nindent 4 }}
+    {{- include "cronjob.labels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   {{- if $job.metadata }}
   {{- with $job.metadata.annotations }}
@@ -40,7 +40,7 @@ spec:
       template:
         metadata:
           labels:
-            {{- include "jobLabels" $top | nindent 12 }}
+            {{- include "job.labels" $top | nindent 12 }}
             app.kubernetes.io/component: {{ $jobName }}
         {{- with $job.annotations }}
         annotations:

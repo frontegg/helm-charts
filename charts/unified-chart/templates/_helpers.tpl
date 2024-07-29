@@ -54,45 +54,45 @@
   subPath: {{ .Values.externalSecret.subPath }} 
 {{- end -}}
 
-{{/* Common labels includes selectorLabels */}}
+{{/* Common labels includes selector.labels */}}
 {{- define "labels" -}}
 helm.sh/chart: {{ include "unified.chart" . }}
 app.frontegg.com/team: {{ required "Every service needs to have responsible parents. .Values.team is required." .Values.team }}
 {{- with .Values.web.labels }}
 {{ toYaml . }}
 {{- end }}
-{{ include "selectorLabels" . }}
+{{ include "selector.labels" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
 app.frontegg.com/appVersion: {{ include "appVersion" . }}
 {{- end -}}
 
 {{/* Selector labels */}}
-{{- define "selectorLabels" -}}
+{{- define "selector.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "jobLabels" -}}
+{{- define "job.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-job
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "cronJobLabels" -}}
+{{- define "cronjob.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-cronjob
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-{{- define "workerLabels" -}}
+{{- define "worker.labels" -}}
 app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
 app.frontegg.com/appVersion: {{ include "appVersion" . }}
 {{- with .Values.worker.labels }}
 {{ toYaml . }}
 {{- end }}
-{{ include "workerSelectorLabels" . }}
+{{ include "worker.selector.labels" . }}
 {{- end -}}
 
-{{- define "workerSelectorLabels" -}}
+{{- define "worker.selector.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-worker
 {{- end -}}
 
@@ -105,7 +105,7 @@ app.frontegg.com/name: {{ include "name" . }}-worker
 {{- end -}}
 
 {{/*
-Common labels includes HP selectorLabels
+Common labels includes HP selector.labels
 */}}
 {{- define "hp.labels" -}}
 app.frontegg.com/team: {{ .Values.team }}
@@ -113,13 +113,13 @@ helm.sh/chart: {{ include "unified.chart" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
 app.frontegg.com/appVersion: {{ include "appVersion" . }}
-{{ include "hp.selectorLabels" . }}
+{{ include "hp.selector.labels" . }}
 {{- end -}}
 
 {{/*
 Selector labels for high priority pods
 */}}
-{{- define "hp.selectorLabels" -}}
+{{- define "hp.selector.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-hp
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}

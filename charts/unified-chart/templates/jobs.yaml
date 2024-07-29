@@ -8,7 +8,7 @@ kind: Job
 metadata:
   name: {{ include "name" $top }}-{{ $jobName }}
   labels:
-    {{- include "jobLabels" $top | nindent 4 }}
+    {{- include "job.labels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   {{- if $job.metadata }}
   {{- with $job.metadata.annotations }}
@@ -26,7 +26,7 @@ spec:
     metadata:
       name: {{ include "name" $top }}-{{ $jobName }}-{{ $values.appVersion }}
       labels:
-        {{- include "jobLabels" $top | nindent 8 }}
+        {{- include "job.labels" $top | nindent 8 }}
         app.kubernetes.io/component: {{ $jobName }}
       {{- with .annotations }}
       annotations:

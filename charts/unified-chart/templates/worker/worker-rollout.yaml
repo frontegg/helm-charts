@@ -13,7 +13,7 @@ spec:
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      {{- include "workerSelectorLabels" . | nindent 6 }}
+      {{- include "worker.selector.labels" . | nindent 6 }}
   strategy:
     blueGreen:
       activeService: {{ include "worker.name" . }}

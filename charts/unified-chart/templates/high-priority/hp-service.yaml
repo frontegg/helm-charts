@@ -15,5 +15,5 @@ spec:
       protocol: {{ .Values.service.protocol }}
       name: {{ .Values.service.name | default "http" }}
   selector:
-    {{- include "hp.selectorLabels" . | nindent 4 }}
+    {{- include "hp.selector.labels" . | nindent 4 }}
 {{- end }}
