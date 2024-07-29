@@ -1,3 +1,4 @@
+{{- $values := .Values -}}
 {{- if .Values.web.enabled -}}
 ---
 apiVersion: apps/v1
@@ -21,9 +22,7 @@ spec:
       labels:
       {{- include "labels" . | nindent 8 }}
       annotations:
-        {{- with .Values.web.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "calculate.pod.annotations" .Values.web | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "name" . }}

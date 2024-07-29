@@ -21,9 +21,7 @@ spec:
       labels:
         {{- include "worker.labels" . | nindent 8 }}
       annotations:
-        {{- with .Values.worker.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "calculate.pod.annotations" .Values.worker | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "name" . }}

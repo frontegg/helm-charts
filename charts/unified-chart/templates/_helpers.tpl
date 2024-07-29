@@ -124,7 +124,25 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 app.frontegg.com/instance: {{ .Release.Name }}
 {{- end -}}
 
-
 {{- define "keda.annotations" -}}
 {{- .Values.keda.annotations | toYaml }}
+{{- end -}}
+
+{{/* what is linkerd? */}}
+{{- define "linkerd.annotations" -}}
+{{ .Values.linkerd.annotations }}
+{{- end -}}
+
+{{- define "calculate.pod.annotations" -}}
+{{- if .linkerd.enabled }}
+{{- mergeOverwrite .podAnnotations .linkerd.annotations | toYaml }}
+{{- else }}
+{{- if .podAnnotations }}
+{{- $result := .podAnnotations }}
+{{- range $k := keys .linkerd.annotations -}}
+{{- $_ := unset $result $k }}
+{{- end -}}
+{{- toYaml $result }}
+{{- end }}
+{{- end }}
 {{- end -}}

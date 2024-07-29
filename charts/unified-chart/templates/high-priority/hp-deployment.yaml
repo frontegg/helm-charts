@@ -1,3 +1,4 @@
+{{- $values := .Values -}}
 {{- if .Values.highPriority.enabled }}
 ---
 apiVersion: apps/v1
@@ -22,9 +23,7 @@ spec:
       labels:
         {{- include "hp.labels" . | nindent 8 }}
       annotations:
-        {{- with .Values.web.podAnnotations }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+        {{- include "calculate.pod.annotations" .Values.highPriority | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "name" . }}

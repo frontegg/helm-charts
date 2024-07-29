@@ -31,10 +31,14 @@ albIngress:
 
 web:
   enabled: true
+  linkerd:
+    enabled: false
+  podAnnotations:
+    linkerd.io/inject: enabled # test to ensure linkerd is not injected if not enabled
+    some/other: anot
+    some/other2: anot2
   labels:
     scrape-for-metrics: enabled
-  podAnnotations:
-    linkerd.io/inject: enabled
   autoscaling:
     enabled: true
     scaledObject:
@@ -42,6 +46,11 @@ web:
 
 highPriority:
   enabled: true
+  linkerd:
+    enabled: true
+  podAnnotations:
+    some/other: hp
+    some/other2: hp2
   autoscaling:
     enabled: true
     scaledObject:
@@ -52,13 +61,13 @@ highPriority:
 
 worker:
   enabled: true
+  linkerd:
+    enabled: true
   env:
     - name: SOME_ENV
       value: some_val
   labels:
     scrape-for-metrics: enabled
-  podAnnotations:
-    linkerd.io/inject: enabled
   nodeSelector:
     workload: general
   autoscaling:

@@ -29,10 +29,15 @@ service:
 
 web:
   enabled: false
+  linkerd:
+    enabled: false
+    annotations:
+      linkerd.io/inject: enabled
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   env: []
   replicaCount: 1
+  podAnnotations: {}
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -51,7 +56,6 @@ web:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
 
-  podAnnotations: {}
   resources: {}
   terminationGracePeriodSeconds: 30
   # handles restart (not offline)
@@ -76,9 +80,14 @@ web:
 
 worker:
   enabled: false
+  linkerd:
+    enabled: false
+    annotations:
+      linkerd.io/inject: enabled
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "worker"]
   replicaCount: 1
+  podAnnotations: {}
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -112,11 +121,16 @@ worker:
 
 highPriority:
   enabled: false
+  linkerd:
+    enabled: false
+    annotations:
+      linkerd.io/inject: enabled
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:
     priority: "high"
   replicaCount: 1
+  podAnnotations: {}
   env: []
   serviceProfile:
     enabled: false
