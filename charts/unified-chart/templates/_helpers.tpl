@@ -100,7 +100,7 @@ app.frontegg.com/name: {{ include "name" . }}-worker
 {{ required "NEED APPVERSION: .Values.appVersion is required cant run without it" .Values.appVersion }}
 {{- end -}}
 
-{{- define "name-app-version" -}}
+{{- define "secret.name" -}}
 {{ include "name" . }}-{{ include "appVersion" . }}
 {{- end -}}
 
