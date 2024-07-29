@@ -70,7 +70,7 @@ spec:
           {{- if $values.configmap.data }}
           envFrom:
             - configMapRef:
-                name: {{ include "name" $top }}-configmap
+                name: {{ include "name" $top }}
           {{- end }}
           command:
             {{- range .command }}

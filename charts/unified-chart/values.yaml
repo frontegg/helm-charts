@@ -111,6 +111,8 @@ worker:
 
 highPriority:
   enabled: false
+  command: ["/bin/bash"]
+  args: ["entrypoint.sh", "p1-service"]
   labels:
     priority: "high"
   replicaCount: 1
