@@ -49,7 +49,7 @@
 {{- end -}}
 
 {{- define "externalsecret.volumemount" -}}
-- name: vol-secret
+- name: secret-volume
   mountPath: {{ .Values.externalSecret.mountPath }}
   subPath: {{ .Values.externalSecret.subPath }} 
 {{- end -}}

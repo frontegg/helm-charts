@@ -36,7 +36,7 @@ spec:
       {{- end }}
       {{- if .Values.externalSecret.enabled }}
       volumes:
-        - name: vol-secret
+        - name: secret-volume
           secret:
             secretName: {{ include "secret.name" . }}
       {{- end }}
