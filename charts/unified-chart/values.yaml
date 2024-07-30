@@ -29,10 +29,6 @@ service:
 
 web:
   enabled: false
-  linkerd:
-    enabled: false
-    annotations:
-      linkerd.io/inject: enabled
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   env: []
@@ -80,14 +76,10 @@ web:
 
 worker:
   enabled: false
-  linkerd:
-    enabled: false
-    annotations:
-      linkerd.io/inject: enabled
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "worker"]
-  replicaCount: 1
   podAnnotations: {}
+  replicaCount: 1
   autoscaling:
     enabled: false
     minReplicas: 1
@@ -121,10 +113,6 @@ worker:
 
 highPriority:
   enabled: false
-  linkerd:
-    enabled: false
-    annotations:
-      linkerd.io/inject: enabled
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:
@@ -262,6 +250,11 @@ keda:
 serviceAccount:
   enabled: false
   annotations: {}
+
+linkerd:
+  enabled: false
+  annotations:
+    linkerd.io/inject: enabled
 
 # additional helm templates to render resources freely
 additionalTemplates: |

@@ -23,7 +23,9 @@ spec:
       labels:
         {{- include "hp.labels" . | nindent 8 }}
       annotations:
-        {{- include "calculate.pod.annotations" .Values.highPriority | nindent 8 }}
+        {{- $vals := .Values.highPriority -}}
+        {{- $both := merge $vals (pick .Values "linkerd") }}
+        {{- include "calculate.pod.annotations" $both | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "name" . }}

@@ -21,7 +21,9 @@ spec:
       labels:
         {{- include "worker.labels" . | nindent 8 }}
       annotations:
-        {{- include "calculate.pod.annotations" .Values.worker | nindent 8 }}
+        {{- $vals := .Values.worker -}}
+        {{- $both := merge $vals (pick .Values "linkerd") }}
+        {{- include "calculate.pod.annotations" $both | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "name" . }}

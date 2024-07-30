@@ -31,10 +31,8 @@ albIngress:
 
 web:
   enabled: true
-  linkerd:
-    enabled: false
   podAnnotations:
-    linkerd.io/inject: enabled # test to ensure linkerd is not injected if not enabled
+    linkerd.io/inject: crappy # test to ensure linkerd is not injected if not enabled
     some/other: anot
     some/other2: anot2
   labels:
@@ -46,8 +44,6 @@ web:
 
 highPriority:
   enabled: true
-  linkerd:
-    enabled: true
   podAnnotations:
     some/other: hp
     some/other2: hp2
@@ -61,8 +57,6 @@ highPriority:
 
 worker:
   enabled: true
-  linkerd:
-    enabled: true
   env:
     - name: SOME_ENV
       value: some_val
@@ -146,3 +140,6 @@ serviceAccount:
   enabled: true
   annotations:
     someshit/knuckle: enabled
+
+linkerd:
+  enabled: true
