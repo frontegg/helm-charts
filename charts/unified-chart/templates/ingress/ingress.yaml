@@ -1,36 +1,41 @@
-{{- if .Values.ingress.enabled -}}
-{{- $name := include "name" . -}}
-{{- $svcPort := .Values.service.port -}}
+{{- $top := . }}
+{{- $values := .Values }}
+{{- range $ingname, $ingress := .Values.ingresses }}
+{{- if $ingress.enabled }}
+{{- $name := include "name" $top }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ required ".Values.name is required" .Values.name }}
+  name: {{ required ".Values.name is required" $values.name }}-{{ $ingname }}
   labels:
-    {{- include "labels" . | nindent 4 }}
-  {{- with .Values.ingress.annotations }}
+    {{- include "labels" $top | nindent 4 }}
+  {{- with $ingress.annotations }}
   annotations:
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
-  {{- with .Values.ingress.ingressClassName }}
+  {{- with $ingress.ingressClassName }}
   ingressClassName: {{ . | quote }}
   {{- end }}
-{{- if .Values.ingress.tls.enabled}}
+{{- with $ingress.tls }}
+{{- if .enabled}}
   tls:
     - hosts:
-        - {{ include "unified.hostname" . | quote }}
-      secretName: {{ .Values.ingress.tls.secretName }}
+        - {{ required "Need a proper hostname, u idiot!" $ingress.hostnameOverride | quote }}
+      secretName: {{ .secretName }}
+{{- end }}
 {{- end }}
   rules:
-    - host: {{ include "unified.hostname" . | quote }}
+    - host: {{ $ingress.hostnameOverride | quote }}
       http:
         paths:
         - path: /
           backend:
             service:
-              name: frontegg-{{ include "name" . }}
+              name: frontegg-{{ include "name" $top }}
               port:
-                number: {{ $svcPort }}
+                number: {{ $values.service.port }}
           pathType: ImplementationSpecific
-  {{- end }}
+{{- end }}
+{{- end }}

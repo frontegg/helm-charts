@@ -23,11 +23,11 @@ configuration:
 prometheusRule:
   enabled: true
 
-ingress:
-  enabled: true
-
-albIngress:
-  enabled: true
+ingresses:
+  tesla:
+    enabled: true
+  newton:
+    enabled: true
 
 web:
   enabled: true

@@ -1,8 +1,3 @@
-{{/* Hostname is used in services who render ingress */}}
-{{- define "unified.hostname" -}}
-{{- required "I need to know the host: .Values.ingress.hostnameOverride is required when ingress enabled" .Values.ingress.hostnameOverride | trimSuffix "-" }}
-{{- end -}}
-
 {{/* Just the name */}}
 {{- define "name" -}}
 {{- required "I cant live without a name: .Values.name must be set" .Values.name }}{{ include "unified.suffix" . }}

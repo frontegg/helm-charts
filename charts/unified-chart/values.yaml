@@ -217,30 +217,30 @@ prometheusRule:
         description: EXAMPLE RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
         summary: EXAMPLE RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
 
-ingress:
-  enabled: false
-  ingressClassName: nginx
-  hostnameOverride: "example.changeme"
-  annotations:
-    nginx.ingress.kubernetes.io/server-snippet: |
-      location ~* ^/(metrics|health) {
-        deny all;
-        return 403;
-      }
-  tls:
+ingresses:
+  tesla:
     enabled: false
-    secretName: frontegg-secret-2020
-
-albIngress:
-  enabled: false
-  ingressClassName: nginx2
-  hostnameOverride: ""
-  annotations:
-    nginx.ingress.kubernetes.io/server-snippet: |
-      location ~* ^/(metrics|health) {
-        deny all;
-        return 403;
-      }
+    ingressClassName: nginx
+    hostnameOverride: "nicola.tesla"
+    annotations:
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~* ^/(metrics|health) {
+          deny all;
+          return 403;
+        }
+    tls:
+      enabled: false
+      secretName: frontegg-secret-2020
+  newton:
+    enabled: false
+    ingressClassName: nginx2
+    hostnameOverride: "isaac.newton"
+    annotations:
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~* ^/(metrics|health) {
+          deny all;
+          return 403;
+        }
 
 keda:
   annotations:
