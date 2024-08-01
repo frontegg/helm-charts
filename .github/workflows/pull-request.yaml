@@ -1,0 +1,22 @@
+name: helm template check
+
+on:
+  push:
+    paths:
+      - charts/unified-chart/**
+
+jobs:
+  helm-template-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run a one-line script
+        shell: bash
+        env:
+          NAME_TEMPLATE: release-name
+          NAME: api-gw-test
+          TEAM: someteam
+          APP_VERSION: production-global-20240721.084900-a5186d5
+          TEST_FILE: test.values.yaml
+        run: |
+          helm template . --name-template=$NAME_TEMPLATE  --set name=$NAME --set team=$fewassholes --set appVersion=$APP_VERSION --values $TEST_FILE --debug
