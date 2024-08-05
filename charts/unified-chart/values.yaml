@@ -14,6 +14,23 @@ argoRollouts: true
 image:
   repository:
 
+default:
+  migration:
+    annotations:
+      helm.sh/hook: pre-install,pre-upgrade
+      helm.sh/hook-weight: "-5"
+      helm.sh/hook-delete-policy: "before-hook-creation"
+  configmap:
+    annotations:
+      helm.sh/hook: pre-install,pre-upgrade
+      helm.sh/hook-weight: "-10"
+      helm.sh/hook-delete-policy: "before-hook-creation"
+  secret:
+    annotations:
+      helm.sh/hook: pre-install,pre-upgrade
+      helm.sh/hook-weight: "-10"
+      helm.sh/hook-delete-policy: "before-hook-creation"
+
 revisionHistoryLimit: 3
 
 imagePullPolicy: Always
@@ -144,10 +161,7 @@ jobs:
   mgr:
     enabled: false
     metadata:
-      annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "-2"
-        helm.sh/hook-delete-policy: "before-hook-creation"
+      annotations: {}
     spec:
       annotations: {}
       command: ["/bin/bash"]
@@ -173,13 +187,9 @@ cronjobs:
     nodeSelector: {}
 
 configmap:
-  annotations:
-    # argocd.argoproj.io/sync-wave: "-1000"
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "-2"
-    helm.sh/hook-delete-policy: "before-hook-creation"
+  annotations: {}
   data:
-    # EXAMPLE: '{{ include "fullname" $ }}-example'
+    name: '{{ include "fullname" $ }}'
 
 configuration:
   map:
@@ -191,10 +201,7 @@ externalSecret:
   mountPath: /etc/config/config.yaml
   subPath: config
   refreshInterval: 1m
-  annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-weight: "-4"
-    helm.sh/hook-delete-policy: "before-hook-creation"
+  annotations: {}
   text: |
     {{- $secret := .contents | fromYaml }}
     apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}

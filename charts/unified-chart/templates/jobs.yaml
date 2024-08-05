@@ -11,10 +11,11 @@ metadata:
     {{- include "job.labels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   {{- if $job.metadata }}
-  {{- with $job.metadata.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- $defaultt := pick $values.default.migration "annotations" -}}
+    {{- $ext := pick $job.metadata "annotations" -}}
+    {{- $res := mergeOverwrite $defaultt $ext -}}
+    {{- toYaml $res.annotations | nindent 4 }}
   {{- end }}
 spec:
   {{- with $job.spec }}

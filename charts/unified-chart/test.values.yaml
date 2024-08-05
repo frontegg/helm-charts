@@ -14,6 +14,14 @@ service:
 
 externalSecret:
   enabled: true
+  annotations:
+    helm.sh/hook: pre-install,pre-upgrade
+    helm.sh/hook-delete-policy: "after-hook-creation"
+    helm.sh/hook-weight: "-9"
+
+configmap:
+  annotations:
+    something/else: bugger
 
 configuration:
   map:
@@ -123,9 +131,8 @@ jobs:
     enabled: true
     metadata:
       annotations:
-        helm.sh/hook: pre-install,pre-upgrade
-        helm.sh/hook-weight: "-2"
-        helm.sh/hook-delete-policy: "before-hook-creation"
+        helm.sh/hook-weight: "-200"
+        something/cronjob: someannotation
     spec:
       annotations: {}
       command: ["/bin/bash"]
@@ -137,10 +144,10 @@ jobs:
 
 cronjobs:
   refresh:
-    enabled: false
+    enabled: true
     metadata:
       annotations:
-        argocd.argoproj.io/sync-wave: "-500"
+        something/cronjob: someannotation
     command: ["/bin/bash"]
     args: ["entrypoint.sh"]
     schedule: "0 * * * *"
