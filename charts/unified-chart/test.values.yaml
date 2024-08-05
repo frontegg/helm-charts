@@ -41,6 +41,21 @@ web:
     enabled: true
     scaledObject:
       enabled: true
+  serviceProfile:
+    enabled: true
+    routes:
+      - condition:
+          method: XXXX
+          pathRegex: /pathx
+        name: GET /pathx
+      - condition:
+          method: YYYYYY
+          pathRegex: /pathy
+        name: PUT /pathy
+      - condition:
+          method: ZZZZZZ
+          pathRegex: /pathz
+        name: /pathz
 
 highPriority:
   enabled: true

@@ -5,7 +5,7 @@
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
-  name: {{ include "hp.name" $top }}.frontegg.svc.cluster.local
+  name: {{ include "hp.name" $top }}.{{ .namespace | default "frontegg" }}.svc.cluster.local
   namespace: {{ .namespace | default "frontegg" }}
 spec:
   routes:
