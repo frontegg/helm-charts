@@ -15,8 +15,8 @@ metadata:
     {{- $mgr_ants := $values.default.migration.annotations }}
     {{- if $job.metadata }}
     {{- $job_ants := $job.metadata.annotations }}
-    {{- $newdict := merge $job_ants $mgr_ants }}
-    {{- toYaml $newdict | nindent 4 }}
+    {{- $new_ants := merge $job_ants $mgr_ants }}
+    {{- toYaml $new_ants | nindent 4 }}
     {{- else }}
     {{- toYaml $values.default.migration.annotations | nindent 4 }}
     {{- end }}
