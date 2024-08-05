@@ -18,5 +18,7 @@ jobs:
           TEAM: someteam
           APP_VERSION: production-global-20240721.084900-a5186d5
           TEST_FILE: test.values.yaml
+          CHART_PATH: charts/unified-chart
         run: |
+          cd charts/unified-chart
           helm template . --name-template=$NAME_TEMPLATE  --set name=$NAME --set team=$fewassholes --set appVersion=$APP_VERSION --values $TEST_FILE --debug
