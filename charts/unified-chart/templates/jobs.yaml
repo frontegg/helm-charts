@@ -1,7 +1,8 @@
-{{- $values := .Values -}}
-{{- $top := . -}}
-{{- range $jobName, $job := $values.jobs -}}
+{{- $values := .Values }}
+{{- $top := . }}
+{{- range $jobName, $job := $values.jobs }}
 {{- if $job.enabled }}
+{{- $res := dict }}
 ---
 apiVersion: batch/v1
 kind: Job
@@ -10,13 +11,15 @@ metadata:
   labels:
     {{- include "job.labels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
-  {{- if $job.metadata }}
   annotations:
-    {{- $defaultt := pick $values.default.migration "annotations" -}}
-    {{- $ext := pick $job.metadata "annotations" -}}
-    {{- $res := mergeOverwrite $defaultt $ext -}}
-    {{- toYaml $res.annotations | nindent 4 }}
-  {{- end }}
+    {{- $mgr_ants := $values.default.migration.annotations }}
+    {{- if $job.metadata }}
+    {{- $job_ants := $job.metadata.annotations }}
+    {{- $newdict := merge $job_ants $mgr_ants }}
+    {{- toYaml $newdict | nindent 4 }}
+    {{- else }}
+    {{- toYaml $values.default.migration.annotations | nindent 4 }}
+    {{- end }}
 spec:
   {{- with $job.spec }}
   ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | default 6000 }}

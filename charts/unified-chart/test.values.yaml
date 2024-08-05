@@ -132,7 +132,7 @@ jobs:
     metadata:
       annotations:
         helm.sh/hook-weight: "-200"
-        something/cronjob: someannotation
+        something/mgr: someannotation-mgr
     spec:
       annotations: {}
       command: ["/bin/bash"]
@@ -141,6 +141,16 @@ jobs:
         requests:
           cpu: 500m
           memory: 500Mi
+  test:
+    enabled: true
+    spec:
+      command: ["/bin/bash"]
+      args: ["test"]
+  test2:
+    enabled: true
+    spec:
+      command: ["/bin/bash"]
+      args: ["test"]
 
 cronjobs:
   refresh:
