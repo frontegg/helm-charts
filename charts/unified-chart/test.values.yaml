@@ -148,6 +148,9 @@ jobs:
       args: ["test"]
   test2:
     enabled: true
+    metadata:
+      annotations:
+        shit: test2
     spec:
       command: ["/bin/bash"]
       args: ["test"]
