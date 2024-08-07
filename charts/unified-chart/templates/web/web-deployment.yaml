@@ -6,7 +6,7 @@ kind: Deployment
 metadata:
   name: {{ include "web.name" . }}
   labels:
-  {{- include "labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 2 }}
   {{- if .Values.argoRollouts }}

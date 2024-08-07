@@ -1,6 +1,6 @@
 {{- $values := .Values -}}
 {{- $top := . -}}
-{{- with $values.autoscaling }}
+{{- with $values.web.autoscaling }}
 {{- if .scaledObject.enabled }}
 ---
 apiVersion: keda.sh/v1alpha1
@@ -10,7 +10,7 @@ metadata:
   annotations:
     {{- include "keda.annotations" $top | nindent 4 }}
   labels:
-    {{- include "identity-service.labels" $top | nindent 4 }}
+    {{- include "labels" $top | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if $values.argoRollouts }}
