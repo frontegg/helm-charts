@@ -85,7 +85,11 @@ spec:
             - {{ . | quote  }}
             {{- end }}
           resources:
+            {{- if .resources }}
             {{- toYaml .resources | nindent 12 }}
+            {{- else }}
+            {{- toYaml $values.default.migration.resources | nindent 12 }}
+            {{- end }}
       {{- if $values.nodeSelector }}
       nodeSelector:
       {{- toYaml $values.nodeSelector | nindent 8 }}
