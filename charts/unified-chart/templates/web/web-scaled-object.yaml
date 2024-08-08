@@ -10,7 +10,7 @@ metadata:
   annotations:
     {{- include "keda.annotations" $top | nindent 4 }}
   labels:
-    {{- include "labels" $top | nindent 4 }}
+    {{- include "web.labels" $top | nindent 4 }}
 spec:
   scaleTargetRef:
     {{- if $values.argoRollouts }}

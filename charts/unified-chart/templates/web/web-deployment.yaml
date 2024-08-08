@@ -20,7 +20,7 @@ spec:
   template:
     metadata:
       labels:
-      {{- include "web.labels" . | nindent 8 }}
+        {{- include "web.labels" . | nindent 8 }}
       annotations:
         {{- $vals := .Values.web -}}
         {{- $both := merge $vals (pick .Values "linkerd") }}
