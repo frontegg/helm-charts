@@ -49,23 +49,27 @@
   subPath: {{ .Values.externalSecret.subPath }} 
 {{- end -}}
 
-{{/* Common labels includes selector.labels */}}
+{{/* general labels for resources not related to web/hp/worker */}}
 {{- define "labels" -}}
 helm.sh/chart: {{ include "unified.chart" . }}
-app.frontegg.com/team: {{ required "Every service needs to have responsible parents. .Values.team is required." .Values.team }}
-{{- with .Values.web.labels }}
-{{ toYaml . }}
-{{- end }}
-{{ include "selector.labels" . }}
 app.frontegg.io/version: {{ .Chart.Version | quote }}
 app.frontegg.io/managed-by: {{ .Release.Service }}
+app.frontegg.com/team: {{ required "Every service needs to have responsible parents. .Values.team is required." .Values.team }}
 app.frontegg.com/appVersion: {{ include "appVersion" . }}
 {{- end -}}
 
+{{- define "web.labels" -}}
+app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
+app.frontegg.com/appVersion: {{ include "appVersion" . }}
+{{- with .Values.web.labels }}
+{{ toYaml . }}
+{{- end }}
+{{ include "web.selector.labels" . }}
+{{- end -}}
+
 {{/* Selector labels */}}
-{{- define "selector.labels" -}}
-app.frontegg.com/name: {{ include "name" . }}
-app.frontegg.com/instance: {{ .Release.Name }}
+{{- define "web.selector.labels" -}}
+app.frontegg.com/name: {{ include "name" . }}-web
 {{- end -}}
 
 {{- define "job.labels" -}}

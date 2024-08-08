@@ -8,7 +8,7 @@ metadata:
     {{- with .Values.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- include "labels" . | nindent 4 }}
+    {{- include "web.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -17,5 +17,5 @@ spec:
       protocol: {{ .Values.service.protocol }}
       name: {{ .Values.service.name | default "http" }}
   selector:
-    {{- include "selector.labels" . | nindent 4 }}
+    {{- include "web.selector.labels" . | nindent 4 }}
 {{- end }}

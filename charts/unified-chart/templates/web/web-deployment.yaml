@@ -6,7 +6,7 @@ kind: Deployment
 metadata:
   name: {{ include "web.name" . }}
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "web.labels" . | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 2 }}
   {{- if .Values.argoRollouts }}
@@ -16,11 +16,11 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "selector.labels" . | nindent 6 }}
+      {{- include "web.selector.labels" . | nindent 6 }}
   template:
     metadata:
       labels:
-      {{- include "labels" . | nindent 8 }}
+      {{- include "web.labels" . | nindent 8 }}
       annotations:
         {{- $vals := .Values.web -}}
         {{- $both := merge $vals (pick .Values "linkerd") }}

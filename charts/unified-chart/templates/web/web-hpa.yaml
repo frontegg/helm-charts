@@ -6,7 +6,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "web.name" . }}
   labels:
-  {{- include "labels" . | nindent 4 }}
+  {{- include "web.labels" . | nindent 4 }}
   annotations:
     {{- if .Values.web.autoscaling.scaledObject.enabled }}
     {{- include "keda.annotations" . | nindent 4 }}

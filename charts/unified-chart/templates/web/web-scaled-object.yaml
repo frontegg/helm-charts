@@ -25,7 +25,7 @@ spec:
   minReplicaCount: {{.minReplicas }}
   maxReplicaCount: {{ .maxReplicas }}
   {{- with .scaledObject.fallback }}
-  fallback:                                                 # Optional. Section to specify fallback options
+  fallback:
     {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- with .scaledObject.triggers }}
