@@ -49,11 +49,13 @@ spec:
             {{- include "externalsecret.volumemount" . | nindent 12 }}
           {{- end }}
           ports:
-          {{- range .Values.web.ports }}
-          - name: {{ .name }}
-            containerPort: {{ .targetPort }}
-            protocol: {{ .protocol }}
-          {{- end }}
+            {{- if .Values.web.ports }}
+            {{- toYaml .Values.web.ports | nindent 12 }}
+            {{- else }}
+            - name: http
+              containerPort: {{ .Values.service.targetPort }}
+              protocol: TCP
+            {{- end }}
           {{- with .Values.web.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
