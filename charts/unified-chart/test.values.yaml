@@ -10,10 +10,11 @@ linkerd:
   enabled: true
 
 service:
-  name: access-port
-  targetPort: 3003
-  labels:
-    monitoring-metrics: enabled
+  ports:
+    - name: access-port
+      targetPort: 3003
+      labels:
+        monitoring-metrics: enabled
 
 externalSecret:
   enabled: true
@@ -36,7 +37,13 @@ prometheusRule:
 
 ingresses:
   tesla:
-    enabled: true
+    enabled: false
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        service:
+          - name: test
+            port: 3003
   newton:
     enabled: true
 

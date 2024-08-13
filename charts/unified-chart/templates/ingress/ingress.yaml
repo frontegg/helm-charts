@@ -30,12 +30,14 @@ spec:
     - host: {{ $ingress.hostnameOverride | quote }}
       http:
         paths:
-        - path: /
-          backend:
-            service:
-              name: frontegg-{{ include "name" $top }}
-              port:
-                number: {{ $values.service.port }}
-          pathType: ImplementationSpecific
+        {{- range $path := $ingress.paths }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .service.name }}
+                port:
+                  number: {{ .service.port }}
+        {{- end }}
 {{- end }}
 {{- end }}
