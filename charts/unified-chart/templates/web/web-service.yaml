@@ -12,10 +12,12 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ required "need to know if someone listening: .Values.service.targetPort is required" .Values.service.targetPort }}
-      protocol: {{ .Values.service.protocol }}
-      name: {{ .Values.service.name | default "http" }}
+    {{- range .Values.service.ports }}
+    - port: {{ .port }}
+      targetPort: {{ required "need to know if someone listening: .targetPort is required" .targetPort }}
+      protocol: {{ .protocol }}
+      name: {{ .name }}
+    {{- end }}
   selector:
     {{- include "web.selector.labels" . | nindent 4 }}
 {{- end }}

@@ -43,10 +43,11 @@ imagePullSecrets:
   - name: regcred
 
 service:
-  labels: {}
   type: ClusterIP
-  protocol: TCP
-  port: 80
+  ports:
+    - protocol: TCP
+      port: 80
+  labels: {}
 
 web:
   enabled: false
