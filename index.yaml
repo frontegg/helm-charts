@@ -4699,6 +4699,18 @@ entries:
     version: 0.1.2
   unified-chart:
   - apiVersion: v2
+    created: "2024-08-13T14:06:49.231414874Z"
+    description: Frontegg Unified Chart
+    digest: 1cbb7fa7c10543112b86414904db5f4bfeeff54d3c0a4f4b1c3bc8d8decff8b3
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-2.0.11/unified-chart-2.0.11.tgz
+    version: 2.0.11
+  - apiVersion: v2
     created: "2024-08-12T11:38:01.377469705Z"
     description: Frontegg Unified Chart
     digest: 9e3b1942b0cbce0acd35ac5f474fdc79be19e488d59d518eb758f275a63b188e
@@ -5168,4 +5180,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2024-08-12T11:38:01.378144375Z"
+generated: "2024-08-13T14:06:49.231988565Z"
