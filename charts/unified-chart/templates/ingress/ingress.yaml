@@ -31,13 +31,13 @@ spec:
       http:
         paths:
         {{- range $path := $ingress.paths }}
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+          - path: {{ $path.path }}
+            pathType: {{ $path.pathType }}
             backend:
               service:
-                name: {{ .service.name }}
+                name: {{ $path.service.name }}
                 port:
-                  number: {{ .service.port }}
+                  number: {{ $path.service.port }}
         {{- end }}
 {{- end }}
 {{- end }}
