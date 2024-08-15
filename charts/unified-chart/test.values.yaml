@@ -33,6 +33,8 @@ ingresses:
     enabled: true
   newton:
     enabled: true
+    service:
+      name: "frontegg-api-gateway"
 
 web:
   enabled: true

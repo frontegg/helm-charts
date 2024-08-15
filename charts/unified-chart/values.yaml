@@ -265,6 +265,9 @@ ingresses:
     enabled: false
     ingressClassName: nginx
     hostnameOverride: "nicola.tesla"
+    service:
+      name: '{{ include "web.name" $ }}'
+      port: 80
     annotations:
       nginx.ingress.kubernetes.io/server-snippet: |
         location ~* ^/(metrics|health) {
@@ -278,6 +281,9 @@ ingresses:
     enabled: false
     ingressClassName: nginx2
     hostnameOverride: "isaac.newton"
+    service:
+      name: '{{ include "web.name" $ }}'
+      port: 80
     annotations:
       nginx.ingress.kubernetes.io/server-snippet: |
         location ~* ^/(metrics|health) {

@@ -33,9 +33,9 @@ spec:
         - path: /
           backend:
             service:
-              name: frontegg-{{ include "name" $top }}
+              name: {{ tpl ($ingress.service.name | default "frontegg-{{ include \"name\" $ }}") $top }}
               port:
-                number: {{ $values.service.port }}
+                number: {{ $ingress.service.port | default 80 }}
           pathType: ImplementationSpecific
 {{- end }}
 {{- end }}

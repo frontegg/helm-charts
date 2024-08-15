@@ -1,10 +1,10 @@
 {{/* Just the name */}}
 {{- define "name" -}}
-{{- required "I cant live without a name: .Values.name must be set" .Values.name }}{{ include "unified.suffix" . }}
+{{- required "I cant live without a name: .Values.name must be set" .Values.name }}{{ include "suffix" . }}
 {{- end -}}
 
 {{/* calculate the suffix */}}
-{{- define "unified.suffix" -}}
+{{- define "suffix" -}}
 {{- with .Values.nameSuffix -}}
 -{{ . | trunc 10 }}
 {{- end -}}
