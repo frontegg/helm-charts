@@ -3,7 +3,7 @@ name: unified-chart
 description: Frontegg Unified Chart
 type: application
 
-version: 2.0.10
+version: 2.0.11
 
 maintainers:
   - name: "platform"

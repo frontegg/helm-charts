@@ -47,6 +47,7 @@ service:
   ports:
     - protocol: TCP
       port: 80
+      name: http
   labels: {}
 
 web:

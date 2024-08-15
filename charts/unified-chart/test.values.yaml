@@ -11,10 +11,10 @@ linkerd:
 
 service:
   ports:
-    - name: access-port
-      targetPort: 3003
-      labels:
-        monitoring-metrics: enabled
+    - protocol: TCP
+      port: 3003
+      name: access-port
+  labels: {}
 
 externalSecret:
   enabled: true
@@ -37,7 +37,7 @@ prometheusRule:
 
 ingresses:
   tesla:
-    enabled: false
+    enabled: true
     paths:
       - path: /
         pathType: ImplementationSpecific
