@@ -13,7 +13,9 @@ service:
   ports:
     - protocol: TCP
       port: 3003
+      targetPort: 3003
       name: access-port
+
   labels: {}
 
 externalSecret:
@@ -42,8 +44,8 @@ ingresses:
       - path: /
         pathType: ImplementationSpecific
         service:
-          - name: test
-            port: 3003
+          name: test
+          port: 3003
   newton:
     enabled: true
 
