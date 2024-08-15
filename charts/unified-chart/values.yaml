@@ -42,14 +42,17 @@ imagePullPolicy: Always
 imagePullSecrets:
   - name: regcred
 
-service:
-  labels: {}
-  type: ClusterIP
-  protocol: TCP
-  port: 80
-
 web:
   enabled: false
+  service:
+    labels: {}
+    type: ClusterIP
+    protocol: TCP
+    ports:
+      - port: 80
+        targetPort: 3000
+        protocol: TCP
+        name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   env: []
@@ -102,6 +105,15 @@ web:
 
 worker:
   enabled: false
+  service:
+    labels: {}
+    type: ClusterIP
+    protocol: TCP
+    ports:
+      - port: 80
+        targetPort: 3000
+        protocol: TCP
+        name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "worker"]
   podAnnotations: {}
@@ -146,6 +158,11 @@ worker:
 
 hp:
   enabled: false
+  service:
+    labels: {}
+    type: ClusterIP
+    protocol: TCP
+    ports: []
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:
@@ -160,6 +177,9 @@ hp:
     #       method: EXAMPLE
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
+  ports:
+    - name: http
+      containerPort: 3000
   autoscaling:
     enabled: false
     minReplicas: 1

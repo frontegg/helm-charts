@@ -1,21 +1,26 @@
-{{- if .Values.web.enabled -}}
+{{- $values := .Values -}}
+{{- if $values.web.enabled -}}
+{{- if $values.argoRollouts -}}
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "web.name" . }}
   labels:
-    {{- with .Values.service.labels }}
+    {{- include "web.labels" . | nindent 4 }}
+    {{- with $values.web.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-    {{- include "web.labels" . | nindent 4 }}
 spec:
-  type: {{ .Values.service.type }}
+  type: {{ $values.web.service.type }}
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ required "need to know if someone listening: .Values.service.targetPort is required" .Values.service.targetPort }}
-      protocol: {{ .Values.service.protocol }}
-      name: {{ .Values.service.name | default "http" }}
+    {{- range $values.web.service.ports }}
+    - port: {{ required ".Values.web.service.ports[*].port number is required" .port }}
+      targetPort: {{ required "need to know if someone listening: .Values.web.service.ports[*].targetPort is required" .targetPort }}
+      protocol: {{ .protocol | default "TCP" }}
+      name: {{ .name | default "http" }}
+    {{- end }}
   selector:
     {{- include "web.selector.labels" . | nindent 4 }}
+{{- end }}
 {{- end }}

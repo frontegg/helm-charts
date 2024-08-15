@@ -9,12 +9,6 @@ image:
 linkerd:
   enabled: true
 
-service:
-  name: access-port
-  targetPort: 3003
-  labels:
-    monitoring-metrics: enabled
-
 externalSecret:
   enabled: true
   annotations:
@@ -42,6 +36,12 @@ ingresses:
 
 web:
   enabled: true
+  service:
+    ports:
+      - port: 80
+        targetPort: 3000
+        protocol: TCP
+        name: http
   podAnnotations:
     linkerd.io/inject: crappy # test to ensure linkerd is not injected if not enabled
     some/other: anot
@@ -70,6 +70,13 @@ web:
 
 hp:
   enabled: true
+  service:
+    labels:
+      monitoring-metrics: enabled
+    ports:
+      - port: 80
+        targetPort: 3000
+        name: http
   podAnnotations:
     some/other: hp
     some/other2: hp2
@@ -83,6 +90,13 @@ hp:
 
 worker:
   enabled: true
+  service:
+    labels:
+      monitoring-metrics: enabled
+    ports:
+      - port: 80
+        targetPort: 3000
+        name: access-port
   env:
     - name: SOME_ENV
       value: some_val
@@ -90,6 +104,9 @@ worker:
     scrape-for-metrics: enabled
   nodeSelector:
     workload: general
+  ports:
+    - name: access-port
+      containerPort: 3000
   autoscaling:
     enabled: true
     minReplicas: 2
