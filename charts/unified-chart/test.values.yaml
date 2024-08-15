@@ -47,7 +47,13 @@ ingresses:
           name: test
           port: 3003
   newton:
-    enabled: true
+    enabled: false
+    paths:
+      - path: /
+        pathType: ImplementationSpecific
+        service:
+          name: test
+          port: 3003
 
 web:
   enabled: true
