@@ -66,10 +66,12 @@ web:
     maxReplicas: 2
     targetCPUUtilizationPercentage: 50
     targetMemoryUtilizationPercentage: 75
-    triggers: []
-    advanced:
-      horizontalPodAutoscalerConfig:
-        name: '{{ include "web.name" $ }}'
+    scaledObject:
+      enabled: false
+      triggers: []
+      advanced:
+        horizontalPodAutoscalerConfig:
+          name: '{{ include "web.name" $ }}'
   serviceProfile:
     enabled: false
     # routes:

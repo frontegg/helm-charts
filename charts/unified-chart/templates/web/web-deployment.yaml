@@ -70,19 +70,15 @@ spec:
           {{- end }}
           env:
             {{- include "container.env" .Values.web | indent 12 -}}
-            {{- if .Values.externalSecret.enabled }}
-            - name: FRONTEGG_CONFIG_DIRECTORY
-              value: "/etc/config"
-            {{- end }}
-          {{- range $config_name, $values := .Values.configuration.map }}
-          {{- range $key, $value :=  $values}}
+            {{- range $config_name, $values := .Values.configuration.map }}
+            {{- range $key, $value :=  $values}}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
                   name: {{ $config_name }}
                   key: {{ $value }}
-          {{- end }}
-          {{- end }}
+            {{- end }}
+            {{- end }}
           {{- if .Values.configmap.data }}
           envFrom:
             - configMapRef:

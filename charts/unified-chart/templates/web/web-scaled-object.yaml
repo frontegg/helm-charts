@@ -1,6 +1,7 @@
 {{- $values := .Values -}}
 {{- $top := . -}}
 {{- with $values.web.autoscaling }}
+{{- if .enabled }}
 {{- if .scaledObject.enabled }}
 ---
 apiVersion: keda.sh/v1alpha1
@@ -36,5 +37,6 @@ spec:
   advanced:
     {{- tpl ( . | toYaml) $ | nindent 4 }}
   {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
