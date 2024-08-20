@@ -40,10 +40,13 @@ web:
   enabled: true
   service:
     ports:
-      - port: 80
-        targetPort: 3000
+      - port: 8080
+        targetPort: 3050
         protocol: TCP
         name: http
+  ports:
+    - name: http
+      containerPort: 3050
   podAnnotations:
     linkerd.io/inject: crappy # test to ensure linkerd is not injected if not enabled
     some/other: anot
