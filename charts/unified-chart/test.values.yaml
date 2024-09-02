@@ -31,10 +31,39 @@ prometheusRule:
 ingresses:
   tesla:
     enabled: true
+    hostname: nicola.tesla
+    annotations:
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~* ^/(metrics|health) {
+          deny all;
+          return 403;
+        }
   newton:
     enabled: true
+    hostname: isaac.newton
     service:
       name: "frontegg-api-gateway"
+  galileo:
+    enabled: true
+    annotations:
+      nginx.ingress.kubernetes.io/server-snippet: |
+        location ~* ^/(metrics|health) {
+          deny all;
+          return 403;
+        }
+    rules:
+      - hostname: galileo.galilei
+        paths:
+          - path: /galileo
+            servicePort: 8080
+            pathType: Prefix
+          - path: /galilei
+      - hostname: alon.wanted.more.hosts
+        paths:
+          - path: /alon
+            servicePort: 8080
+            pathType: Prefix
+          - path: /smartass
 
 web:
   enabled: true
