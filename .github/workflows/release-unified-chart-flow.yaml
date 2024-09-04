@@ -1,0 +1,17 @@
+---
+name: release unified-chart flow
+
+on:
+  push:
+    branches:
+      - test-unified-chart-release
+
+jobs:
+  release-stg:
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@test-unified-chart-release
+    with:
+      environment: stg
+  release-ca:
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@test-unified-chart-release
+    with:
+      environment: ca

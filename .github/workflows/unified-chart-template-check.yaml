@@ -1,9 +1,10 @@
+---
 name: helm template check
 
 on:
   push:
     paths:
-      - charts/unified-chart/**
+      - common/unified-chart/**
 
 jobs:
   helm-template-check:
@@ -20,5 +21,5 @@ jobs:
           TEST_FILE: test.values.yaml
           CHART_PATH: common/unified-chart
         run: |
-          cd charts/unified-chart
+          cd common/unified-chart
           helm template . --name-template=$NAME_TEMPLATE  --set name=$NAME --set team=$TEAM --set appVersion=$APP_VERSION --values $TEST_FILE --debug
