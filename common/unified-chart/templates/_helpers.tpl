@@ -3,6 +3,11 @@
 {{- required "I cant live without a name: .Values.name must be set" .Values.name }}{{ include "suffix" . }}
 {{- end -}}
 
+{{/* Just the container name */}}
+{{- define "container.name" -}}
+{{- required "I cant live without a name: .Values.name must be set" .Values.name }}
+{{- end -}}
+
 {{/* calculate the suffix */}}
 {{- define "suffix" -}}
 {{- with .Values.nameSuffix -}}
