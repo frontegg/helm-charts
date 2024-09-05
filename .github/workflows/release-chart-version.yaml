@@ -38,10 +38,11 @@ jobs:
           cd ${{ inputs.charts-dir }}/${{ inputs.chart-name }}
           version=$(cat Chart.yaml | yq e '.version')
           helm package . --version $version-${{ inputs.environment }}
+          cp ${{ inputs.chart-name }}-$version-${{ inputs.environment }}.tgz .cr-release-packages/
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: common
-          # skip_packaging: true
+          skip_packaging: true
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
