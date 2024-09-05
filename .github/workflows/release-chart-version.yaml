@@ -44,7 +44,6 @@ jobs:
         uses: helm/chart-releaser-action@v1.6.0
         with:
           charts_dir: common
-          # skip_packaging: false
         env:
           CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           CR_PACKAGE_PATH: ${{ inputs.charts-dir }}/${{ inputs.chart-name }}/.cr-release-packages
