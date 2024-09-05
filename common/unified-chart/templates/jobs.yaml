@@ -52,7 +52,7 @@ spec:
             secretName: {{ include "secret.name" $ }}
       {{- end }}
       containers:
-        - name: {{ include "container.name" . }}
+        - name: {{ include "container.name" $top }}
           {{- if $job.spec.image }}
           image: {{ $job.spec.image | quote }}
           {{- else }}
