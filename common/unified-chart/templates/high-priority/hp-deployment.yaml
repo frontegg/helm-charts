@@ -42,7 +42,7 @@ spec:
             secretName: {{ include "secret.name" . }}
       {{- end }}
       containers:
-        - name: {{ include "hp.name" . }}
+        - name: {{ include "container.name" . }}
           image: "{{ required "what do you wanna run: .Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if .Values.externalSecret.enabled }}
