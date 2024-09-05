@@ -41,7 +41,7 @@ spec:
           pathType: {{ $ingress.pathType | default "ImplementationSpecific" }}
     {{- end }}
     {{- range $rule := $ingress.rules }}
-    - host: {{ required "rule hostname is required when providing list of rules" $rule.hostname | quote }}
+    - host: {{ required "rule hostname is required when providing list of rules" (tpl $rule.hostname $) | quote }}
       http:
         paths:
           {{- range $path := $rule.paths }}

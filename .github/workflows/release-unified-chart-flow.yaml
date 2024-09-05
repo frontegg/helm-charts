@@ -4,14 +4,30 @@ name: release unified-chart flow
 on:
   push:
     branches:
-      - test-unified-chart-release
+      - master
 
 jobs:
   release-stg:
-    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@test-unified-chart-release
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
     with:
       environment: stg
   release-ca:
-    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@test-unified-chart-release
+    needs: release-stg
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
     with:
       environment: ca
+  release-au:
+    needs: release-ca
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
+    with:
+      environment: au
+  release-us:
+    needs: release-au
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
+    with:
+      environment: us
+  release-eu:
+    needs: release-us
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
+    with:
+      environment: eu
