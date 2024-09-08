@@ -40,7 +40,7 @@ jobs:
         run: |
           cd ${{ inputs.charts-dir }}/${{ inputs.chart-name }}
           version=$(cat Chart.yaml | yq e '.version')
-          chart_version=$($version-$version.${{ inputs.environment }})
+          chart_version=$version-$version.${{ inputs.environment }}
           helm package . --version $chart_version
           mkdir .cr-release-packages
           cp ${{ inputs.chart-name }}-$chart_version.tgz .cr-release-packages/
