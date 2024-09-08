@@ -41,7 +41,7 @@ jobs:
           cd ${{ inputs.charts-dir }}/${{ inputs.chart-name }}
           version=$(cat Chart.yaml | yq e '.version')
           # chart_version=$($version-${{ inputs.lexicographical-priority }}${{ inputs.environment }})
-          lock=4.0.10
+          lock=4.0.11
           chart_version=$($lock-${{ inputs.environment }}.$version)
           helm package . --version $chart_version
           mkdir .cr-release-packages
