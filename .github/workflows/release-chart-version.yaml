@@ -40,9 +40,12 @@ jobs:
         run: |
           cd ${{ inputs.charts-dir }}/${{ inputs.chart-name }}
           version=$(cat Chart.yaml | yq e '.version')
-          helm package . --version $version-${{ inputs.lexicographical-priority }}${{ inputs.environment }}
+          # chart_version=$($version-${{ inputs.lexicographical-priority }}${{ inputs.environment }})
+          lock=4.0.10
+          chart_version=$($lock-${{ inputs.environment }}.$version)
+          helm package . --version $chart_version
           mkdir .cr-release-packages
-          cp ${{ inputs.chart-name }}-$version-${{ inputs.lexicographical-priority }}${{ inputs.environment }}.tgz .cr-release-packages/
+          cp ${{ inputs.chart-name }}-$chart_version.tgz .cr-release-packages/
       - name: Run chart-releaser
         uses: helm/chart-releaser-action@v1.6.0
         with:
