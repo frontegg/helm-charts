@@ -11,7 +11,7 @@ on:
 
 jobs:
   release-stg:
-    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@trying-something
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
     with:
       environment: stg
       lexicographical-priority: 1
