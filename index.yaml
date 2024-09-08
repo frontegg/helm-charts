@@ -4723,6 +4723,18 @@ entries:
     - https://github.com/frontegg/helm-charts/releases/download/unified-chart-4.0.13-4.0.13.ca/unified-chart-4.0.13-4.0.13.ca.tgz
     version: 4.0.13-4.0.13.ca
   - apiVersion: v2
+    created: "2024-09-08T13:53:27.28950178Z"
+    description: Frontegg Unified Chart
+    digest: 2a2df0982577ca92c35a58596e9b8e26b0f5e861e2ab6d91507b3727a3cea068
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-4.0.13-4.0.13.au/unified-chart-4.0.13-4.0.13.au.tgz
+    version: 4.0.13-4.0.13.au
+  - apiVersion: v2
     created: "2024-09-08T13:37:40.182321722Z"
     description: Frontegg Unified Chart
     digest: b5a639f8d904ee47ee7d3ed33824ad23197eaa5ac5fde8ee9ee47b8a22bceec6
@@ -5732,4 +5744,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2024-09-08T13:50:25.723300714Z"
+generated: "2024-09-08T13:53:27.29038548Z"
