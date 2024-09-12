@@ -1,0 +1,17 @@
+{{- if .Values.web.pdb.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "web.name" . }}
+spec:
+  {{- with .Values.web.pdb.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- end }}
+  {{- with .Values.web.pdb.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "web.selector.labels" . | nindent 6 }}
+{{- end }}

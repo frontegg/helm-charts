@@ -1,0 +1,17 @@
+{{- if .Values.hp.pdb.enabled }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "hp.name" . }}
+spec:
+  {{- with .Values.hp.pdb.maxUnavailable }}
+  maxUnavailable: {{ . }}
+  {{- end }}
+  {{- with .Values.hp.pdb.minAvailable }}
+  minAvailable: {{ . }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "hp.selector.labels" . | nindent 6 }}
+{{- end }}
