@@ -9,7 +9,11 @@
 # CAUTION this will change name of all manifests
 nameSuffix: v2
 
-argoRollouts: true
+argoRollouts:
+  enabled: true
+  activeMetadata:
+    labels:
+      role: active
 
 image:
   repository:

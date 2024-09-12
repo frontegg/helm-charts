@@ -11,7 +11,7 @@ metadata:
     {{- include "keda.annotations" . | nindent 4 }}
 spec:
   scaleTargetRef:
-    {{- if .Values.argoRollouts }}
+    {{- if .Values.argoRollouts.enabled }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
     name: {{ include "hp.name" . }}

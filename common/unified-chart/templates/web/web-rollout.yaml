@@ -1,5 +1,5 @@
 {{- if .Values.web.enabled -}}
-{{- if .Values.argoRollouts }}
+{{- if .Values.argoRollouts.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
@@ -16,6 +16,10 @@ spec:
       {{- include "web.selector.labels" . | nindent 6 }}
   strategy:
     blueGreen:
+      {{- with .Values.argoRollouts.activeMetadata }}
+      activeMetadata:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       activeService: {{ include "web.name" . }}
       autoPromotionEnabled: true
 {{- end }}

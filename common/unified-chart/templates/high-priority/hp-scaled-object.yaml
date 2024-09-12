@@ -14,7 +14,7 @@ metadata:
     {{- include "hp.labels" $top | nindent 4 }}
 spec:
   scaleTargetRef:
-    {{- if $values.argoRollouts }}
+    {{- if $values.argoRollouts.enabled }}
     apiVersion: argoproj.io/v1alpha1
     kind: Rollout
     name: {{ include "hp.name" $top }}

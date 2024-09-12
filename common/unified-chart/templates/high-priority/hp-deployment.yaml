@@ -10,7 +10,7 @@ metadata:
   {{- toYaml .Values.hp.labels | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 2 }}
-  {{- if .Values.argoRollouts }}
+  {{- if .Values.argoRollouts.enabled }}
   replicas: 0
   {{- else if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.hp.replicaCount }}

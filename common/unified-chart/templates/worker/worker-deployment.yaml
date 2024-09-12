@@ -7,7 +7,7 @@ metadata:
   labels:
     {{- include "worker.labels" . | nindent 4 }}
 spec:
-  {{- if .Values.argoRollouts }}
+  {{- if .Values.argoRollouts.enabled }}
   replicas: 0
   {{- else if not .Values.web.autoscaling.enabled }}
   replicas: {{ .Values.worker.replicaCount }}
