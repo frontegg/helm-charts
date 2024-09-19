@@ -12,9 +12,21 @@ linkerd:
 externalSecret:
   enabled: true
   annotations:
-    helm.sh/hook: pre-install,pre-upgrade
-    helm.sh/hook-delete-policy: "after-hook-creation"
-    helm.sh/hook-weight: "-9"
+    someting: cool
+  mountPath: /etc/config/config.yaml
+  text: |
+    {{- $secret := .contents | fromYaml }}
+    apiKey: {{ $secret.frontegg.apiKeys.logsStreamingServiceApiKey | toYaml }}
+    splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+    kafka:
+      brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+      saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+    databases:
+      mysql:
+        host: {{ $secret.databases.generalMysql.host | toYaml }}
+        username: {{ $secret.databases.generalMysql.username | toYaml }}
+        password: {{ $secret.databases.generalMysql.password | toYaml }}
 
 configmap:
   annotations:
