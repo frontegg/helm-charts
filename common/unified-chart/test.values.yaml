@@ -238,12 +238,12 @@ serviceAccount:
 
 role:
   enabled: true
-  namespace: "logs-streaming"
+  namespace: "test"
   rules:
     - apiGroups: ["*"]
       resources: ["*"]
       verbs: ["*"]
 
 rolebinding:
-  namespace: "logs-streaming"
+  namespace: "test"
   enabled: true
