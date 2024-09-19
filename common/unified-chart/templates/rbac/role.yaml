@@ -1,0 +1,19 @@
+{{- $top := . }}
+{{- if .Values.role.enabled }}
+{{- with .Values.role }}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: {{ include "name" $top }}
+  namespace: {{ required "role.namespace requried" .namespace }}
+  labels:
+    {{- include "labels" $top | nindent 4 }}
+  {{- with .annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+rules:
+  {{- toYaml .rules | nindent 2 }}
+{{- end }}  
+{{- end }}

@@ -235,3 +235,15 @@ serviceAccount:
   enabled: true
   annotations:
     someshit/knuckle: enabled
+
+role:
+  enabled: true
+  namespace: "logs-streaming"
+  rules:
+    - apiGroups: ["*"]
+      resources: ["*"]
+      verbs: ["*"]
+
+rolebinding:
+  namespace: "logs-streaming"
+  enabled: true
