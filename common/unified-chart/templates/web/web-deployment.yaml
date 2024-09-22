@@ -84,8 +84,8 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "name" . }}
-            {{- range .Values.web.additionalEnvFrom }}
-            {{ tpl . $top }}
+            {{- with .Values.web.additionalEnvFrom }}
+            {{- tpl . $top | nindent 12 }}
             {{- end }}
           {{- end }}
           resources:
