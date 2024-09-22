@@ -83,10 +83,10 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "name" . }}
-            {{- if .Values.additionalSecrets }}
+            {{- if .Values.additionalEnvFrom }}
             - secretRef:
                 name: additional-{{ include "secret.name" . }}
-            {{- end }}
+          {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}
