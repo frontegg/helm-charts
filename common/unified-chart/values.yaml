@@ -333,16 +333,3 @@ additionalTemplates: |
 #   name: {{ include "fullname" $ }}-sa
 #   labels:
 #     {{- include "labels" $ | nindent 4 }}
-
-# additional helm templates to render external secrets and secret volumes
-additionalEnvFrom: |
-
-# ---
-# apiVersion: external-secrets.io/v1beta1
-# kind: ExternalSecret
-# metadata:
-#   name: {{ include "fullname" $ }}-ext
-#   annotations:
-#     argocd.argoproj.io/sync-options: ServerSideApply=true, Delete=false
-#   labels:
-#     {{- include "labels" $ | nindent 4 }}

@@ -1,3 +1,4 @@
+{{- $top := . -}}
 {{- $values := .Values -}}
 {{- if .Values.web.enabled -}}
 ---
@@ -83,10 +84,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "name" . }}
-            {{- if .Values.additionalEnvFrom }}
-            - secretRef:
-                name: additional-{{ include "secret.name" . }}
-          {{- end }}
+            {{- range .Values.web.additionalEnvFrom }}
+            {{ tpl . $top }}
+            {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.web.resources | nindent 12 }}

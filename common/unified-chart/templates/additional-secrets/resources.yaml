@@ -1,3 +1,0 @@
-{{- with .Values.additionalEnvFrom }}
-{{ tpl . $ }}
-{{- end }}
