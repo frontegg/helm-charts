@@ -319,12 +319,14 @@ serviceAccount:
 
 role:
   enabled: false
+  kind: clusterrole
   namespace: ""
   rules: []
 
 rolebinding:
-  namespace: ""
   enabled: false
+  kind: rolebinding
+  namespace: ""
 
 linkerd:
   enabled: false

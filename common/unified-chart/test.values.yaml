@@ -250,12 +250,13 @@ serviceAccount:
 
 role:
   enabled: true
-  namespace: "test"
+  kind: clusterrole
+  namespace: ""
   rules:
     - apiGroups: ["*"]
       resources: ["*"]
       verbs: ["*"]
 
 rolebinding:
-  namespace: "test"
   enabled: true
+  namespace: ""
