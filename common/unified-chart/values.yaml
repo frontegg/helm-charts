@@ -323,8 +323,8 @@ linkerd:
     linkerd.io/inject: enabled
     config.alpha.linkerd.io/proxy-wait-before-exit-seconds: "30"
 
-# additional helm templates to render resources freely
-additionalTemplates: |
+# additional helm resources to render resources freely
+additionalResources: |
 
 # ---
 # apiVersion: v1
