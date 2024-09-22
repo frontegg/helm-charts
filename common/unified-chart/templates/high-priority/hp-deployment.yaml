@@ -1,3 +1,4 @@
+{{- $top := . -}}
 {{- $values := .Values -}}
 {{- if .Values.hp.enabled }}
 ---
@@ -84,6 +85,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "name" . }}
+            {{- with .Values.hp.additionalEnvFrom }}
+            {{- tpl . $top | nindent 12 }}
+            {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.hp.resources | nindent 12 }}

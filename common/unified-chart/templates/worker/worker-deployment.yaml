@@ -1,3 +1,4 @@
+{{- $top := . -}}
 {{- if .Values.worker.enabled }}
 ---
 apiVersion: apps/v1
@@ -82,6 +83,9 @@ spec:
           envFrom:
             - configMapRef:
                 name: {{ include "name" . }}
+            {{- with .Values.worker.additionalEnvFrom }}
+            {{- tpl . $top | nindent 12 }}
+            {{- end }}
           {{- end }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
