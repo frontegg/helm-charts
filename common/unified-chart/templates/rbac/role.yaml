@@ -1,9 +1,10 @@
 {{- $top := . }}
 {{- if .Values.role.enabled }}
 {{- with .Values.role }}
+{{- $rolekind := (.kind | lower) }}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: {{ required ".Values.role.kind" .kind }}
+kind: {{ required ".Values.role.kind" $rolekind }}
 metadata:
   name: {{ include "name" $top }}
   {{- if eq (.kind | lower ) "role" }}
@@ -15,10 +16,6 @@ metadata:
   {{- end }}
   labels:
     {{- include "labels" $top | nindent 4 }}
-  {{- with .annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
 rules:
   {{- toYaml .rules | nindent 2 }}
 {{- end }}  

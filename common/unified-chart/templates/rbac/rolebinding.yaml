@@ -17,10 +17,6 @@ metadata:
   {{- end }}
   labels:
     {{- include "labels" $top | nindent 4 }}
-  {{- with .annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: {{ $values.role.kind }}
