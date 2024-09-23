@@ -154,3 +154,11 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- define "service.account.name" -}}
 {{ .Values.serviceAccount.nameOverride | default (include "name" . )}}
 {{- end -}}
+
+{{/* validations */}}
+{{- define "validate.role.bindings" }}
+{{- $rolekind := (.Values.role.kind | lower) }}
+{{- if and (ne $rolekind "role") (ne $rolekind "clusterrole") }}
+{{- fail ".Values.role.kind must be role/rolebinding" }}
+{{- end }}
+{{- end }}

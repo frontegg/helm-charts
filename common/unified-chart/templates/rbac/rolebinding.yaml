@@ -8,9 +8,9 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: {{ eq $rolekind "role" | ternary "rolebinding" "clusterrolebinding"  }}
 metadata:
   name: {{ include "name" $top }}
-  {{- with .anotations }}
+  {{- with .annotations }}
   annotations:
-    {{- toYaml . | nindent }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   {{- if eq $rolekind "role" }}
   namespace: {{ required ".Values.rolebinding.namespace requried" .namespace }}

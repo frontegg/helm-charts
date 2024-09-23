@@ -1,5 +1,6 @@
 {{- $top := . }}
 {{- if .Values.role.enabled }}
+{{- include "validate.role.bindings" $top }}
 {{- with .Values.role }}
 {{- $rolekind := (.kind | lower) }}
 ---
@@ -10,9 +11,9 @@ metadata:
   {{- if eq $rolekind "role" }}
   namespace: {{ required "role.namespace requried" .namespace }}
   {{- end }}
-  {{- with .anotations }}
+  {{- with .annotations }}
   annotations:
-    {{- toYaml . | nindent }}
+    {{- toYaml . | nindent 4 }}
   {{- end }}
   labels:
     {{- include "labels" $top | nindent 4 }}
