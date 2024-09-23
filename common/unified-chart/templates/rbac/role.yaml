@@ -7,7 +7,7 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: {{ required ".Values.role.kind" $rolekind }}
 metadata:
   name: {{ include "name" $top }}
-  {{- if eq (.kind | lower ) "role" }}
+  {{- if eq $rolekind "role" }}
   namespace: {{ required "role.namespace requried" .namespace }}
   {{- end }}
   {{- with .anotations }}
