@@ -325,7 +325,6 @@ role:
 
 rolebinding:
   enabled: false
-  kind: rolebinding
   namespace: ""
 
 linkerd:
