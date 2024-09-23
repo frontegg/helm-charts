@@ -1,0 +1,28 @@
+{{- $top := . -}}
+{{- $values := .Values -}}
+{{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+{{- range $type := tuple "canary" "stable" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hp.name" $top }}-{{ $type }}
+  labels:
+    {{- include "hp.labels" $top | nindent 4 }}
+    {{- with $values.hp.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ $values.hp.service.type }}
+  ports:
+    {{- range $values.hp.service.ports }}
+    - port: {{ required ".Values.hp.service.ports[*].port number is required" .port }}
+      targetPort: {{ required "need to know if someone listening: .Values.hp.service.ports[*].targetPort is required" .targetPort }}
+      protocol: {{ .protocol | default "TCP" }}
+      name: {{ .name | default "http" }}
+    {{- end }}
+  selector:
+    {{- include "hp.selector.labels" $top | nindent 4 }}
+{{- end }}
+{{- end }}
+

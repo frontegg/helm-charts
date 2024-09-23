@@ -14,6 +14,8 @@ argoRollouts:
   activeMetadata:
     labels:
       role: active
+  progressiveDelivery:
+    enabled: true
 
 image:
   repository:
@@ -187,7 +189,11 @@ hp:
     labels: {}
     type: ClusterIP
     protocol: TCP
-    ports: []
+    ports:
+      - port: 80
+        targetPort: 3000
+        protocol: TCP
+        name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:
