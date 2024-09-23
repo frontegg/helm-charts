@@ -319,7 +319,7 @@ serviceAccount:
 
 role:
   enabled: false
-  kind: clusterrole
+  kind: role
   namespace: ""
   rules: []
 
