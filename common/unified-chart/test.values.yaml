@@ -252,6 +252,8 @@ role:
   enabled: true
   kind: clusterrole
   namespace: ""
+  annotations:
+    my/cool: annotation
   rules:
     - apiGroups: ["*"]
       resources: ["*"]
@@ -260,3 +262,5 @@ role:
 rolebinding:
   enabled: true
   namespace: ""
+  annotations:
+    my/cool/rolebinding: annotation

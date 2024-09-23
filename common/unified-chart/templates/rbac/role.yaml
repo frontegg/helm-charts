@@ -9,6 +9,10 @@ metadata:
   {{- if eq (.kind | lower ) "role" }}
   namespace: {{ required "role.namespace requried" .namespace }}
   {{- end }}
+  {{- with .anotations }}
+  annotations:
+    {{- toYaml . | nindent }}
+  {{- end }}
   labels:
     {{- include "labels" $top | nindent 4 }}
   {{- with .annotations }}
