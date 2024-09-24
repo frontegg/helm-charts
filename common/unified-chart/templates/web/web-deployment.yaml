@@ -50,7 +50,7 @@ spec:
         - name: {{ include "container.name" . }}
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
-          {{- if or .Values.externalSecret.enabled .Values.web.additionalVolumes }}
+          {{- if or .Values.externalSecret.enabled .Values.web.additionalVolumeMounts }}
           volumeMounts:
             {{- if .Values.externalSecret.enabled }}
             {{- include "externalsecret.volumemount" . | nindent 12 }}
