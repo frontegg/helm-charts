@@ -16,6 +16,8 @@ argoRollouts:
       role: active
   progressiveDelivery:
     enabled: true
+    blackBox:
+      url: http://nexus.default.svc.cluster.local:8080/blackbox
 
 image:
   repository:

@@ -1,0 +1,28 @@
+{{- $top := . -}}
+{{- $values := .Values -}}
+{{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: black-box
+spec:
+  args:
+    - name: service-name
+      value: {{ include "hp.name" . }}
+  metrics:
+    - name: succesful-black-box-test
+      successCondition: result == true
+      provider:
+        web:
+          method: POST # valid values are GET|POST|PUT, defaults to GET
+          url: {{ .Values.argoRollouts.progressiveDelivery.blackBox.url | default "http://nexus.default.svc.cluster.local:8080/blackbox" }}
+          timeoutSeconds: 1200 # seconds
+          headers:
+            - key: Content-Type # if body is a json, it is recommended to set the Content-Type
+              value: "application/json"
+          jsonBody: # If using jsonBody Content-Type header will be automatically set to json
+            service-name: version
+            version: {{ include "appVersion" . }}
+          jsonPath: "{$.status}"
+{{- end }}  
