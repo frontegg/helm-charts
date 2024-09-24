@@ -70,9 +70,6 @@ web:
   # - name: vol-acl-config
   #   mountPath: /etc/smokescreen/acl.yaml
   #   subPath: acl.yaml
-  # - name: vol-acl-config
-  #   mountPath: /etc/smokescreen/config.yaml
-  #   subPath: config.yaml
   pdb:
     enabled: true
     # The use of maxUnavailable is recommended as it automatically responds to changes in the number of replicas.
@@ -141,6 +138,16 @@ worker:
   env: []
   #   - name: SOME_WORKER_VAR
   #     value: some_worker_value
+  additionalVolumes: ""
+  # |
+  # - name: vol-acl-config
+  #   configMap:
+  #     name: '{{ include "fullname" $ }}-acl-config'
+  additionalVolumeMounts: ""
+  # |
+  # - name: vol-acl-config
+  #   mountPath: /etc/smokescreen/acl.yaml
+  #   subPath: acl.yaml
   service:
     labels: {}
     type: ClusterIP
@@ -196,6 +203,16 @@ hp:
   env: []
   # - name: SOME_WEB_VAR
   #   value: some_web_value
+  additionalVolumes: ""
+  # |
+  # - name: vol-acl-config
+  #   configMap:
+  #     name: '{{ include "fullname" $ }}-acl-config'
+  additionalVolumeMounts: ""
+  # |
+  # - name: vol-acl-config
+  #   mountPath: /etc/smokescreen/acl.yaml
+  #   subPath: acl.yaml
   pdb:
     enabled: true
     # The use of maxUnavailable is recommended as it automatically responds to changes in the number of replicas.
@@ -251,6 +268,16 @@ jobs:
         requests:
           cpu: 500m
           memory: 500Mi
+      additionalVolumes: ""
+      # |
+      # - name: worker-vol
+      #   configMap:
+      #     name: '{{ include "fullname" $ }}-worker'
+      additionalVolumeMounts: ""
+      # |
+      # - name: worker-vol
+      #   mountPath: /etc/smokescreen/acl.yaml
+      #   subPath: acl.yaml
 
 cronjobs:
   refresh:
