@@ -44,6 +44,7 @@ spec:
         {{- with .Values.worker.additionalVolumes }}
         {{- tpl . $top | nindent 8 }}
         {{- end }}
+      {{- end }}
       containers:
         - name: {{ include "container.name" . }}
           image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
@@ -54,7 +55,7 @@ spec:
             {{- include "externalsecret.volumemount" . | nindent 12 }}
             {{- end }}
             {{- with .Values.web.additionalVolumeMounts }}
-            {{- tpl . $top | nindent 8 }}
+            {{- tpl . $top | nindent 12 }}
             {{- end }}
           {{- end }}
           ports:

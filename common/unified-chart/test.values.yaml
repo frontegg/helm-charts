@@ -133,6 +133,17 @@ hp:
   env:
     - name: SOME_HP_VAR
       value: some_hp_value
+  additionalVolumes: |
+    - name: hp-vol
+      configMap:
+        name: '{{ include "fullname" $ }}-hp'
+  additionalVolumeMounts: |
+    - name: hp-vol
+      mountPath: /etc/smokescreen/acl.yaml
+      subPath: acl.yaml
+    - name: hp-vol
+      mountPath: /etc/smokescreen/config.yaml
+      subPath: config.yaml
   service:
     labels:
       monitoring-metrics: enabled
@@ -156,6 +167,17 @@ worker:
   env:
     - name: SOME_WORKER_VAR
       value: some_worker_value
+  additionalVolumes: |
+    - name: worker-vol
+      configMap:
+        name: '{{ include "fullname" $ }}-worker'
+  additionalVolumeMounts: |
+    - name: worker-vol
+      mountPath: /etc/smokescreen/acl.yaml
+      subPath: acl.yaml
+    - name: worker-vol
+      mountPath: /etc/smokescreen/config.yaml
+      subPath: config.yaml
   service:
     labels:
       monitoring-metrics: enabled
@@ -239,6 +261,25 @@ jobs:
     spec:
       command: ["/bin/bash"]
       args: ["test"]
+  job-with-vols:
+    enabled: true
+    metadata:
+      annotations:
+        shit: test2
+    spec:
+      command: ["/bin/bash"]
+      args: ["test"]
+      additionalVolumes: |
+        - name: worker-vol
+          configMap:
+            name: '{{ include "fullname" $ }}-worker'
+      additionalVolumeMounts: |
+        - name: worker-vol
+          mountPath: /etc/smokescreen/acl.yaml
+          subPath: acl.yaml
+        - name: worker-vol
+          mountPath: /etc/smokescreen/config.yaml
+          subPath: config.yaml
 
 cronjobs:
   refresh:
@@ -256,6 +297,17 @@ cronjobs:
     restartPolicy: Never
     image: pieceofshit:image
     nodeSelector: {}
+    additionalVolumes: |
+      - name: worker-vol
+        configMap:
+          name: '{{ include "fullname" $ }}-worker'
+    additionalVolumeMounts: |
+      - name: worker-vol
+        mountPath: /etc/smokescreen/acl.yaml
+        subPath: acl.yaml
+      - name: worker-vol
+        mountPath: /etc/smokescreen/config.yaml
+        subPath: config.yaml
 
 serviceAccount:
   enabled: true

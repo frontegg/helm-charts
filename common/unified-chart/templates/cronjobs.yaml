@@ -58,11 +58,16 @@ spec:
           imagePullSecrets:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- if $values.externalSecret.enabled }}
+          {{- if or $values.externalSecret.enabled $job.additionalVolumes }}
           volumes:
+            {{- if $values.externalSecret.enabled }}
             - name: secret-volume
               secret:
                 secretName: {{ include "secret.name" $ }}
+            {{- end }}
+            {{- with $job.additionalVolumes }}
+            {{- tpl . $top | nindent 12 }}
+            {{- end }}
           {{- end }}
           {{- with $job.securityContext }}
           securityContext:
@@ -76,9 +81,14 @@ spec:
               image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
               {{- end }}
               imagePullPolicy: {{ $values.imagePullPolicy }}
-              {{- if $values.externalSecret.enabled }}
+              {{- if or $values.externalSecret.enabled $job.additionalVolumeMounts }}
               volumeMounts:
+                {{- if $values.externalSecret.enabled }}
                 {{- include "externalsecret.volumemount" $ | nindent 16 }}
+                {{- end }}
+                {{- with $job.additionalVolumeMounts }}
+                {{- tpl . $top | nindent 16  }}
+                {{- end }}
               {{- end }}
               {{- with $job.resources}}
               resources:
