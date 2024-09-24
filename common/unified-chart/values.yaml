@@ -18,6 +18,16 @@ argoRollouts:
     enabled: true
     blackBox:
       url: http://nexus.default.svc.cluster.local:8080/blackbox
+    steps:
+      - pause: {}
+      - setWeight: 100
+      - pause: { duration: 60s }
+      - analysis:
+          templates:
+            - templateName: black-box
+          args:
+            - name: service-name
+              value: progressive-delivery-test
 
 image:
   repository:

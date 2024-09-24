@@ -15,12 +15,27 @@ spec:
     matchLabels:
       {{- include "hp.selector.labels" . | nindent 6 }}
   strategy:
-    blueGreen:
+    {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+        canary:
+          canaryService: {{ include "hp.name" . }}-canary
+          stableService: {{ include "hp.name" . }}-stable
+          trafficRouting:
+            plugins:
+              argoproj-labs/gatewayAPI:
+                httpRoute: {{ include "hp.name" . }}
+                namespace: {{ .Release.Namespace }}
+            {{- with .Values.argoRollouts.progressiveDelivery.steps }}
+            steps:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
+    {{- else}}
+        blueGreen:
       {{- with .Values.argoRollouts.activeMetadata }}
       activeMetadata:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       activeService: {{ include "hp.name" . }}
       autoPromotionEnabled: true
+    {{- end}}
 {{- end }}
 {{- end }}
