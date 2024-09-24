@@ -82,6 +82,17 @@ web:
   env:
     - name: SOME_WEB_VAR
       value: some_web_value
+  additionalVolumes: |
+    - name: vol-acl-config
+      configMap:
+        name: '{{ include "fullname" $ }}-acl-config'
+  additionalVolumeMounts: |
+    - name: vol-acl-config
+      mountPath: /etc/smokescreen/acl.yaml
+      subPath: acl.yaml
+    - name: vol-acl-config
+      mountPath: /etc/smokescreen/config.yaml
+      subPath: config.yaml
   service:
     ports:
       - port: 8080
