@@ -17,6 +17,12 @@ spec:
   strategy:
     {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
         canary:
+          stableMetadata:
+            labels:
+              role: stable
+          canaryMetadata:
+            labels:
+              role: canary
           canaryService: {{ include "hp.name" . }}-canary
           stableService: {{ include "hp.name" . }}-stable
           trafficRouting:
