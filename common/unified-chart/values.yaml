@@ -11,9 +11,9 @@ nameSuffix: v2
 
 argoRollouts:
   enabled: true
-  activeMetadata:
-    labels:
-      role: active
+  # activeMetadata:
+  #   labels:
+  #     role: active
   progressiveDelivery:
     enabled: true
     stableMetadata:

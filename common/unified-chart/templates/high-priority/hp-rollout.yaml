@@ -1,5 +1,3 @@
-{{- $top := . -}}
-{{- $values := .Values -}}
 {{- if .Values.hp.enabled }}
 {{- if .Values.argoRollouts.enabled }}
 ---
@@ -17,27 +15,25 @@ spec:
     matchLabels:
       {{- include "hp.selector.labels" . | nindent 6 }}
   strategy:
-    {{- with .Values.argoRollouts.progressiveDelivery }}
-    {{- if .enabled }}
-    canary:
-      {{- with .canaryMetadata }}
-      canaryMetadata:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .stableMetadata }}
-      stableMetadata:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      canaryService: {{ include "hp.name" $top }}-canary
-      stableService: {{ include "hp.name" $top }}-stable
-        trafficRouting:
-          plugins:
-            argoproj-labs/gatewayAPI:
-              httpRoute: {{ include "hp.name" $top  }}
-              namespace: "frontegg"
-          steps:
-            {{- toYaml .steps | nindent 12 }}
-  {{- end }}
+    {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+        canary:
+        {{- with .Values.argoRollouts.progressiveDelivery }}
+          stableMetadata:
+          {{- toYaml .stableMetadata | nindent 12 }}
+          canaryMetadata:
+          {{- toYaml .canaryMetadata| nindent 12 }}
+        {{- end }}
+          canaryService: {{ include "hp.name" . }}-canary
+          stableService: {{ include "hp.name" . }}-stable
+          trafficRouting:
+            plugins:
+              argoproj-labs/gatewayAPI:
+                httpRoute: {{ include "hp.name" . }}
+                namespace: {{ .Release.Namespace }}
+            {{- with .Values.argoRollouts.progressiveDelivery.steps }}
+            steps:
+              {{- toYaml . | nindent 12 }}
+            {{- end }}
     {{- else}}
         blueGreen:
       {{- with .Values.argoRollouts.activeMetadata }}
@@ -49,4 +45,3 @@ spec:
     {{- end}}
 {{- end }}
 {{- end }}
-
