@@ -16,6 +16,12 @@ argoRollouts:
       role: active
   progressiveDelivery:
     enabled: true
+    stableMetadata:
+      labels:
+        role: stable
+    canaryMetadata:
+      labels:
+        role: canary
     blackBox:
       url: http://nexus.default.svc.cluster.local:8080/blackbox
     steps:

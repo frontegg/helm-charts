@@ -19,6 +19,10 @@ spec:
       {{- with .Values.argoRollouts.activeMetadata }}
       {{- toYaml .labels | nindent 6 }}
       {{- end }}
+      {{- with .Values.argoRollouts.progressiveDelivery }}
+      {{- toYaml .stableMetadata | nindent 6 }}
+      {{- toYaml .canaryMetadata | nindent 6 }}
+      {{- end }}
       {{- end }}
 {{- end }}
 {{- end }}
