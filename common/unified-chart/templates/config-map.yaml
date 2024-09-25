@@ -2,8 +2,8 @@
 {{- $values := .Values -}}
 {{- if $values.configmap.data }}
 ---
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
   annotations:
     {{- $defaultt := pick .Values.default.configmap "annotations" -}}
