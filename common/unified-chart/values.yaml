@@ -11,9 +11,9 @@ nameSuffix: v2
 
 argoRollouts:
   enabled: true
-  # activeMetadata:
-  #   labels:
-  #     role: active
+  activeMetadata:
+    labels:
+      role: active
   progressiveDelivery:
     enabled: true
     stableMetadata:
@@ -23,7 +23,11 @@ argoRollouts:
       labels:
         role: canary
     blackBox:
-      url: http://nexus.default.svc.cluster.local:8080/blackbox
+      url: http://nexus.default.svc.cluster.local/blackbox
+      timeout: 1200
+      headers:
+        - key: Content-Type
+          value: "application/json"
     steps:
       - pause: {}
       - setWeight: 100

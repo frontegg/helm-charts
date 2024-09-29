@@ -16,11 +16,14 @@ spec:
     matchLabels:
       {{- include "hp.selector.labels" . | nindent 6 }}
       {{- if .Values.argoRollouts.enabled }}
-      {{- with .Values.argoRollouts.progressiveDelivery }}
-      {{- toYaml .stableMetadata.labels| nindent 6 }}
+      {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+        {{- with .Values.argoRollouts.progressiveDelivery }}
+        {{- toYaml .stableMetadata.labels | nindent 6 }}
+        {{- end }}
+      {{else}}      
+        {{- with .Values.argoRollouts.activeMetadata }}
+        {{- toYaml .labels | nindent 6 }}
       {{- end }}
-      {{- with .Values.argoRollouts.activeMetadata }}
-      {{- toYaml .labels | nindent 6 }}
       {{- end }}
       {{- end }}
 {{- end }}
