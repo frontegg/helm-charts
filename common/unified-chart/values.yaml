@@ -15,7 +15,7 @@ argoRollouts:
     labels:
       role: active
   progressiveDelivery:
-    enabled: true
+    enabled: false
     stableMetadata:
       labels:
         role: stable
@@ -32,12 +32,6 @@ argoRollouts:
       - pause: {}
       - setWeight: 100
       - pause: { duration: 60s }
-      - analysis:
-          templates:
-            - templateName: black-box
-          args:
-            - name: service-name
-              value: progressive-delivery-test
 
 image:
   repository:

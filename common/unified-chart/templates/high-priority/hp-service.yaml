@@ -12,7 +12,7 @@ metadata:
     {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  type: {{ $values.hp.service.type }}
+  type: {{ $values.hp.service.type | default "ClusterIP" }}
   ports:
     {{- range $values.hp.service.ports }}
     - port: {{ required ".Values.hp.service.ports[*].port number is required" .port }}
