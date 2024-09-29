@@ -113,13 +113,13 @@ spec:
                 - configMapRef:
                     name: {{ include "name" $top }}
               {{- end }}
-              {{- with .command }}
+              {{- with $job.command }}
               command:
                 {{- range . }}
                 - {{ tpl . $ | quote  }}
                 {{- end }}
               {{- end }}
-              {{- with .args }}
+              {{- with $job.args }}
               args:
                 {{- range . }}
                 - {{ . | quote  }}
