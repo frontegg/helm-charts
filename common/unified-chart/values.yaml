@@ -242,11 +242,7 @@ hp:
     labels: {}
     type: ClusterIP
     protocol: TCP
-    ports:
-      - port: 80
-        targetPort: 3000
-        protocol: TCP
-        name: http
+    ports: []
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:
