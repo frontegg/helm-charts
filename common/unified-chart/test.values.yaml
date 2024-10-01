@@ -3,6 +3,31 @@ team: shitballz
 envID: local
 appVersion: production-global-19900101.101010-zxc111y
 
+argoRollouts:
+  enabled: true
+  activeMetadata:
+    labels:
+      role: active
+  progressiveDelivery:
+    enabled: false
+    stableMetadata:
+      labels:
+        role: stable
+    canaryMetadata:
+      labels:
+        role: canary
+    blackBox:
+      url: http://nexus.frontegg.svc.cluster.local/blackbox
+      timeout: 1200
+      method: POST
+      headers:
+        - key: Content-Type # if body is a json, it is recommended to set the Content-Type
+          value: "application/json"
+    steps:
+      - pause: {}
+      - setWeight: 100
+      - pause: { duration: 60s }
+
 image:
   repository: frontegg/crappy-service
 

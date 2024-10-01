@@ -23,10 +23,11 @@ argoRollouts:
       labels:
         role: canary
     blackBox:
-      url: http://nexus.default.svc.cluster.local/blackbox
+      url: http://nexus.frontegg.svc.cluster.local/blackbox
       timeout: 1200
+      method: POST
       headers:
-        - key: Content-Type
+        - key: Content-Type # if body is a json, it is recommended to set the Content-Type
           value: "application/json"
     steps:
       - pause: {}
