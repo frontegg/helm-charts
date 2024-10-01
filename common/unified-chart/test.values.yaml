@@ -9,7 +9,7 @@ argoRollouts:
     labels:
       role: active
   progressiveDelivery:
-    enabled: false
+    enabled: true
     stableMetadata:
       labels:
         role: stable
