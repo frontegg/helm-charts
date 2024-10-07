@@ -37,7 +37,10 @@ argoRollouts:
 image:
   repository:
 
-default:
+defaults:
+  scrape:
+    labels:
+      monitoring-metrics: enabled
   migration:
     resources:
       requests:
@@ -97,6 +100,7 @@ web:
     maxUnavailable: 30%
     # minAvailable: 50%
   service:
+    scrape: true
     labels: {}
     type: ClusterIP
     protocol: TCP
@@ -240,6 +244,7 @@ hp:
     maxUnavailable: 30%
     # minAvailable: 50%
   service:
+    scrape: true
     labels: {}
     type: ClusterIP
     protocol: TCP

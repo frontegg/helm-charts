@@ -12,13 +12,13 @@ metadata:
     {{- include "job.labels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
-    {{- $mgr_ants := $values.default.migration.annotations }}
+    {{- $mgr_ants := $values.defaults.migration.annotations }}
     {{- if $job.metadata }}
     {{- $job_ants := $job.metadata.annotations }}
     {{- $new_ants := merge $job_ants $mgr_ants }}
     {{- toYaml $new_ants | nindent 4 }}
     {{- else }}
-    {{- toYaml $values.default.migration.annotations | nindent 4 }}
+    {{- toYaml $values.defaults.migration.annotations | nindent 4 }}
     {{- end }}
 spec:
   {{- with $job.spec }}
@@ -100,7 +100,7 @@ spec:
             {{- if .resources }}
             {{- toYaml .resources | nindent 12 }}
             {{- else }}
-            {{- toYaml $values.default.migration.resources | nindent 12 }}
+            {{- toYaml $values.defaults.migration.resources | nindent 12 }}
             {{- end }}
       {{- if $values.nodeSelector }}
       nodeSelector:

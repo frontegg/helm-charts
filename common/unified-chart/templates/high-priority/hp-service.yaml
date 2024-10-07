@@ -11,6 +11,9 @@ metadata:
     {{- with $values.hp.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- if $values.hp.service.scrape }}
+    {{- include "scrape.labels" . | nindent 4 }}
+    {{- end }}
 spec:
   type: {{ $values.hp.service.type | default "ClusterIP" }}
   ports:
