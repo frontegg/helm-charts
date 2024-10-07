@@ -77,6 +77,10 @@ app.frontegg.com/appVersion: {{ include "appVersion" . | quote }}
 app.frontegg.com/name: {{ include "name" . }}-web
 {{- end -}}
 
+{{- define "scrape.labels" }}
+{{ toYaml .Values.default.scrape.labels }}
+{{- end }}
+
 {{- define "job.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-job
 app.frontegg.com/instance: {{ .Release.Name }}

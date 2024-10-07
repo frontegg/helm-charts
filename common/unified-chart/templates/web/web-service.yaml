@@ -11,6 +11,9 @@ metadata:
     {{- with $values.web.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
+    {{- if $values.web.service.scrape }}
+    {{- include "scrape.labels" . | nindent 4 }}
+    {{- end }}
 spec:
   type: {{ $values.web.service.type }}
   ports:
