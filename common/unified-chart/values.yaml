@@ -18,7 +18,7 @@ argoRollouts:
 image:
   repository:
 
-default:
+defaults:
   scrape:
     labels:
       monitoring-metrics: enabled

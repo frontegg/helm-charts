@@ -78,7 +78,7 @@ app.frontegg.com/name: {{ include "name" . }}-web
 {{- end -}}
 
 {{- define "scrape.labels" }}
-{{ toYaml .Values.default.scrape.labels }}
+{{- toYaml .Values.defaults.scrape.labels }}
 {{- end }}
 
 {{- define "job.labels" -}}

@@ -6,7 +6,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   annotations:
-    {{- $defaultt := pick .Values.default.configmap "annotations" -}}
+    {{- $defaultt := pick .Values.defaults.configmap "annotations" -}}
     {{- $ext := pick .Values.configmap "annotations" -}}
     {{- $res := mergeOverwrite $defaultt $ext -}}
     {{- toYaml $res.annotations | nindent 4 }}
