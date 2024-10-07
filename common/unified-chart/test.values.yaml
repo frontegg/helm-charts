@@ -145,8 +145,9 @@ hp:
       mountPath: /etc/smokescreen/config.yaml
       subPath: config.yaml
   service:
+    scrape: false
     labels:
-      monitoring-metrics: enabled
+      monitoring-metrics: hp
     ports:
       - port: 80
         targetPort: 3000
@@ -180,7 +181,7 @@ worker:
       subPath: config.yaml
   service:
     labels:
-      monitoring-metrics: enabled
+      monitoring-metrics: worker
     ports:
       - port: 80
         targetPort: 3000
