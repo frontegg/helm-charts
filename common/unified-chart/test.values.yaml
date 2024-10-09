@@ -30,6 +30,7 @@ argoRollouts:
 
 image:
   repository: frontegg/crappy-service
+  prefix: "1111111111.dkr.ecr.us-east-500.amazonaws.com/docker-hub/"
 
 linkerd:
   enabled: true
