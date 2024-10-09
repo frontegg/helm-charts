@@ -47,7 +47,7 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "container.name" . }}
-          image: "{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
+          image: "{{ .Values.image.prefix }}{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
           imagePullPolicy: {{ .Values.imagePullPolicy }}
           {{- if or .Values.externalSecret.enabled .Values.web.additionalVolumeMounts }}
           volumeMounts:
