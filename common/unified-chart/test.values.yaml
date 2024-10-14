@@ -66,6 +66,15 @@ prometheusRule:
   enabled: true
 
 ingresses:
+  ingtls:
+    enabled: true
+    hostname: xxxx.stg.com
+    tls:
+      enabled: true
+      hostname: xxxx.stg.com
+      secretName: tls-secret
+    service:
+      name: someshitttyservice
   tesla:
     enabled: true
     hostname: nicola.tesla
