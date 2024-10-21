@@ -78,7 +78,7 @@ spec:
               {{- if $job.image }}
               image: {{ $job.image | quote }}
               {{- else }}
-              image: "{{ $values.image.repository }}:{{ $values.appVersion }}"
+              image: "{{ $values.image.prefix }}{{ $values.image.repository }}:{{ $values.appVersion }}"
               {{- end }}
               imagePullPolicy: {{ $values.imagePullPolicy }}
               {{- if or $values.externalSecret.enabled $job.additionalVolumeMounts }}

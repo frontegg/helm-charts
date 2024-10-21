@@ -36,6 +36,7 @@ argoRollouts:
 
 image:
   repository:
+  prefix:
 
 defaults:
   scrape:
