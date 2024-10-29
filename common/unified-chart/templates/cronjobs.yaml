@@ -18,7 +18,6 @@ metadata:
   {{- end }}
   {{- end }}
 spec:
-  podReplacementPolicy: {{ $job.podReplacementPolicy | default "Failed" }}
   schedule: {{ required "when? what? how? $job.schedule is required" $job.schedule | quote }}
   {{- with $job.concurrencyPolicy }}
   concurrencyPolicy: {{ . }}
