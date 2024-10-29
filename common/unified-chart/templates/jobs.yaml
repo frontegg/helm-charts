@@ -26,6 +26,7 @@ spec:
   completions: {{ .completions | default 1 }}
   parallelism: {{ .parallelism | default 1 }}
   backoffLimit: {{ .backoffLimit | default 1 }}
+  podReplacementPolicy: {{ .podReplacementPolicy | default "Failed" }}
   template:
     metadata:
       name: {{ include "name" $top | trunc 10 }}-{{ $jobName | trunc 10 }}-{{ $values.appVersion | trunc 41 }}

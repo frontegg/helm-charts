@@ -18,6 +18,7 @@ metadata:
   {{- end }}
   {{- end }}
 spec:
+  podReplacementPolicy: {{ $job.podReplacementPolicy | default "Failed" }}
   schedule: {{ required "when? what? how? $job.schedule is required" $job.schedule | quote }}
   {{- with $job.concurrencyPolicy }}
   concurrencyPolicy: {{ . }}
@@ -33,10 +34,10 @@ spec:
   {{- end }}
   jobTemplate:
     spec:
-      {{- with $job.ttlSecondsAfterFinished }}
-      ttlSecondsAfterFinished: {{ . }}
-      {{- end }}
       backoffLimit: {{ $job.backoffLimit | default 1 }}
+      ttlSecondsAfterFinished: {{ $job.ttlSecondsAfterFinished | default 6000 }}
+      completions: {{ $job.completions | default 1 }}
+      parallelism: {{ $job.parallelism | default 1 }}
       template:
         metadata:
           labels:

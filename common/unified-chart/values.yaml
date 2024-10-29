@@ -44,7 +44,11 @@ defaults:
       monitoring-metrics: enabled
   migration:
     resources:
+      # by default same requests as limit to ensure high QOS
       requests:
+        cpu: 250m
+        memory: 1Gi
+      limits:
         cpu: 250m
         memory: 1Gi
     annotations:
