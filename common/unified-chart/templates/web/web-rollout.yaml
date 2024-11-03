@@ -15,12 +15,33 @@ spec:
     matchLabels:
       {{- include "web.selector.labels" . | nindent 6 }}
   strategy:
-    blueGreen:
-      {{- with .Values.argoRollouts.activeMetadata }}
-      activeMetadata:
-        {{- toYaml . | nindent 8 }}
+    {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+    canary:
+      {{- with .Values.argoRollouts.progressiveDelivery }}
+      stableMetadata:
+        {{- toYaml .stableMetadata | nindent 8 }}
+      canaryMetadata:
+        {{- toYaml .canaryMetadata | nindent 8 }}
       {{- end }}
+      canaryService: {{ include "web.name" . }}-canary
+      stableService: {{ include "web.name" . }}-stable
+      trafficRouting:
+        plugins:
+          argoproj-labs/gatewayAPI:
+            httpRoute: {{ include "web.name" . }}
+            namespace: {{ .Release.Namespace }}
+        {{- with .Values.argoRollouts.progressiveDelivery.steps }}
+        steps:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+    {{- else}}
+    blueGreen:
+    {{- with .Values.argoRollouts.activeMetadata }}
+      activeMetadata:
+      {{- toYaml . | nindent 8 }}
+    {{- end }}
       activeService: {{ include "web.name" . }}
       autoPromotionEnabled: true
+    {{- end}}
 {{- end }}
 {{- end }}

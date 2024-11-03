@@ -1,5 +1,6 @@
 {{- $top := . -}}
 {{- $values := .Values -}}
+{{- if .Values.hp.enabled }}
 {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
 {{- range $type := tuple "canary" "stable" }}
 ---
@@ -25,4 +26,6 @@ spec:
     {{- include "hp.selector.labels" $top | nindent 4 }}
 {{- end }}
 {{- end }}
+{{- end }}
+
 

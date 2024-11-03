@@ -5,18 +5,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
-  name: {{ include "hp.name" . }}
+  name: {{ include "web.name" . }}
 spec:
   args:
     - name: service-name
-      value: {{ include "hp.name" . }}
+      value: {{ include "web.name" . }}
   metrics:
     - name: succesful-black-box-test
       successCondition: result == true
       provider:
         web:
         {{- with .Values.argoRollouts.progressiveDelivery }}
-          method:  {{ .blackBox.methoo | default "POST" }}
+          method:  {{ .blackBox.method | default "POST" }}
           url: {{ .blackBox.url | default "http://nexus.frontegg.svc.cluster.local/blackbox" }}
           timeoutSeconds: {{ .blackBox.timeout | default "1200" }} 
           headers:
@@ -25,7 +25,7 @@ spec:
               value: {{ $header.value }}
             {{- end }}
           jsonBody:
-            service-name: {{ include "hp.name" $top }}
+            service-name: {{ include "web.name" $top }}
             version: {{ include "appVersion" $top }}
         {{- end }}
           jsonPath: "{$.status}"

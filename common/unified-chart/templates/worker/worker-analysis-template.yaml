@@ -1,0 +1,34 @@
+{{- $top := . -}}
+{{- $values := .Values -}}
+{{- if .Values.worker.enabled }}
+{{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: {{ include "worker.name" . }}
+spec:
+  args:
+    - name: service-name
+      value: {{ include "worker.name" . }}
+  metrics:
+    - name: succesful-black-box-test
+      successCondition: result == true
+      provider:
+        web:
+        {{- with .Values.argoRollouts.progressiveDelivery }}
+          method:  {{ .blackBox.method | default "POST" }}
+          url: {{ .blackBox.url | default "http://nexus.frontegg.svc.cluster.local/blackbox" }}
+          timeoutSeconds: {{ .blackBox.timeout | default "1200" }} 
+          headers:
+            {{- range  $header := .blackBox.headers }}
+            - key: {{ $header.key }} 
+              value: {{ $header.value }}
+            {{- end }}
+          jsonBody:
+            service-name: {{ include "worker.name" $top }}
+            version: {{ include "appVersion" $top }}
+        {{- end }}
+          jsonPath: "{$.status}"
+{{- end }}  
+{{- end }}  
