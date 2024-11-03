@@ -41,6 +41,7 @@ spec:
       {{- toYaml . | nindent 8 }}
     {{- end }}
       activeService: {{ include "worker.name" . }}
-      autoPromot
+      autoPromotionEnabled: true
+{{- end }}
 {{- end }}
 {{- end }}

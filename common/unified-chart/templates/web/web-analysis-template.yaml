@@ -1,5 +1,6 @@
 {{- $top := . -}}
 {{- $values := .Values -}}
+{{- if .Values.web.enabled -}}
 {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
 ---
 apiVersion: argoproj.io/v1alpha1
@@ -29,4 +30,5 @@ spec:
             version: {{ include "appVersion" $top }}
         {{- end }}
           jsonPath: "{$.status}"
+{{- end }}  
 {{- end }}  
