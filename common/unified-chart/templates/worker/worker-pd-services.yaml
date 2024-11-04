@@ -1,0 +1,31 @@
+{{- $top := . -}}
+{{- $values := .Values -}}
+{{- if .Values.worker.enabled }}
+{{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+{{- range $type := tuple "canary" "stable" }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "worker.name" $top }}-{{ $type }}
+  labels:
+    {{- include "worker.labels" $top | nindent 4 }}
+    {{- with $values.worker.service.labels }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  type: {{ $values.worker.service.type }}
+  ports:
+    {{- range $values.worker.service.ports }}
+    - port: {{ required ".Values.worker.service.ports[*].port number is required" .port }}
+      targetPort: {{ required "need to know if someone listening: .Values.worker.service.ports[*].targetPort is required" .targetPort }}
+      protocol: {{ .protocol | default "TCP" }}
+      name: {{ .name | default "http" }}
+    {{- end }}
+  selector:
+    {{- include "worker.selector.labels" $top | nindent 4 }}
+{{- end }}
+{{- end }}
+{{- end }}
+
+

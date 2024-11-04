@@ -1,5 +1,6 @@
 {{- $top := . -}}
 {{- $values := .Values -}}
+{{- if .Values.hp.enabled }}
 {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
 ---
 apiVersion: gateway.networking.k8s.io/v1beta1
@@ -24,4 +25,5 @@ spec:
           kind: Service
     {{- end }}
     {{- end }}
+{{- end }}
 {{- end }}
