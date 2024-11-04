@@ -31,8 +31,8 @@ spec:
             httpRoute: {{ include "worker.name" . }}
             namespace: {{ .Release.Namespace }}
         {{- with .Values.argoRollouts.progressiveDelivery.steps }}
-        steps:
-          {{- toYaml . | nindent 12 }}
+      steps:
+        {{- toYaml . | nindent 6 }}
         {{- end }}
     {{- else}}
     blueGreen:
