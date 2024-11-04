@@ -1,3 +1,8 @@
+{{/* Github repo service name */}}
+{{- define "githubrepo.name" -}}
+{{- required "I cant live without a name: .Values.name must be set" .Values.name }}-service
+{{- end -}}
+
 {{/* Just the name */}}
 {{- define "name" -}}
 {{- required "I cant live without a name: .Values.name must be set" .Values.name }}{{ include "suffix" . }}

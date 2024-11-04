@@ -10,7 +10,7 @@ metadata:
 spec:
   args:
     - name: service-name
-      value: {{ include "container.name" . }}
+      value: {{ include "githubrepo.name" . }}
   metrics:
     - name: succesful-black-box-test
       successCondition: result == true
@@ -26,7 +26,7 @@ spec:
               value: {{ $header.value }}
             {{- end }}
           jsonBody:
-            service-name: {{ include "container.name" $top }}
+            service-name: {{ include "githubrepo.name" $top }}
             version: {{ include "appVersion" $top }}
         {{- end }}
           jsonPath: "{$.status}"
