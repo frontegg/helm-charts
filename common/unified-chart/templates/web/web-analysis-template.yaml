@@ -17,7 +17,7 @@ spec:
       {{- with .Values.argoRollouts.progressiveDelivery }}
       failureLimit: {{ .blackBox.failureLimit | default "1" }} 
       count: {{ .blackBox.count | default "1" }}
-      consecutiveErrorLimit: {{ .blackBox.consecutiveErrorLimit | default "1" }}
+      consecutiveErrorLimit: {{ .blackBox.consecutiveErrorLimit | default "0" }}
       provider:
         web:
           method:  {{ .blackBox.method | default "POST" }}
