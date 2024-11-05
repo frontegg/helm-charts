@@ -16,6 +16,7 @@ spec:
       successCondition: result == 'true'
       {{- with .Values.argoRollouts.progressiveDelivery }}
       failureLimit: {{ .blackBox.failureLimit | default "1" }}
+      count: {{ .blackBox.count | default "1" }}
       provider:
         web:
           method:  {{ .blackBox.method | default "POST" }}
