@@ -25,7 +25,7 @@ argoRollouts:
     blackBox:
       url: http://nexus.frontegg.svc.cluster.local/blackbox
       timeout: 1200 # Timeout for each request
-      consecutiveErrorLimit: 1
+      consecutiveErrorLimit: 0
       method: POST
       failureLimit: 1
       headers:
