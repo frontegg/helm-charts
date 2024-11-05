@@ -17,6 +17,7 @@ spec:
       {{- with .Values.argoRollouts.progressiveDelivery }}
       failureLimit: {{ .blackBox.failureLimit | default "1" }}
       count: {{ .blackBox.count | default "1" }}
+      timeout: {{ .blackBox.blackboxTimeout | default "1200" }}
       provider:
         web:
           method:  {{ .blackBox.method | default "POST" }}
