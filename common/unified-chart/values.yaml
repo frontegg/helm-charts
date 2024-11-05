@@ -24,7 +24,8 @@ argoRollouts:
         role: canary
     blackBox:
       url: http://nexus.frontegg.svc.cluster.local/blackbox
-      timeout: 1200
+      timeout: 1200 # Timeout for each request
+      blackBoxTimeout: 1200 # Maximum time for the analysis to complete
       method: POST
       failureLimit: 1
       headers:

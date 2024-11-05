@@ -13,9 +13,11 @@ spec:
       value: {{ include "githubrepo.name" . }}
   metrics:
     - name: succesful-black-box-test
-      successCondition: result == 'true'
+      successCondition: "result.status_code == 200"
       {{- with .Values.argoRollouts.progressiveDelivery }}
       failureLimit: {{ .blackBox.failureLimit | default "1" }} 
+      count: {{ .blackBox.count | default "1" }}
+      timeout: {{ .blackBox.blackboxTimeout | default "1200" }}
       provider:
         web:
           method:  {{ .blackBox.method | default "POST" }}
@@ -30,6 +32,5 @@ spec:
             service-name: {{ include "githubrepo.name" $top }}
             version: {{ include "appVersion" $top }}
       {{- end }}
-          jsonPath: "{$.status}"
 {{- end }}  
 {{- end }}  
