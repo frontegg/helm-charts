@@ -1,6 +1,6 @@
 {{/* Github repo service name */}}
 {{- define "githubrepo.name" -}}
-{{- required "I need repo name if progressive delivery enabled: .Values.progressiveDelivery.reponame must be set" .Values.repoName }}
+{{- required "I need Github repository name if progressive delivery enabled: .Values.repoName must be set" .Values.repoName }}
 {{- end -}}
 
 {{/* Just the name */}}
