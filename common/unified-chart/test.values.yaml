@@ -2,6 +2,7 @@ name: crappy
 team: shitballz
 envID: local
 appVersion: production-global-19900101.101010-zxc111y
+repoName: shitballz-service
 
 argoRollouts:
   enabled: true
