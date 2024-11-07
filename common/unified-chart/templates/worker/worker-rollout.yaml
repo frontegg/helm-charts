@@ -30,7 +30,7 @@ spec:
           - name: {{ include "worker.name" . }}
         plugins:
           argoproj-labs/gatewayAPI:
-            httpRoute: {{ include "worker.name" . }}
+            httpRoute: {{ include "worker.name" . }}-route
             namespace: {{ .Release.Namespace }}
         {{- with .Values.argoRollouts.progressiveDelivery.steps }}
       steps:
