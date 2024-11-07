@@ -30,7 +30,9 @@ spec:
           - name: {{ include "web.name" . }}
         plugins:
           argoproj-labs/gatewayAPI:
-            httpRoute: {{ include "web.name" . }}-route
+            httpRoutes:
+              - name: {{ include "web.name" . }}-route
+                useHeaderRoutes: true
             namespace: {{ .Release.Namespace }}
         {{- with .Values.argoRollouts.progressiveDelivery.steps }}
       steps:
