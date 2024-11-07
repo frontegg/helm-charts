@@ -26,6 +26,8 @@ spec:
       canaryService: {{ include "hp.name" . }}-canary
       stableService: {{ include "hp.name" . }}-stable
       trafficRouting:
+        managedRoutes:
+          - name: {{ include "hp.name" . }}
         plugins:
           argoproj-labs/gatewayAPI:
             httpRoute: {{ include "hp.name" . }}
