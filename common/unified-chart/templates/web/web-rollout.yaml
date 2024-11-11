@@ -1,3 +1,4 @@
+{{- $top := . -}}
 {{- if .Values.web.enabled -}}
 {{- if .Values.argoRollouts.enabled }}
 ---
@@ -35,8 +36,22 @@ spec:
             namespace: {{ .Release.Namespace }}
         {{- with .Values.argoRollouts.progressiveDelivery.steps }}
       steps:
-        {{- toYaml . | nindent 6 }}
-        {{- end }}
+        - setCanaryScale:
+            replicas: {{ .replicas | default "1" }}
+        - setHeaderRoute:
+            name: {{ include "web.name" $top }}
+            match:
+              - headerName: x-frontegg-test
+                headerValue:
+                  exact: automation
+        - analysis:
+            templates:
+              - templateName: {{ include "web.name" $top }}
+            args:
+              - name: service-name
+                value: {{ include "githubrepo.name" $top }}
+        - setHeaderRoute: # remove header route
+            name: {{ include "web.name"  $top  }}
     {{- else}}
     blueGreen:
     {{- with .Values.argoRollouts.activeMetadata }}
@@ -46,5 +61,6 @@ spec:
       activeService: {{ include "web.name" . }}
       autoPromotionEnabled: true
     {{- end}}
+{{- end }}
 {{- end }}
 {{- end }}

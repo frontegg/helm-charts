@@ -28,9 +28,7 @@ argoRollouts:
         - key: Content-Type # if body is a json, it is recommended to set the Content-Type
           value: "application/json"
     steps:
-      - pause: {}
-      - setWeight: 100
-      - pause: { duration: 60s }
+      replicas: 1
 
 image:
   repository: frontegg/crappy-service
