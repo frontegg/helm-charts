@@ -52,6 +52,7 @@ spec:
                 value: {{ include "githubrepo.name" $top }}
         - setHeaderRoute: # remove header route
             name: {{ include "worker.name"  $top  }}
+      {{- end }}
     {{- else}}
     blueGreen:
     {{- with .Values.argoRollouts.activeMetadata }}
@@ -60,8 +61,7 @@ spec:
     {{- end }}
       activeService: {{ include "worker.name" . }}
       autoPromotionEnabled: true
-{{- end }}
-{{- end }}
+  {{- end }}
 {{- end }}
 {{- end }}
 
