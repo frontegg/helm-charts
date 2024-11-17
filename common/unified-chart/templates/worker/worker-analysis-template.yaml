@@ -21,7 +21,7 @@ spec:
       provider:
         web:
           method:  {{ .blackBox.method | default "POST" }}
-          url: {{ .blackBox.url | default "http://nexus-v2-web.frontegg.svc.cluster.local/blackbox" }}
+          url: {{ .blackBox.url }}
           timeoutSeconds: {{ .blackBox.timeout | default "1200" }} 
           headers:
             {{- range  $header := .blackBox.headers }}

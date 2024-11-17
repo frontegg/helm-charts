@@ -23,7 +23,7 @@ argoRollouts:
       labels:
         role: canary
     blackBox:
-      url: http://nexus.frontegg.svc.cluster.local/blackbox
+      url: http://nexus-v2-web.frontegg.svc.cluster.local/blackbox
       timeout: 1200 # Timeout for each request
       consecutiveErrorLimit: 0
       method: POST
