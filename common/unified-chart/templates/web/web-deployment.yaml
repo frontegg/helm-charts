@@ -26,7 +26,7 @@ spec:
         {{- $valsweb := .Values.web -}}
         {{- $bothweb := merge $valsweb (pick .Values "linkerd") }}
         {{- include "calculate.pod.annotations" $bothweb | nindent 8 }}
-        checksum/secret/sha256sum: {{ printf "%s%s" (print $values.externalSecret.text) (print $values.externalSecret.additionalSecrets) | sha256sum }}
+        checksum/secret: {{ printf "%s%s" (print $values.externalSecret.text) (print $values.externalSecret.additionalSecrets) | sha256sum }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "service.account.name" . }}
