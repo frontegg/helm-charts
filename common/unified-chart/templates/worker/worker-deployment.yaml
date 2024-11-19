@@ -25,6 +25,7 @@ spec:
         {{- $valsworker := .Values.worker -}}
         {{- $bothworker := merge $valsworker (pick .Values "linkerd") }}
         {{- include "calculate.pod.annotations" $bothworker | nindent 8 }}
+        checksum/secret: {{ printf "%s%s" (print .Values.externalSecret.text) (print .Values.externalSecret.additionalSecrets) | sha256sum }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "service.account.name" . }}

@@ -27,6 +27,7 @@ spec:
         {{- $valshp := .Values.hp -}}
         {{- $bothhp := merge $valshp (pick .Values "linkerd") }}
         {{- include "calculate.pod.annotations" $bothhp | nindent 8 }}
+        checksum/secret: {{ printf "%s%s" (print $values.externalSecret.text) (print $values.externalSecret.additionalSecrets) | sha256sum }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "service.account.name" . }}
