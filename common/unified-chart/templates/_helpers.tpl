@@ -149,7 +149,9 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- if .linkerd.enabled }}
 {{- mergeOverwrite .podAnnotations .linkerd.annotations | toYaml }}
 {{- else }}
-{{- toYaml .podAnnotations }}
+{{- with .podAnnotations }}
+{{- toYaml . }}
+{{- end }}
 {{- end }}
 {{- end -}}
 

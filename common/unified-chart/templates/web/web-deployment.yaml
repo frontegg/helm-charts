@@ -23,10 +23,10 @@ spec:
       labels:
         {{- include "web.labels" . | nindent 8 }}
       annotations:
-        {{- $valsweb := .Values.web -}}
-        {{- $bothweb := merge $valsweb (pick .Values "linkerd") }}
-        {{- include "calculate.pod.annotations" $bothweb | nindent 8 }}
         checksum/secret: {{ printf "%s%s" (print $values.externalSecret.text) (print $values.externalSecret.additionalSecrets) | sha256sum }}
+        {{- $valsweb := .Values.web -}}
+        {{- $bothweb := merge $valsweb (pick .Values "linkerd") -}}
+        {{- include "calculate.pod.annotations" $bothweb | nindent 8 }}
     spec:
       {{- if .Values.serviceAccount.enabled }}
       serviceAccountName: {{ include "service.account.name" . }}
