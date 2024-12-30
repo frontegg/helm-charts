@@ -22,7 +22,7 @@ roleRef:
   name: {{ include "name" $top }}
 subjects:
   - kind: ServiceAccount
-    name: {{ include "name" $top }}
+    name: {{ include "service.account.name" $top }}
     namespace: {{ $.Release.Namespace }}
 {{- end }}
 {{- end }}
