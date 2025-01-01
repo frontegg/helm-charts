@@ -5975,6 +5975,18 @@ entries:
     version: 4.0.20
   unified-chart-staging:
   - apiVersion: v2
+    created: "2025-01-01T12:30:54.673860072Z"
+    description: Frontegg Unified Chart
+    digest: 916251507b2fedf2bffce55611be4e2fce44645a5122957249a171181a29e33d
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart-staging
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-staging-4.0.65/unified-chart-staging-4.0.65.tgz
+    version: 4.0.65
+  - apiVersion: v2
     created: "2024-12-30T13:36:07.353034674Z"
     description: Frontegg Unified Chart
     digest: 435952e54d445e7f17a5315880f39eb37b9fe48f5a3c7aa5c70d9bd9c2c1494c
@@ -6768,4 +6780,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2024-12-30T15:20:29.186722304Z"
+generated: "2025-01-01T12:30:54.675522587Z"
