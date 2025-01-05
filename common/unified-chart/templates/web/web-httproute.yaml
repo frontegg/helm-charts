@@ -17,9 +17,11 @@ spec:
     {{- end }}
   rules:
     - backendRefs:
-    {{- range $type := tuple "canary" "stable" }}
+{{/*    {{- range $type := tuple "canary" "stable" }}*/}}
+        {{- range $type := tuple "-canary" "" }}
           {{- range $values.web.service.ports }}
-        - name: {{ include "web.name" $top  }}-{{ $type }}
+        - name: {{ include "web.name" $top  }}{{ $type }}
+{{/*          name: {{ include "web.name" $top  }}-{{ $type }}*/}}
           group: "core"
           port: {{ required ".Values.web.service.ports[*].port number is required" .port }}
           kind: Service
