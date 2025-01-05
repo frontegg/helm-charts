@@ -25,7 +25,7 @@ spec:
         {{- toYaml .canaryMetadata | nindent 8 }}
       {{- end }}
       canaryService: {{ include "worker.name" . }}-canary
-      stableService: {{ include "worker.name" . }}-stable
+      stableService: {{ include "worker.name" . }}
       trafficRouting:
         managedRoutes:
           - name: {{ include "worker.name" . }}
