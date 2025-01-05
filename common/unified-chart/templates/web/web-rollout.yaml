@@ -25,7 +25,8 @@ spec:
         {{- toYaml .canaryMetadata | nindent 8 }}
       {{- end }}
       canaryService: {{ include "web.name" . }}-canary
-      stableService: {{ include "web.name" . }}-stable
+{{/*      stableService: {{ include "web.name" . }}-stable*/}}
+      stableService: {{ include "web.name" . }}
       trafficRouting:
         managedRoutes:
           - name: {{ include "web.name" . }}
