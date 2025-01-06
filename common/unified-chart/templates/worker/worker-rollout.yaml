@@ -41,9 +41,9 @@ spec:
         - setHeaderRoute:
             name: {{ include "worker.name" $top }}
             match:
-              - headerName: x-frontegg-test
+              - headerName: frontegg-trace-id
                 headerValue:
-                  exact: automation
+                  regex: '^.*-test$'
         - analysis:
             templates:
               - templateName: {{ include "worker.name" $top }}
