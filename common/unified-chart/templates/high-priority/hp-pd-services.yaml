@@ -2,11 +2,12 @@
 {{- $values := .Values -}}
 {{- if .Values.hp.enabled }}
 {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+{{- range $type := tuple "canary" "stable" }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "hp.name" $top }}-canary
+  name: {{ include "hp.name" $top }}-{{ $type }}
   labels:
     {{- include "hp.labels" $top | nindent 4 }}
     {{- with $values.hp.service.labels }}
@@ -23,6 +24,7 @@ spec:
     {{- end }}
   selector:
     {{- include "hp.selector.labels" $top | nindent 4 }}
+{{- end }}
 {{- end }}
 {{- end }}
 

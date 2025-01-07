@@ -3,7 +3,7 @@
 {{- if .Values.hp.enabled }}
 {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
 ---
-apiVersion: gateway.networking.k8s.io/v1beta1
+apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
   name: {{ include "hp.name" $top }}-route
@@ -17,15 +17,13 @@ spec:
     {{- end }}
   rules:
     - backendRefs:
-      {{- range $values.hp.service.ports }}
-      - name: {{ include "hp.name" $top  }}-canary
-        group: "core"
-        port: {{ required ".Values.hp.service.ports[*].port number is required" .port }}
-        kind: Service
-      - name: {{ include "hp.name" $top  }}
-        group: "core"
-        port: {{ required ".Values.hp.service.ports[*].port number is required" .port }}
-        kind: Service
-      {{- end }}
+    {{- range $type := tuple "canary" "stable" }}
+          {{- range $values.hp.service.ports }}
+        - name: {{ include "hp.name" $top  }}-{{ $type }}
+          group: "core"
+          port: {{ required ".Values.hp.service.ports[*].port number is required" .port }}
+          kind: Service
+    {{- end }}
+    {{- end }}
 {{- end }}
 {{- end }}
