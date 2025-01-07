@@ -23,7 +23,9 @@ spec:
       protocol: {{ .protocol | default "TCP" }}
       name: {{ .name | default "http" }}
     {{- end }}
+  {{- if not .Values.argoRollouts.progressiveDelivery.enabled }}
   selector:
     {{- include "web.selector.labels" . | nindent 4 }}
+  {{- end }}
 {{- end }}
 {{- end }}

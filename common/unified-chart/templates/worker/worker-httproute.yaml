@@ -17,15 +17,13 @@ spec:
     {{- end }}
   rules:
     - backendRefs:
-    {{- range $values.worker.service.ports }}
-      - name: {{ include "worker.name" $top  }}-canary
-        group: "core"
-        port: {{ required ".Values.worker.service.ports[*].port number is required" .port }}
-        kind: Service
-      - name: {{ include "worker.name" $top  }}
-        group: "core"
-        port: {{ required ".Values.worker.service.ports[*].port number is required" .port }}
-        kind: Service
+    {{- range $type := tuple "canary" "stable" }}
+          {{- range $values.worker.service.ports }}
+        - name: {{ include "worker.name" $top  }}-{{ $type }}
+          group: "core"
+          port: {{ required ".Values.worker.service.ports[*].port number is required" .port }}
+          kind: Service
+    {{- end }}
     {{- end }}
 {{- end }}
 {{- end }}
