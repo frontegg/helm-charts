@@ -1,3 +1,4 @@
+{{- if not .Values.argoRollouts.progressiveDelivery.enabled }}
 {{- $top := . }}
 {{- with .Values.web.serviceProfile }}
 {{- if .enabled }}
@@ -19,5 +20,6 @@ metadata:
 spec:
   routes:
     {{- .routes | toYaml | nindent 4 }}
+{{- end }}
 {{- end }}
 {{- end }}
