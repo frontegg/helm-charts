@@ -6730,6 +6730,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/unified-chart-staging-4.0.20/unified-chart-staging-4.0.20.tgz
     version: 4.0.20
+  unified-chart-x-uk:
+  - apiVersion: v2
+    created: "2025-01-16T15:57:48.140045291Z"
+    description: Frontegg Unified Chart
+    digest: f9a3992238f843624fec9957a29cc348e26f66b5bbb45c5526e77a4c15e237c0
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart-x-uk
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-x-uk-4.0.83/unified-chart-x-uk-4.0.83.tgz
+    version: 4.0.83
   webhook-service:
   - apiVersion: v2
     created: "2023-12-12T14:22:00.645415586Z"
@@ -6996,4 +7009,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-01-09T12:35:49.041641623Z"
+generated: "2025-01-16T15:57:48.140851089Z"
