@@ -10,14 +10,15 @@ on:
       - common/unified-chart/**
 
 jobs:
-  uk:
-    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
-    with:
-      environment: x-uk
   stg:
     uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
     with:
       environment: staging
+  uk:
+    needs: stg
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
+    with:
+      environment: x-uk
   ca-au:
     needs: stg
     uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
