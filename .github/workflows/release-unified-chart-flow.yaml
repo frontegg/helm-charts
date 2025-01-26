@@ -18,7 +18,7 @@ jobs:
     needs: stg
     uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
     with:
-      environment: x-uk
+      environment: production-uk
   ca-au:
     needs: stg
     uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
