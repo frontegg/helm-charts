@@ -43,7 +43,7 @@ spec:
             match:
               - headerName: frontegg-trace-id
                 headerValue:
-                  regex: '^.*-test$'
+                  prefix: automation
         - analysis:
             templates:
               - templateName: {{ include "worker.name" $top }}
