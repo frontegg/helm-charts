@@ -1,4 +1,3 @@
-{{- if not .Values.argoRollouts.progressiveDelivery.enabled }}
 {{- $top := . }}
 {{- with .Values.web.serviceProfile }}
 {{- if .enabled }}
@@ -6,11 +5,14 @@
 apiVersion: linkerd.io/v1alpha2
 kind: ServiceProfile
 metadata:
+  {{- if .Values.argoRollouts.progressiveDelivery.enabled }}
+  name: {{ include "web.name" $top }}-stable.frontegg.svc.cluster.local
+  {{- else }}
   name: {{ include "web.name" $top }}.frontegg.svc.cluster.local
+  {{- end }}
   namespace: {{ .namespace | default "frontegg" }}
 spec:
   routes:
     {{- .routes | toYaml | nindent 4 }}
-{{- end }}
 {{- end }}
 {{- end }}
