@@ -9,7 +9,7 @@ kind: Service
 metadata:
   name: {{ include "hp.name" $top }}-{{ $type }}
   labels:
-    {{- include "hp.labels" $top | nindent 4 }}
+    {{- include "hp.appversion.labels" $top | nindent 4 }}
     {{- with $values.hp.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
