@@ -2,7 +2,7 @@
 name: release chart single version
 permissions: write-all
 
-# concurrency: unified-helm-chart-release
+concurrency: unified-helm-chart-release
 
 on:
   workflow_call:
