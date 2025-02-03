@@ -5634,6 +5634,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/unified-chart-1.0.0/unified-chart-1.0.0.tgz
     version: 1.0.0
+  unified-chart-idgw-stg:
+  - apiVersion: v2
+    created: "2025-02-03T14:47:37.487185978Z"
+    description: Frontegg Unified Chart
+    digest: 265caffe4714b4668d7c537e98737255ce3748047d4a340ce6a4b8c7cf07748e
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart-idgw-stg
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-idgw-stg-4.0.93/unified-chart-idgw-stg-4.0.93.tgz
+    version: 4.0.93
   unified-chart-production-au:
   - apiVersion: v2
     created: "2025-01-02T13:40:52.61984194Z"
@@ -7178,4 +7191,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-02-02T17:14:27.923724164Z"
+generated: "2025-02-03T14:47:37.48810172Z"
