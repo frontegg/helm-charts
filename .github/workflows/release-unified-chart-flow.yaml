@@ -14,6 +14,10 @@ jobs:
     uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
     with:
       environment: staging
+  idgw-stg:
+    uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
+    with:
+      environment: idgw-stg
   uk:
     needs: stg
     uses: frontegg/helm-charts/.github/workflows/release-chart-version.yaml@master
