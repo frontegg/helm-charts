@@ -113,6 +113,20 @@ ingresses:
             servicePort: 8080
             pathType: Prefix
           - path: /smartass
+  split:
+    enabled: true
+    ingressClassName: alb
+    hostname: split.stg.backegg.io-{{ .Values.name }}
+    service:
+      name: '{{ include "web.name" $ }}'
+      port: 80
+    annotations:
+      alb.ingress.kubernetes.io/scheme: internal
+      alb.ingress.kubernetes.io/target-type: ip
+      alb.ingress.kubernetes.io/group.name: internal.observability
+      external-dns.alpha.kubernetes.io/cloudflare-proxied: "false"
+    path: /
+    pathType: Prefix
 
 web:
   enabled: true
