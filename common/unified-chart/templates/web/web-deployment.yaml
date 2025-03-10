@@ -100,7 +100,7 @@ spec:
             {{- end }}
           {{- end }}
           resources:
-            {{- toYaml .Values.web.resources | nindent 12 }}
+            {{- required ".Values.web.resources is required" .Values.web.resources | toYaml | nindent 12 }}
           {{- with .Values.web.command }}
           command:
             {{- range . }}
