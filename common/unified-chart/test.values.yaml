@@ -348,6 +348,10 @@ jobs:
 cronjobs:
   refresh:
     enabled: true
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
     metadata:
       annotations:
         something/cronjob: someannotation

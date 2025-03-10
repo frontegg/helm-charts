@@ -90,10 +90,8 @@ spec:
                 {{- tpl . $top | nindent 16  }}
                 {{- end }}
               {{- end }}
-              {{- with $job.resources}}
               resources:
-                {{- toYaml . | nindent 16 }}
-              {{- end }}
+                {{- required "$job.resources is required" $job.resources | toYaml | nindent 16 }}
               env:
               {{- if $values.externalSecret.enabled }}
                 - name: FRONTEGG_CONFIG_DIRECTORY
