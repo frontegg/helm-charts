@@ -99,7 +99,7 @@ spec:
             {{- end }}
           {{- end }}
           resources:
-            {{- toYaml .Values.worker.resources | nindent 12 }}
+            {{- required ".Values.worker.resources is required" .Values.worker.resources | toYaml | nindent 12 }}
           {{- with .Values.worker.command }}
           command:
             {{- range . }}

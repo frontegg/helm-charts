@@ -132,7 +132,6 @@ web:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
 
-  resources: {}
   terminationGracePeriodSeconds: 30
   livenessProbe:
     # failureThreshold: 3
@@ -195,10 +194,6 @@ worker:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "worker.name" $ }}'
-  resources:
-    requests:
-      cpu: 250m
-      memory: 1Gi
   livenessProbe:
     # failureThreshold: 3
     # httpGet:

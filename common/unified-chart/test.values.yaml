@@ -130,6 +130,10 @@ ingresses:
 
 web:
   enabled: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
   env:
     - name: SOME_WEB_VAR
       value: some_web_value
@@ -181,6 +185,10 @@ web:
 
 hp:
   enabled: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
   env:
     - name: SOME_HP_VAR
       value: some_hp_value
@@ -216,6 +224,10 @@ hp:
 
 worker:
   enabled: true
+  resources:
+    requests:
+      cpu: 500m
+      memory: 500Mi
   env:
     - name: SOME_WORKER_VAR
       value: some_worker_value
@@ -336,6 +348,10 @@ jobs:
 cronjobs:
   refresh:
     enabled: true
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
     metadata:
       annotations:
         something/cronjob: someannotation
