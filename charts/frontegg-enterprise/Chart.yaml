@@ -186,7 +186,8 @@ dependencies:
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: vendors
 #
- - name: *chartName
-   version: *chartVersion
-   repository: https://frontegg.github.io/helm-charts
-   alias: webhook-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: webhook-service
