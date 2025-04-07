@@ -11,182 +11,182 @@ maintainers:
     email: "support@frontegg.com"
 
 dependencies:
-  - name: unified-chart
-    version: &chartVersion 4.0.99
+  - name: &chartName unified-chart-staging
+    version: &chartVersion 4.0.*
     repository: https://frontegg.github.io/helm-charts
     alias: admins
 
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: apiGateway
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: applicationsService
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: anomalyDetection
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: authHubService
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: authentication
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: audits
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: backoffice
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: connectorsWorker
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: customCodeService
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: dashboard
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: dashboardEnvBuilder
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: directory
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: entitlements
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: envDuplicator
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: events
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: forwardProxy
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: integrations
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: logs
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: logsStreaming
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: metadata
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: nlpExecutionAssistant
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: prehooks
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: pricingViews
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: reports
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: reportingEngine
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: reportingScheduler
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: securityCenterGraphs
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: securityEngine
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: subscriptions
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: taskMaster
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: teamManagement
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: tenants
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: usageTracking
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: vendors
 #
-#  - name: unified-chart
+#  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: webhooks
