@@ -1,8 +1,8 @@
 {{- $values := .Values -}}
 {{- $top := . -}}
-{{- $apps := .Values.frontegg.applications -}}
-{{- $infra := .Values.externalServices -}}
-{{- $secrets := .Values.externalServices.secrets -}}
+{{- $apps := .Values.configCenter.frontegg.applications -}}
+{{- $infra := .Values.configCenter.externalServices -}}
+{{- $secrets := .Values.configCenter.externalServices.secrets -}}
 
 apiVersion: v1
 kind: ConfigMap
@@ -11,7 +11,7 @@ metadata:
   labels:
     {{- include "config-center.labels" . | nindent 4 }}
 data:
-  {{- with .Values.frontegg.services }}
+  {{- with .Values.configCenter.frontegg.services }}
   prehook-service-url: {{ .prehookServiceUrl }}
   admins-service-url: {{ .adminsServiceUrl }}
   audits-service-url: {{ .auditsServiceUrl }}
