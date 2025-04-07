@@ -334,3 +334,194 @@ config-center:
       nlpExecutionAssistantUrl: "http://nlp-execution-assistant-v2-web"
       anomalyDetectionUrl: "http://anomaly-detection-v2-web"
       fronteggVendorHost: "EMPTY"
+
+
+webhook-service:
+  name: webhooks
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/webhook-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3013
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3013
+    env:
+      - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
+        value: "false"
+    podAnnotations:
+      config.linkerd.io/skip-outbound-ports: "8080"
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+      failureThreshold: 3
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      failureThreshold: 30
+      periodSeconds: 10
+    startupProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 15
+
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3013
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3013
+    env:
+      - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
+        value: "true"
+    podAnnotations:
+      config.linkerd.io/skip-outbound-ports: "8080"
+    labels:
+      scrape-for-metrics: enabled
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /health
+        port: http
+      failureThreshold: 30
+      periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      periodSeconds: 10
+      failureThreshold: 30
+
+  configmap:
+    data:
+      NODE_ENV: production
+      FRONTEGG_PORT: "3013"
+      FRONTEGG_SERVICE_NAME: webhook-service
+      FRONTEGG_WEBHOOK_SERVICE_MONGODB_CONNECTION_RETRY_ATTEMPTS: "3"
+      FRONTEGG_WEBHOOK_SERVICE_MONGODB_CONNECTION_RETRY_DELAY: "1000"
+      FRONTEGG_EVENT_SERVICE_URL: http://frontegg-event-service
+      FRONTEGG_EVENTS_PUBSUB_TOPIC: events
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
+      FRONTEGG_ANALYTICS_TYPE: firehose
+      FRONTEGG_VALIDATION_WEBHOOK_URL_HOSTNAME_BLACKLIST_REGEXP: (169\.254\.\d+.\d+)|(127\.0\.0\.1)
+      FRONTEGG_WEBHOOK_GUARD_FEATURE_FLAG_NAME: "webhooks_blacklist"
+      FRONTEGG_HTTP_CLIENT_PROXY_AUTH_ENABLED: "false"
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      NODE_NO_WARNINGS: "1"
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_EVENT_SERVICE_URL: events-service-url
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_WEBHOOK_MYSQL_DB_NAME: webhook-mysql-db-name
+        FRONTEGG_WEBHOOK_SERVICE_MONGODB_CONNECTION_RETRY_ATTEMPTS: webhook-service-mongodb-connection-retry-attempts
+        FRONTEGG_WEBHOOK_SERVICE_MONGODB_CONNECTION_RETRY_DELAY: webhook-service-mongodb-connection-retry-delay
+        FRONTEGG_EVENTS_PUBSUB_TOPIC: events-pubsub-topic
+        FRONTEGG_HTTP_CLIENT_PROXY_ENABLED: webhook-proxy-enabled
+        FRONTEGG_HTTP_CLIENT_PROXY_HOST: frontegg-proxy-host
+        FRONTEGG_HTTP_CLIENT_PROXY_PORT: frontegg-proxy-port
+        FRONTEGG_HTTP_CLIENT_PROXY_PROTO: frontegg-proxy-protocol
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.webhooksServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      splitIO:
+        splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      databases:
+        mongoDB:
+          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+        mysql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+      internalServices:
+        eventService:
+          apiKey: {{ $secret.frontegg.apiKeys.eventsServiceApiKey | toYaml }}
+      analytics:
+        firehose:
+          aws:
+            keyId: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
+            secretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
+            region: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
+
+    additionalSecrets: ""
