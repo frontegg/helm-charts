@@ -7,10 +7,13 @@ admins:
   # envID specifies the environment identifier (e.g., local, dev, prod).
   envID: prod
 
+  appVersion: production-global
+
   image:
     # repository specifies the Docker image repository for the admins service.
     repository: frontegg/admins-service
   # web contains configurations specific to the web deployment of the admins service.
+
   web:
     # enabled specifies whether the web component of the admins service is enabled.
     enabled: true
@@ -128,8 +131,9 @@ admins:
 webhook-service:
   name: webhooks
   team: adoption
-
   envID: local
+
+  appVersion: production-global
 
   image:
     repository: frontegg/webhook-service
