@@ -16,10 +16,10 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: admins
 
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: apiGateway
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: api-gateway
 
   - name: *chartName
     version: *chartVersion
