@@ -1,103 +1,55 @@
-# Configuration for the admins service
 admins:
-  # name specifies the name identifier for the admins service components.
   name: admins
-  # team specifies the team associated with this service.
   team: frontegg
-  # envID specifies the environment identifier (e.g., local, dev, prod).
   envID: prod
 
   appVersion: production-global
 
   image:
-    # repository specifies the Docker image repository for the admins service.
     repository: frontegg/admins-service
-  # web contains configurations specific to the web deployment of the admins service.
 
   web:
-    # enabled specifies whether the web component of the admins service is enabled.
     enabled: true
-    # command overrides the default entrypoint command for the container.
     command: ["/bin/bash"]
-    # args specifies the arguments passed to the command.
     args: ["entrypoint.sh"]
-    # resources specifies the CPU and memory resource requests and limits for the container.
     resources:
-      # requests specifies the minimum resources required.
       requests:
-        # cpu specifies the requested CPU amount.
         cpu: 500m
-        # memory specifies the requested memory amount.
         memory: 1Gi
-      # limits specifies the maximum resources allowed.
       limits:
-        # memory specifies the memory limit.
         memory: 1Gi
-    # service defines the Kubernetes service configuration for the web component.
     service:
-      # ports defines the ports exposed by the service.
       ports:
-        # port is the port number the service listens on.
         - port: 80
-          # targetPort is the port on the pod that the service forwards traffic to.
           targetPort: 3004
-          # protocol specifies the network protocol (TCP or UDP).
           protocol: TCP
-          # name is the name of the port.
           name: http
-    # ports defines the container ports to open.
     ports:
-      # name is the name of the container port.
       - name: http
-        # containerPort is the port number inside the container.
         containerPort: 3004
-    # autoscaling configures Horizontal Pod Autoscaler (HPA) for the web deployment.
     autoscaling:
-      # enabled specifies whether HPA is enabled.
       enabled: true
-      # minReplicas specifies the minimum number of replicas.
       minReplicas: 2
-      # maxReplicas specifies the maximum number of replicas.
       maxReplicas: 10
-      # targetCPUUtilizationPercentage specifies the target average CPU utilization across all pods.
       targetCPUUtilizationPercentage: 50
-      # targetMemoryUtilizationPercentage specifies the target average memory utilization across all pods.
       targetMemoryUtilizationPercentage: 50
-    # livenessProbe configures the liveness probe to check if the container is running.
     livenessProbe:
-      # failureThreshold specifies how many times the probe can fail before the container is restarted.
       failureThreshold: 3
-      # httpGet specifies an HTTP GET request to perform for the probe.
       httpGet:
-        # path specifies the URL path to access on the container.
         path: /health
-        # port specifies the name or number of the port to access on the container.
         port: http
-      # initialDelaySeconds specifies the number of seconds after the container has started before the probe is initiated.
       initialDelaySeconds: 20
-      # periodSeconds specifies how often (in seconds) to perform the probe.
       periodSeconds: 10
-    # readinessProbe configures the readiness probe to check if the container is ready to serve traffic.
     readinessProbe:
-      # httpGet specifies an HTTP GET request to perform for the probe.
       httpGet:
-        # path specifies the URL path to access on the container.
         path: /health
-        # port specifies the name or number of the port to access on the container.
         port: http
-      # initialDelaySeconds specifies the number of seconds after the container has started before the probe is initiated.
       initialDelaySeconds: 5
-      # periodSeconds specifies how often (in seconds) to perform the probe.
       periodSeconds: 5
-  # configmap defines the configuration map for the admins service.
   configmap:
-    # data contains the key-value pairs for the configmap.
     data:
-      # CLOUD_ENVIRONMENT specifies the cloud environment type.
       CLOUD_ENVIRONMENT: production
-      # NODE_ENV specifies the Node.js environment.
       NODE_ENV: production
-      # FRONTEGG_CONFIG_FILE_PATH specifies the path to the Frontegg configuration file.
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
 
   configuration:
