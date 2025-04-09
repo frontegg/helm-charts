@@ -3671,5 +3671,881 @@ dashboard-env-builder:
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
 
+custom-code-service:
+  name: custom-code
+  team: adoption
 
+  envID: local
+
+  image:
+    repository: frontegg/custom-code-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3036
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3036
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 40
+      periodSeconds: 60
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3036
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3036
+    nodeSelector:
+      workload: general
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    livenessProbe:
+      failureThreshold: 5
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 60
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      SENTRY_ENABLED: "true"
+      SENTRY_DSN: "https://f937ac31272a0c754ee68c25204c05f9@o362363.ingest.us.sentry.io/4507905114636288"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+        FRONTEGG_AWS_REGION: aws-region
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
+        FRONTEGG_AWS_LAMBDA_MANAGEMENT_ROLE_ARN: custom-code-service-lambda-management-role-arn
+        FRONTEGG_AWS_LAMBDA_EXECUTION_ROLE_ARN: custom-code-service-lambda-execution-role-arn
+        FRONTEGG_AWS_STEP_FUNCTIONS_MANAGEMENT_ROLE_ARN: custom-code-service-lambda-management-role-arn
+        FRONTEGG_AWS_STEP_FUNCTIONS_EXECUTION_ROLE_ARN: custom-code-service-lambda-execution-role-arn
+        FRONTEGG_AWS_LAMBDA_LAYERS: custom-code-service-lambda-layers
+        FRONTEGG_AWS_LAMBDA_ENV_CX_DOMAIN: custom-code-service-lambda-env-cx-domain
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_AWS_LAMBDA_EXECUTION_DEFAULT_POLICIES: custom-code-service-lambda-execution-default-policies
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      databases:
+        mysql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      encryption:
+        secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      aws:
+        lambda:
+          environment:
+            variables:
+              cxApiKey: {{ $secret.frontegg.applications.customCode.lambda.cxApiKey | toYaml }}
+    additionalSecrets: ""
+
+  serviceAccount:
+    enabled: true
+    nameOverride: custom-code-sa
+    annotations:
+      argocd.argoproj.io/sync-options: Delete=false
+
+connectors-worker:
+  name: connectors-worker
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/connectors-worker
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["./entrypoint.sh"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3015
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3015
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    nodeSelector:
+      workload: general
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      PORT: "3015"
+      FRONTEGG_SERVICE_NAME: connectors-worker
+      FRONTEGG_INTEGRATIONS_SERVICE_URL: http://integrations-v2-web
+      FRONTEGG_TWILIO_SENDER: "+12055578527"
+      FRONTEGG_KAFKA_SLACK_ACTIVATE_RETRY: "true"
+      FRONTEGG_KAFKA_SLACK_ACTIVATE_DLQ: "true"
+      FRONTEGG_KAFKA_EMAIL_ACTIVATE_RETRY: "true"
+      FRONTEGG_KAFKA_EMAIL_ACTIVATE_DLQ: "true"
+      FRONTEGG_KAFKA_SMS_ACTIVATE_RETRY: "true"
+      FRONTEGG_KAFKA_SMS_ACTIVATE_DLQ: "true"
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_CONNECTORS_WORKER_SERVICE_REDIS_DB_INDEX: connectors-worker-service-redis-db-index
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_INTEGRATIONS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.integrationsServiceApiKey | toYaml }}
+      FRONTEGG_KAFKA_SLACK_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SLACK_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_KAFKA_SLACK_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_KAFKA_EMAIL_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_EMAIL_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_KAFKA_EMAIL_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_KAFKA_SMS_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SMS_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_KAFKA_SMS_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_CONNECTORS_WORKER_SERVICE_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
+      FRONTEGG_CONNECTORS_WORKER_SERVICE_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+      FRONTEGG_SENDGRID_API_KEY={{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
+      FRONTEGG_TWILIO_TOKEN={{ $secret.externalServices.twilio.token | toYaml }}
+      FRONTEGG_TWILIO_ACCOUNTSID={{ $secret.externalServices.twilio.accountId | toYaml }}
+      FRONTEGG_KAFKA_EVENTS_STATUS_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_EVENTS_STATUS_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_KAFKA_EVENTS_STATUS_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_CONNECTORS_WORKER_SERVICE_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
+      FRONTEGG_CONNECTORS_WORKER_SERVICE_REDIS_TLS={{ $secret.databases.redis.tls | toYaml }}
+    additionalSecrets: ""
+
+backoffice-service:
+  name: backoffice
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/backoffice-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3025
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3025
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 2Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 5
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3025
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3025
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 2Gi
+    livenessProbe:
+    #    httpGet:
+    #      path: /health
+    #      port: http
+    #    initialDelaySeconds: 60
+    #    periodSeconds: 20
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 5
+    nodeSelector:
+      workload: general
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: backoffice-service
+      NODE_ENV: production
+      FRONTEGG_TENANTS_KAFKA_TOPIC_NAME: tenants-v1
+      FRONTEGG_BACKOFFICE_SERVICE_ENCRYPT_ALGORITHM: aes-256-cbc
+      FRONTEGG_BACKOFFICE_SERVICE_DB_NAME: frontegg_backoffice
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
+        FRONTEGG_REDSHIFT_DATABASE: redshift-database-name
+        FRONTEGG_BACKOFFICE_SERVICE_REDIS_DB_INDEX: backoffice-redis-db-index
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.backofficeApiKey | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_DB_HOST={{ $secret.databases.generalMysql.host | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_DB_USERNAME={{ $secret.databases.generalMysql.username | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_DB_PASSWORD={{ $secret.databases.generalMysql.password | toYaml }}
+      FRONTEGG_REDSHIFT_HOSTNAME={{ $secret.databases.redshift.host | toYaml }}
+      FRONTEGG_REDSHIFT_USERNAME={{ $secret.databases.redshift.userName | toYaml }}
+      FRONTEGG_REDSHIFT_PASSWORD={{ $secret.databases.redshift.password | toYaml }}
+      FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      FRONTEGG_TENANTS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+      FRONTEGG_IDENTITY_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_REDIS_TLS={{ $secret.databases.redis.tls | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
+      FRONTEGG_BACKOFFICE_SERVICE_DB_USE_SSL={{ $secret.databases.generalMysql.useSsl | toYaml }}
+
+    additionalSecrets: ""
+
+  cronjobs:
+    aggregate-uav:
+      enabled: true
+      command: ["npm"]
+      args: ["run", "aggregate-users-accounts-visits"]
+      schedule: "0 0 * * *"
+      resources:
+        requests:
+          cpu: 500m
+          memory: 500Mi
+      ttlSecondsAfterFinished: 86400
+      concurrencyPolicy: Forbid
+      failedJobsHistoryLimit: 3
+      successfulJobsHistoryLimit: 3
+      restartPolicy: Never
+    aggregate-av:
+      enabled: true
+      command: ["npm"]
+      args: ["run", "aggregate-accounts-visits"]
+      schedule: "0 0 * * *"
+      resources:
+        requests:
+          cpu: 500m
+          memory: 500Mi
+      ttlSecondsAfterFinished: 86400
+      concurrencyPolicy: Forbid
+      failedJobsHistoryLimit: 3
+      successfulJobsHistoryLimit: 3
+      restartPolicy: Never 
+
+audits-service:
+  name: audits
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/audits-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    service:
+      ports:
+        - port: 80
+          targetPort: 3002
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3002
+    resources:
+      requests:
+        cpu: 512m
+        memory: 2Gi
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_SERVICE_NAME: audits-service
+      FRONTEGG_HYBRID_MODE: "false"
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_ANALYTICS_TYPE: firehose
+      FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
+      FRONTEGG_PORT: "3002"
+      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      LOG_LEVEL: verbose
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_METADATA_SERVICE_URL: metadata-service-url
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_AUDITS_TOPIC_NAME: audits-topic-name
+        FRONTEGG_AUDITS_DB_TYPE: audits-db-type
+        FRONTEGG_AUDITS_DB_NAME: audits-db-name
+        FRONTEGG_METADATA_SERVICE_FETCH_PUBSUB_STRATEGY: metadata-service-fetch-pubsub-strategy
+        FRONTEGG_METADATA_SERVICE_TOPIC_NAME: metadata-service-topic-name
+        FRONTEGG_AUDITS_SERVICE_REDIS_DB_INDEX: audits-service-redis-db-index
+        FRONTEGG_AUDITS_KAFKA_RETRY_COUNT: audits-kafka-retry-count
+        FRONTEGG_ENTITLEMENTS_AGENT_URL: entitlements-agent-url
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_AUDITS_MYSQL_DB_HOST={{ $secret.databases.generalMysql.host | toYaml }}
+      FRONTEGG_AUDITS_MYSQL_DB_PASSWORD={{ $secret.databases.generalMysql.password | toYaml }}
+      FRONTEGG_AUDITS_MYSQL_DB_USERNAME={{ $secret.databases.generalMysql.username | toYaml }}
+      FRONTEGG_AUDITS_MYSQL_SSL={{ $secret.databases.generalMysql.useSsl | toYaml }}
+      FRONTEGG_AUDITS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.auditsServiceApiKey | toYaml }}
+      FRONTEGG_METADATA_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.metadataServiceApiKey | toYaml }}
+      FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_AUDITS_DB_HOST={{ $secret.databases.generalMysql.host | toYaml }}
+      FRONTEGG_AUDITS_DB_USERNAME={{ $secret.databases.generalMysql.username | toYaml }}
+      FRONTEGG_AUDITS_DB_PASSWORD={{ $secret.databases.generalMysql.password | toYaml }}
+      FRONTEGG_AUDITS_DB_USE_SSL={{ $secret.databases.generalMysql.useSsl | toYaml }}
+      FRONTEGG_AUDITS_SERVICE_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
+      FRONTEGG_AUDITS_SERVICE_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
+      FRONTEGG_AUDITS_SERVICE_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+      FRONTEGG_AUDITS_SERVICE_REDIS_TLS={{ $secret.databases.redis.tls | toYaml }}
+      FRONTEGG_METADATA_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_METADATA_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_AUDITS_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_AUDITS_KAFKA_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_AUDITS_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
+      FRONTEGG_AUDITS_SERVICE_MONGO_URL={{ $secret.databases.mongo.connectionString | toYaml }}
+      FRONTEGG_FIREHOSE_ACCESS_KEY_ID={{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
+      FRONTEGG_FIREHOSE_SECRET_ACCESS_KEY={{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
+      FRONTEGG_AWS_REGION={{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
+      FRONTEGG_CLIENT_ID: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      FRONTEGG_VENDORS_SERVICE_API_KEY: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+    additionalSecrets: ""  
+
+authentication-service:
+  name: authentication
+  team: core
+
+  envID: local
+
+  replicaCount: 1
+  appVersion: master-latest
+
+  image:
+    repository: frontegg/authentication-service
+    pullPolicy: Always
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    podAnnotations:
+      linkerd.io/inject: enabled
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    nodeSelector:
+      agentpool: agentpool
+    tolerations: []
+    affinity: {}
+
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 4000
+    protocol: TCP
+    name: http
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-p1-service-url
+        PORTAL_URL: portal-url
+        FRONTEGG_COOKIE_DOMAIN: authentication-cookie-domain
+        SECURED_COOKIE: authentication-secured-cookie
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_PRIVATE_KEY={{ $secret.frontegg.applications.authentication.authenticationPrivateKey | toYaml }}
+      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      FRONTEGG_VENDORS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      FRONTEGG_ADMINS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.adminsServiceApiKey | toYaml }}
+      FRONTEGG_IDENTITY_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+      FRONTEGG_AUTH_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.authenticationServiceApiKey | toYaml }}
+    additionalSecrets: ""  
+
+auth-hub-service:
+  name: auth-hub
+  team: tamago
+  repoName: auth-hub-service
+
+  envID: local
+
+  image:
+    repository: frontegg/auth-hub-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3039
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3039
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 40
+      periodSeconds: 60
+
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    nodeSelector:
+      workload: general
+    service:
+      ports:
+        - port: 80
+          targetPort: 3039
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3039
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 5
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 60
+
+  configmap:
+    data:
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: auth-hub-service
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      MIGRATION_DIR_PATH: dist/migrations
+      FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
+      FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
+      FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
+      FRONTEGG_ANALYTICS_TYPE: firehose
+      FRONTEGG_TWILIO_SENDER: "+12055578527"
+      FRONTEGG_TWILIO_MESSAGING_SID: "MGf49702aad25a6a99b4acf68ad148af03"
+      SENTRY_ENABLED: "true"
+      SENTRY_DSN: "https://c9776b38a17d57f95286ee1701a8780b@o362363.ingest.sentry.io/4506846259511296"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
+        FRONTEGG_API_GW_URL: api-gateway-url
+        FRONTEGG_REPORTS_ENGINE_URL: reports-engine-url
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
+        FRONTEGG_PREHOOK_SERVICE_URL: prehook-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_EMAIL_SERVICE_URL: email-service-url
+        FRONTEGG_MAX_CONCURRENT_SESSIONS: identity-service-max-concurrent-sessions
+        FRONTEGG_IDENTITY_SERVICE_DB_NAME: identity-service-db-name
+        FRONTEGG_AUDITS_KAFKA_TOPIC_NAME: identity-service-audit-triggered-topic-name
+        FRONTEGG_OAUTH_SERVICE_URL: oauth-service-url
+        FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
+        FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_ENTITLEMENTS_AGENT_URL: entitlements-agent-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.authHubServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      cryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      cryptoKeyV2: {{ $secret.frontegg.applications.identity.cryptoKeyV2 | toYaml }}
+      sendGrid:
+        apiKey: {{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      databases:
+        mySql:
+          host: {{ $secret.databases.identityMysql.host | toYaml }}
+          username: {{ $secret.databases.identityMysql.username | toYaml }}
+          password: {{ $secret.databases.identityMysql.password | toYaml }}
+          replicaHost: {{ $secret.databases.identityMysql.replicaHost | default "" }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      sharedCache:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      internalServices:
+        identityService:
+          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+        reportsEngine:
+            apiKey: {{ $secret.frontegg.apiKeys.reportsEngineApiKey | toYaml }}
+        teamManagement:
+            apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
+        tenantsService:
+            apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+        prehookService:
+            apiKey: {{ $secret.frontegg.apiKeys.prehookApiKey | toYaml }}
+        vendorsService:
+            apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+        emailService:
+            apiKey: {{ $secret.frontegg.apiKeys.emailServiceApiKey | toYaml }}
+        oauthService:
+            apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
+        securityEngines:
+            apiKey: {{ $secret.frontegg.apiKeys.securityEnginesApiKey | toYaml }}
+        applicationsService:
+            apiKey: {{ $secret.frontegg.apiKeys.applicationsServiceApiKey | toYaml }}
+        customCodeService:
+            apiKey: {{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+      oidc:
+        google:
+          clientId: {{ $secret.frontegg.applications.identity.google.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.google.clientSecret | toYaml }}
+        github:
+          clientId: {{ $secret.frontegg.applications.identity.github.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.github.clientSecret | toYaml }}
+        microsoft:
+          clientId: {{ $secret.frontegg.applications.identity.microsoft.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.microsoft.clientSecret | toYaml }}
+        facebook:
+          clientId: {{ $secret.frontegg.applications.identity.facebook.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.facebook.clientSecret | toYaml }}
+        slack:
+          clientId: {{ $secret.frontegg.applications.identity.slack.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.slack.clientSecret | toYaml }}
+        apple:
+          clientId: {{ $secret.frontegg.applications.identity.apple.AppleClientId | toYaml }}
+          clientPrivateKey: {{ $secret.frontegg.applications.identity.apple.ApplePrivateKey | trim | toJson }}
+          teamId: {{ $secret.frontegg.applications.identity.apple.AppleTeamId | toYaml }}
+          keyId: {{ $secret.frontegg.applications.identity.apple.AppleKeyId | toYaml }}
+      twilio:
+        token: {{ $secret.externalServices.twilio.token | toYaml }}
+        accountsId: {{ $secret.externalServices.twilio.accountId | toYaml }}
+      session:
+        secret: {{ $secret.frontegg.applications.identity.facebook.SessionSecret | toYaml }}
+      aws:
+        region: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
+        credentials:
+          accessKeyId: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
+          secretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
+      cloudflare:
+        cdn:
+          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
+          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+
+    additionalSecrets: ""  
 
