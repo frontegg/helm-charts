@@ -90,11 +90,11 @@ dependencies:
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: events
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: forwardProxy
+    
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: forward-proxy
 #
 #  - name: *chartName
 #    version: *chartVersion

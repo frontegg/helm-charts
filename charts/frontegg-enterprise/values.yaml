@@ -2588,3 +2588,146 @@ logs-service:
         splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
     additionalSecrets: ""
 
+forward-proxy:
+  name: forward-proxy
+  team: platform
+
+  envID: local
+
+  image:
+    repository: frontegg/forward-proxy
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/server"]
+    args: []
+    additionalVolumes: |
+      - name: vol-config
+        configMap:
+          name: '{{ include "fullname" $ }}-config'
+      - name: vol-acl
+        configMap:
+          name: '{{ include "fullname" $ }}-acl'
+    additionalVolumeMounts: |
+      - name: vol-acl
+        mountPath: /etc/smokescreen/acl.yaml
+        subPath: acl.yaml
+      - name: vol-config
+        mountPath: /etc/smokescreen/config.yaml
+        subPath: config.yaml
+    service:
+      scrape: false
+      labels:
+        monitoring-port: metrics
+      ports:
+        - name: http
+          port: 8080
+          protocol: TCP
+          targetPort: 4750
+        - name: metrics
+          port: 9090
+          protocol: TCP
+          targetPort: 9090
+    ports:
+      - name: http
+        containerPort: 4750
+      - name: metrics
+        containerPort: 9090
+    resources:
+      requests:
+        cpu: 500m
+        memory: 512Mi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    nodeSelector:
+      workload: general
+    readinessProbe:
+      httpGet:
+        path: /healthcheck
+        port: 4750
+      initialDelaySeconds: 40
+      periodSeconds: 5
+      failureThreshold: 1
+    livenessProbe:
+      httpGet:
+        path: /healthcheck
+        port: 4750
+      initialDelaySeconds: 40
+      periodSeconds: 20
+    startupProbe:
+      httpGet:
+        path: /healthcheck
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 5
+    terminationGracePeriodSeconds: 60
+
+  configmap:
+    data:
+
+  configuration:
+    map:
+      config-center:
+
+  externalSecret:
+    enabled: false
+
+  additionalResources: |
+    ---
+    kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-100"
+        argocd.argoproj.io/sync-options: Force=true,Replace=true
+      name: {{ include "fullname" $ }}-acl
+      labels:
+        {{- include "labels" $ | nindent 4 }}
+    data:
+      acl.yaml: | 
+        ---
+        version: v1
+        services:
+          - name: test-trusted-srv
+            project: security
+            action: report
+            allowed_domains:
+              - frontegg.com
+        
+        default:
+          project: other
+          action: report
+          allowed_domains:
+            - test.com
+        
+        global_allow_list:
+          - google.com
+        
+        global_deny_list:
+          - 127.0.0.1  
+    ---
+    kind: ConfigMap
+    apiVersion: v1
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-wave: "-100"
+        argocd.argoproj.io/sync-options: Force=true,Replace=true
+      name: {{ include "fullname" $ }}-config
+      labels:
+        {{- include "labels" $ | nindent 4 }}
+    data:
+      config.yaml: |
+        ---
+        allow_missing_role: true # skip mTLS client validation
+        unsafe_allow_private_ranges: false
+
