@@ -4549,3 +4549,357 @@ auth-hub-service:
 
     additionalSecrets: ""  
 
+anomaly-detection:
+  name: anomaly-detection
+  team: core
+
+  envID: local
+
+  image:
+    repository: "frontegg/anomaly-detection"
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3038
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3038
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        memory: 500Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 60
+      targetMemoryUtilizationPercentage: 60
+        enabled: false
+        annotations:
+          scaledobject.keda.sh/transfer-hpa-ownership: "true"
+          validations.keda.sh/hpa-ownership: "false"
+        triggers:
+          - type: cpu
+            metadata:
+              type: Utilization
+              value: "50"
+          - type: memory
+            metadata:
+              type: Utilization
+              value: "50"
+        advanced:
+          horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
+            name: '{{ include "web.name" $ }}'
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 300
+                policies:
+                  - type: Pods
+                    value: 1
+                    periodSeconds: 60
+              scaleUp:
+                stabilizationWindowSeconds: 0
+                policies:
+                  - type: Pods
+                    value: 1
+                    periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+
+  configmap:
+    data:
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: anomaly-detection
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      MIGRATION_DIR_PATH: ./dist/migrations
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      SENTRY_ENABLED: "true"
+      SENTRY_DSN: "https://df4e77306fe836ca17283337bab8570a@o362363.ingest.us.sentry.io/4507877559697408"
+      BUCKET_NAME: "{{ .Values.envID }}-{{ .Values.name }}"
+      S3_KEY_PREFIX: "data/"
+      STORAGE_USE_S3: "True"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+
+    additionalSecrets: ""  
+
+applications-service:
+  name: applications
+  team: tamago
+
+  envID: local
+
+  image:
+    repository: frontegg/applications-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3035
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3035
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+        enabled: true
+        annotations:
+          scaledobject.keda.sh/transfer-hpa-ownership: "true"
+          validations.keda.sh/hpa-ownership: "false"
+        triggers:
+          - type: cpu
+            metadata:
+              type: Utilization
+              value: "80"
+          - type: memory
+            metadata:
+              type: Utilization
+              value: "75"
+          - type: prometheus
+            name: P90 latency
+            metadata:
+              serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
+              query: max(histogram_quantile(0.90, sum(rate(route_response_latency_ms_bucket{direction="inbound",namespace="frontegg", pod=~"applications-v2-web.*"}[1m]) ) by (le, pod)))
+              threshold: "1000"
+          - type: prometheus
+            name: eventloop lag
+            metadata:
+              serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
+              query: max(nodejs_eventloop_lag_seconds{pod=~"applications-v2-web.*"})
+              threshold: "1"
+          - type: prometheus
+            name: active handlers
+            metadata:
+              serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
+              query: max(nodejs_active_handles_total{pod=~"applications-v2-web.*"}[5m])
+              threshold: "750"
+        advanced:
+          horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
+            name: '{{ include "web.name" $ }}'
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 300
+                policies:
+                  - type: Pods
+                    value: 1
+                    periodSeconds: 60
+              scaleUp:
+                stabilizationWindowSeconds: 0
+                policies:
+                  - type: Pods
+                    value: 3
+                    periodSeconds: 10
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 40
+      periodSeconds: 60
+
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    replicaCount: 1
+    nodeSelector:
+      workload: general
+    service:
+      ports:
+        - port: 80
+          targetPort: 3035
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3035
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+        enabled: true
+        annotations:
+          scaledobject.keda.sh/transfer-hpa-ownership: "true"
+          validations.keda.sh/hpa-ownership: "false"
+        triggers:
+          - type: cpu
+            metadata:
+              type: Utilization
+              value: "80"
+          - type: memory
+            metadata:
+              type: Utilization
+              value: "75"
+          - type: prometheus
+            name: kafka time lag
+            metadata:
+              serverAddress: http://vmselect-vm.observability.svc.cluster.local:8481/select/0/prometheus
+              query: max(sum(aws_kafka_estimated_max_time_lag_maximum{dimension_Consumer_Group=~".*VendorEventsConsumerIdentifier.*|.*ApplicationDomainEventsIdentifier.*|.*TenantEventsConsumerIdentifier.*|.*VendorEventsConsumerIdentifier.*" }) by (dimension_Consumer_Group))
+              threshold: "50"
+        advanced:
+          horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
+            name: '{{ include "worker.name" $ }}'
+            behavior:
+              scaleDown:
+                stabilizationWindowSeconds: 300
+                policies:
+                  - type: Pods
+                    value: 1
+                    periodSeconds: 60
+              scaleUp:
+                stabilizationWindowSeconds: 0
+                policies:
+                  - type: Pods
+                    value: 1
+                    periodSeconds: 15
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 5
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 60
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_SERVICE_NAME: applications-service
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
+      NODE_NO_WARNINGS: "1"
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+        FRONTEGG_AWS_REGION: aws-region
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.applicationsServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      databases:
+        mysql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      encryption:
+        secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+    additionalSecrets: ""

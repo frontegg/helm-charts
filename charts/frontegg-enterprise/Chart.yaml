@@ -20,16 +20,16 @@ dependencies:
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: apiGateway
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: applicationsService
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: anomalyDetection
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: applications-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: anomaly-detection
 
   - name: *chartName
     version: *chartVersion
