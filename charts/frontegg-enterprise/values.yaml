@@ -1719,3 +1719,418 @@ reporting-scheduler:
       FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
     additionalSecrets: ""
 
+reporting-engine:
+  name: reporting-engine
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/reporting-engine
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3007
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3007
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 120
+      periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 120
+      periodSeconds: 10
+    startupProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 120
+      periodSeconds: 10
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 60
+    nodeSelector:
+      workload: general
+    tolerations:
+      - key: "node.frontegg.com/type"
+        operator: "Equal"
+        value: "compute"
+        effect: "NoSchedule"
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_ASSET_BLOB_STORAGE_CONTAINER_NAME: vendor-assets
+      FRONTEGG_PORT: "3007"
+      FRONTEGG_SERVICE_NAME: reporting-engine
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_REPORTING_SERVICE_URL: reports-service-url
+        FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
+        FRONTEGG_ASSET_BLOB_STORAGE_CONTAINER_NAME: asset-blob-storage-container-name
+        FRONTEGG_REPORTING_ENGINE_APPROVERS_NOTIFICATION_EMAIL_TEMPLATE_ID: reporting-engine-approvers-notification-email-template-id
+        FRONTEGG_REPORTING_ENGINE_S3_BUCKET_NAME: reporting-engine-s3-bucket-name # for future use
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      databases:
+        mongo:
+          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.reportsEngineApiKey | toYaml }}
+      splitIO:
+        splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      sendgridApiKey: {{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      internalServices:
+        reportsService:
+          apiKey: {{ $secret.frontegg.apiKeys.reportsServiceApiKey | toYaml }}
+        adminsService:
+          apiKey: {{ $secret.frontegg.apiKeys.adminsServiceApiKey | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      assetStorage:
+        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }}
+    additionalSecrets: ""
+
+pricing-views-service:
+  name: pricing-views
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: "frontegg/pricing-views-service"
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    service:
+      labels:
+        monitoring-metrics: enabled
+      ports:
+        - port: 80
+          targetPort: 3026
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3026
+    podAnnotations:
+      linkerd.io/inject: enabled
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    nodeSelector:
+      workload: general
+    tolerations: []
+    affinity: {}
+
+  service:
+    type: ClusterIP
+    port: 80
+    targetPort: 3026
+    protocol: TCP
+    name: access-port
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: pricing-views-service
+      NODE_ENV: production
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_PRICING_VIEWS_S3_BUCKET: default-pricing-views-s3-bucket
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        nodeSelector:
+          workload: general
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_SUBSCRIPTIONS_SERVICE_URL: subscriptions-service-url
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.pricingViewsApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      internalServices:
+        subscriptions:
+          apiKey: {{ $secret.frontegg.apiKeys.subscriptionsServiceApiKey | toYaml }}
+    additionalSecrets: ""
+
+prehook-service:
+  name: prehooks
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/prehook-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    podAnnotations:
+      config.linkerd.io/skip-outbound-ports: "8080"
+    service:
+      ports:
+        - port: 80
+          targetPort: 3021
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3021
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: prehook-service
+      NODE_ENV: production
+      FRONTEGG_PREHOOK_TIMEOUT: "5000"
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
+      FRONTEGG_HTTP_CLIENT_PROXY_ENABLED: "true"
+      NODE_NO_WARNINGS: "1"
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 250m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_HTTP_CLIENT_PROXY_HOST: frontegg-proxy-host
+        FRONTEGG_HTTP_CLIENT_PROXY_PORT: frontegg-proxy-port
+        FRONTEGG_HTTP_CLIENT_PROXY_PROTO: frontegg-proxy-protocol
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_PREHOOK_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.prehookApiKey | toYaml }}
+      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      FRONTEGG_PREHOOK_SERVICE_DB_URL={{ $secret.databases.mongo.connectionString | toYaml }}
+      FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
+      FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_KAFKA_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
+      FRONTEGG_CUSTOM_CODE_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+    additionalSecrets: ""
+
+nlp-execution-assistant:
+  name: nlp-execution-assistant
+  team: adoption
+  envID: local
+
+  image:
+    repository: frontegg/nlp-execution-assistant
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/nodejs/bin/node"]
+    args: ["./dist/deployments/service/main"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3037
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3037
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    startupProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 5
+
+  hp:
+    enabled: false
+
+  worker:
+    enabled: false
+
+  configmap:
+    data:
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: nlp-execution-assistant
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
+      FRONTEGG_FLOWS_AI_MODEL_NAME: "ft:gpt-4o-2024-08-06:frontegg-ltd:flows-v1-1:AIIzRBSj"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.nlpExecutionAssistantApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      openAI:
+        key: {{ $secret.externalServices.openAI.key | toYaml }}
+      databases:
+        mongo:
+          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+
+    additionalSecrets: ""
+
+  serviceProfile:
+    routes: []
+

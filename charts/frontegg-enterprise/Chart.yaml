@@ -115,32 +115,32 @@ dependencies:
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: metadata
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: nlpExecutionAssistant
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: prehooks
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: pricingViews
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: reports
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: reportingEngine
-#
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: nlp-execution-assistant
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: prehook-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: pricing-views-service
+
+  # - name: *chartName
+  #   version: *chartVersion
+  #   repository: https://frontegg.github.io/helm-charts
+  #   alias: reports
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: reporting-engine
+
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
