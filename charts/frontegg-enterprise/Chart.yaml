@@ -14,7 +14,7 @@ dependencies:
   - name: &chartName unified-chart-staging
     version: &chartVersion 4.0.*
     repository: https://frontegg.github.io/helm-charts
-    alias: admins
+    alias: admins-service
 
   - name: *chartName
     version: *chartVersion
@@ -90,16 +90,16 @@ dependencies:
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
     alias: event-service
-    
+
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
     alias: forward-proxy
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: integrations
+  #
+  #  - name: *chartName
+  #    version: *chartVersion
+  #    repository: https://frontegg.github.io/helm-charts
+  #    alias: integrations
 
   - name: *chartName
     version: *chartVersion

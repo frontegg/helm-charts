@@ -1,4 +1,4 @@
-admins:
+admins-service:
   name: admins
   team: frontegg
   envID: prod
