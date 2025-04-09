@@ -100,21 +100,21 @@ dependencies:
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: integrations
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: logs
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: logsStreaming
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: metadata
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: logs-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: logs-streaming-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: metadata-service
 
   - name: *chartName
     version: *chartVersion

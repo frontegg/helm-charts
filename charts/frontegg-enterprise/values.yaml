@@ -2134,3 +2134,457 @@ nlp-execution-assistant:
   serviceProfile:
     routes: []
 
+metadata-service:
+  name: metadata
+  team: tamago
+
+  envID: local
+
+  image:
+    repository: frontegg/metadata-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3005
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3005
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_PORT: "3005"
+      FRONTEGG_SERVICE_NAME: metadata-service
+      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      FRONTEGG_JAEGER_ENABLED: "true"
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_METADATA_SERVICE_TOPIC_NAME: metadata-service-topic-name
+        FRONTEGG_METADATA_SERVICE_DB_CONNECTION_TIMEOUT_MS: metadata-service-db-connection-timeout-ms
+        FRONTEGG_METADATA_SERVICE_DB_CONNECTION_RETRY_ATTEMPTS: metadata-service-db-connection-retry-attempts
+        FRONTEGG_METADATA_SERVICE_DB_CONNECTION_RETRY_DELAY: metadata-service-db-connection-retry-delay
+        FRONTEGG_METADATA_SERVICE_IP_STACK_URL: metadata-service-ip-stack-url
+        FRONTEGG_METADATA_SERVICE_REDIS_DB_INDEX: metadata-service-redis-db-index
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_CDN_URL: cdn-url
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
+      FRONTEGG_SPLIT_IO_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
+      FRONTEGG_SPLIT_IO_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
+      FRONTEGG_SPLIT_IO_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+      FRONTEGG_METADATA_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.metadataServiceApiKey | toYaml }}
+      FRONTEGG_METADATA_SERVICE_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
+      FRONTEGG_METADATA_SERVICE_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
+      FRONTEGG_METADATA_SERVICE_REDIS_TLS={{ $secret.databases.redis.tls | toYaml }}
+      FRONTEGG_METADATA_SERVICE_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+      FRONTEGG_METADATA_SERVICE_DB_URL={{ $secret.databases.mongo.connectionString | toYaml }}
+      FRONTEGG_METADATA_SERVICE_IP_STACK_API_KEY={{ $secret.frontegg.xxx.ipStackApiKey | toYaml }}
+      FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+      FRONTEGG_VENDORS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      FRONTEGG_CLOUDFLARE_PURGE_CACHE_ZONE_ID={{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
+      FRONTEGG_CLOUDFLARE_PURGE_CACHE_TOKEN={{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+      FRONTEGG_IP_DATA_API_KEY={{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
+
+    additionalSecrets: ""
+
+logs-streaming-service:
+  name: log-stream
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: "frontegg/logs-streaming-service"
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      labels:
+        monitoring-metrics: enabled
+      ports:
+        - port: 80
+          targetPort: 3030
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3030
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 60
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    tolerations: []
+    affinity: {}
+
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      labels:
+        monitoring-metrics: enabled
+      ports:
+        - port: 80
+          targetPort: 3030
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3030
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe: {}
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configmap:
+    data:
+      NODE_ENV: production
+      NODE_OPTIONS: "--no-warnings"
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: logs-streaming-service
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_EXPORTERS_DEPLOYMENT_NAMESPACE: log-streaming
+      FRONTEGG_EXPORTERS_DEPLOYMENT_SERVICE_ACCOUNT_NAME: '{{ include "name" $ }}'
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_EXPORTERS_DEPLOYMENT_IMAGE_PULL_SECRETS: regcred-v2
+      FRONTEGG_EXPORTERS_SCALING_COOLDOWN_PERIOD: "90"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.logsStreamingServiceApiKey | toYaml }}
+      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      databases:
+        mysql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+      encryption:
+        key: {{ $secret.frontegg.applications.logsStreaming.cryptoKey | toYaml }}
+    additionalSecrets: ""
+
+  additionalResources: |
+    ---
+    apiVersion: v1
+    kind: Namespace
+    metadata:
+      annotations:
+        argocd.argoproj.io/sync-options: Delete=false
+      name: log-streaming
+    ---
+    apiVersion: external-secrets.io/v1beta1
+    kind: ExternalSecret
+    metadata:
+      name: {{ include "fullname" $ }}-regcred
+      namespace: log-streaming
+    spec:
+      refreshInterval: 1m
+      secretStoreRef:
+        name: external-secret-store
+        kind: ClusterSecretStore
+      target:
+        name: regcred-v2
+        template:
+          type: kubernetes.io/dockerconfigjson
+          engineVersion: v2
+          data:
+            .dockerconfigjson: |
+              {{`{{- $secret := .contents | fromYaml }}
+              {"auths": {
+                "{{ $secret.externalServices.regCred.url | toYaml }}": {
+                  "username": "{{ $secret.externalServices.regCred.username | toYaml }}",
+                  "password": "{{ $secret.externalServices.regCred.password | toYaml }}",
+                  "email": "{{ $secret.externalServices.regCred.email | toYaml }}",
+                  "auth": "{{ $secret.externalServices.regCred.auth | toYaml }}"
+                }
+              }}`}}
+      data:
+        - secretKey: contents
+          remoteRef:
+            key: {{ .Values.envID }}
+
+  role:
+    enabled: true
+    kind: Role
+    namespace: "log-streaming"
+    rules:
+      - apiGroups: ["*"]
+        resources: ["*"]
+        verbs: ["*"]
+
+  rolebinding:
+    enabled: true
+    namespace: "log-streaming"
+
+logs-service:
+  name: logs
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: "frontegg/logs-service"
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    env:
+      - name: FRONTEGG_LOGS_SERVICE_OFFLINE_PROCESS
+        value: "false"
+    service:
+      ports:
+        - port: 80
+          targetPort: 3029
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3029
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    env:
+      - name: FRONTEGG_LOGS_SERVICE_OFFLINE_PROCESS
+        value: "true"
+    service:
+      ports:
+        - port: 80
+          targetPort: 3029
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3029
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+
+  cronjobs:
+    retention-enforcement:
+      resources:
+        requests:
+          cpu: 500m
+          memory: 500Mi
+      enabled: true
+      schedule: "@hourly"
+      ttlSecondsAfterFinished: 600
+      concurrencyPolicy: Forbid
+      failedJobsHistoryLimit: 4
+      successfulJobsHistoryLimit: 4
+      restartPolicy: Never
+      command: ["/bin/bash"]
+      args: ["entrypoint.sh", "command", "enforce-retention"]
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configmap:
+    data:
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: logs-service
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_FEATURE_RETENTION_FEATURE_FLAG_NAME: "logs-retention"
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_BACKOFFICE_URL: backoffice-service-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.logsServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      databases:
+        mongo:
+          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+      internalServices:
+        backoffice:
+          apiKey: {{ $secret.frontegg.apiKeys.backofficeApiKey | toYaml }}
+      splitIO:
+        splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+    additionalSecrets: ""
+
