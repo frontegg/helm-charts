@@ -141,21 +141,21 @@ dependencies:
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: reportingEngine
 #
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: reportingScheduler
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: securityCenterGraphs
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: securityEngine
-#
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: reporting-scheduler
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: security-center-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: security-engines
+
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts

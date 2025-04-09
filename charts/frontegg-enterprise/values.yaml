@@ -1330,3 +1330,392 @@ subscriptions-service:
       FRONTEGG_IDENTITY_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
     additionalSecrets: ""
 
+security-engines:
+  name: security-engines
+  team: adoption
+  repoName: security-engines
+
+  envID: local
+
+  image:
+    repository: "frontegg/security-engines"
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3032
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3032
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 60
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3032
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3032
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+  #    httpGet:
+  #      path: /health
+  #      port: http
+  #    initialDelaySeconds: 30
+  #    periodSeconds: 20
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configmap:
+    data:
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: security-engines
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: verbose
+      MIGRATION_DIR_PATH: ./dist/migrations
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      SENTRY_ENABLED: "true"
+      SENTRY_DSN: "https://df4e77306fe836ca17283337bab8570a@o362363.ingest.us.sentry.io/4507877559697408"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+        FRONTEGG_ANOMALY_DETECTION_SERVICE_URL: anomaly-detection-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.securityEnginesApiKey | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      databases:
+        mysql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+      encryption:
+        secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      ipStack:
+        accessKey: {{ $secret.frontegg.xxx.ipStackApiKey | toYaml }}
+      ipData:
+        apiKey: {{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
+      ipqs:
+        apiKey: {{ $secret.externalServices.ipqs.apiKey | toYaml }}
+      zeroBounce:
+        apiKey: {{ $secret.externalServices.zeroBounce.apiKey | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      cloudflare:
+        cdn:
+          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
+          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+
+    additionalSecrets: ""
+
+security-center-service:
+  name: security-center
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: "frontegg/security-center-service"
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3033
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3033
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 60
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3033
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3033
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configmap:
+    data:
+      NODE_ENV: production
+      LOG_LEVEL: verbose
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: security-center-service
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.securityCenterServiceApiKey | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+
+      databases:
+        mongo:
+          uri: {{ $secret.databases.mongo6.connectionString | toYaml }}
+
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+
+      ipStack:
+        accessKey: {{ $secret.frontegg.xxx.ipStackApiKey | toYaml }}
+      ipData:
+        apiKey: {{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
+
+    additionalSecrets: ""
+
+reporting-scheduler:
+  name: reporting-scheduler
+  team: adoption
+
+  envID: local
+
+  image:
+    repository: frontegg/reporting-scheduler
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3010
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3010
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    nodeSelector:
+      workload: general
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_PORT: "3010"
+      FRONTEGG_SERVICE_NAME: reporting-scheduler
+      FRONTEGG_SERVICE_VERSION: "1.0.0"
+      FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_REPORTING_SERVICE_URL: reports-service-url
+        FRONTEGG_REPORTING_ENGINE_URL: reports-engine-url
+        FRONTEGG_REPORTING_SERVICE_TOPIC_NAME: reporting-service-topic-name
+        FRONTEGG_REPORTING_SERVICE_FETCH_PUBSUB_STRATEGY: reporting-service-fetch-pubsub-strategy
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_REPORTING_SCHEDULER_API_KEY={{ $secret.frontegg.apiKeys.reportsSchedulerApiKey | toYaml }}
+      FRONTEGG_REPORTING_SCHEDULER_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
+      FRONTEGG_REPORTING_SCHEDULER_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
+      FRONTEGG_REPORTING_SCHEDULER_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+      FRONTEGG_REPORTING_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.reportsServiceApiKey | toYaml }}
+      FRONTEGG_REPORTING_ENGINE_API_KEY={{ $secret.frontegg.apiKeys.reportsEngineApiKey | toYaml }}
+      FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
+      FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
+    additionalSecrets: ""
+
