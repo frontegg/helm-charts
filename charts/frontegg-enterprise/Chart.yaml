@@ -166,10 +166,10 @@ dependencies:
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: taskMaster
 #
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: teamManagement
+ - name: *chartName
+   version: *chartVersion
+   repository: https://frontegg.github.io/helm-charts
+   alias: team-management-service
 #
 #  - name: *chartName
 #    version: *chartVersion
