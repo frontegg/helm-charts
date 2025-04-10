@@ -1,0 +1,16 @@
+apiVersion: v2
+name: frontegg-enterprise
+description: Frontegg Enterprise Helm Chart # FILL IN BY MARKETING
+type: application
+
+version: 0.0.1
+appVersion: 2025.04.01
+
+maintainers:
+  - name: "Frontegg"
+    email: "support@frontegg.com"
+
+dependencies:
+  - name: admins
+    version: 0.0.1
+    repository: file://../tests/admins

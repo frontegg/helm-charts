@@ -4422,6 +4422,7 @@ api-gateway:
       LOG_LEVEL: "verbose"
       #SENTRY_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
+      FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
 
   configuration:
     map:
@@ -4473,7 +4474,6 @@ api-gateway:
         FRONTEGG_REDIS_DB_INDEX: api-gateway-redis-db-index
         FRONTEGG_ENABLE_REDIS_STORE: api-gateway-enable-redis-store
         IGNORED_HOSTS: api-gateway-ignore-hosts
-        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
 
   externalSecret:
     enabled: true
@@ -4739,7 +4739,6 @@ configCenter:
         host: "frontegg-forward-proxy"
         port: "8080"
         protocol: "http"
-
 
     services:
       prehookServiceUrl: "http://frontegg-prehook-service"
