@@ -63,12 +63,12 @@ add:
 {{- $top := . }}
 {{- $values := .Values }}
 vendorService:
-  url: {{ $values.frontegg.services.vendorsServiceUrl }}.frontegg.svc.cluster.local
+  url: {{ $values.configCenter.frontegg.services.vendorsServiceUrl }}.frontegg.svc.cluster.local
 identityService:
-  url: {{ $values.frontegg.services.identityServiceUrl }}.frontegg.svc.cluster.local
+  url: {{ $values.configCenter.frontegg.services.identityServiceUrl }}.frontegg.svc.cluster.local
 redis:
   dbIndex: 0
 kafka:
-  usageReportingTopic: {{ $values.frontegg.applications.tenants.tenantsUsageReportingTopicName | quote }}
+  usageReportingTopic: {{ $values.configCenter.frontegg.applications.tenants.tenantsUsageReportingTopicName | quote }}
 multiHost:
-  enableMultiHost: {{ $values.frontegg.applications.apiGateway.enableMultiHosts }}
+  enableMultiHost: {{ $values.configCenter.frontegg.applications.apiGateway.enableMultiHosts }}

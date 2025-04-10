@@ -11,75 +11,68 @@ metadata:
   labels:
     {{- include "config-center.labels" . | nindent 4 }}
 data:
-  {{- with .Values.configCenter.frontegg.services }}
-  prehook-service-url: {{ .prehookServiceUrl }}
-  admins-service-url: {{ .adminsServiceUrl }}
-  audits-service-url: {{ .auditsServiceUrl }}
-  authentication-service-url: {{ .authenticationServiceUrl }}
-  metadata-service-url: {{ .metadataServiceUrl }}
-  notification-service-url: {{ .notificationServiceUrl }}
-  reports-engine-url: {{ .reportsEngineUrl }}
-  reports-service-url: {{ .reportsServiceUrl }}
-  team-service-url: {{ .teamServiceUrl }}
-  vendors-service-url: {{ .vendorsServiceUrl }}
-  tenants-service-url: {{ .tenantsServiceUrl }}
-  webpush-service-url: {{ .webpushServiceUrl }}
-  webhook-service-url: {{ .webhookServiceUrl }}
-  events-service-url: {{ .eventsServiceUrl }}
-  identity-service-url: {{ .identityServiceUrl }}
-  nlp-execution-assistant-url: {{ .nlpExecutionAssistantUrl }}
-  identity-p1-service-url: {{ .identityP1ServiceUrl }}
-  integrations-service-url: {{ .integrationsServiceUrl }}
-  api-gateway-url: {{ .apiGatewayUrl }}
-  api-gateway-internal-url: {{ .apiGatewayInternalUrl }}
-  oauth-service-url: {{ .oauthServiceUrl }}
-  subscriptions-service-url: {{ .subscriptionsServiceUrl }}
-  usage-tracking-service-url: {{ .usageTrackingUrl }}
-  env-duplicator-service-url: {{ .envDuplicatorUrl }}
-  policy-service-url: {{ .policyServiceUrl }}
-  dashboard-env-builder-url: {{ .dashboardEnvBuilderUrl }}
-  frontegg-vendor-host: {{ .fronteggVendorHost }}
+  {{- with $values.configCenter.frontegg.services }}
+  prehook-service-url: "{{ .prehookServiceUrl }}"
+  admins-service-url: "{{ .adminsServiceUrl }}"
+  audits-service-url: "{{ .auditsServiceUrl }}"
+  authentication-service-url: "{{ .authenticationServiceUrl }}"
+  metadata-service-url: "{{ .metadataServiceUrl }}"
+  notification-service-url: "{{ .notificationServiceUrl }}"
+  reports-engine-url: "{{ .reportsEngineUrl }}"
+  reports-service-url: "{{ .reportsServiceUrl }}"
+  team-service-url: "{{ .teamServiceUrl }}"
+  vendors-service-url: "{{ .vendorsServiceUrl }}"
+  tenants-service-url: "{{ .tenantsServiceUrl }}"
+  webpush-service-url: "{{ .webpushServiceUrl }}"
+  webhook-service-url: "{{ .webhookServiceUrl }}"
+  events-service-url: "{{ .eventsServiceUrl }}"
+  identity-service-url: "{{ .identityServiceUrl }}"
+  nlp-execution-assistant-url: "{{ .nlpExecutionAssistantUrl }}"
+  identity-p1-service-url: "{{ .identityP1ServiceUrl }}"
+  integrations-service-url: "{{ .integrationsServiceUrl }}"
+  api-gateway-url: "{{ .apiGatewayUrl }}"
+  api-gateway-internal-url: "{{ .apiGatewayInternalUrl }}"
+  oauth-service-url: "{{ .oauthServiceUrl }}"
+  subscriptions-service-url: "{{ .subscriptionsServiceUrl }}"
+  usage-tracking-service-url: "{{ .usageTrackingUrl }}"
+  env-duplicator-service-url: "{{ .envDuplicatorUrl }}"
+  policy-service-url: "{{ .policyServiceUrl }}"
+  dashboard-env-builder-url: "{{ .dashboardEnvBuilderUrl }}"
+  frontegg-vendor-host: "{{ .fronteggVendorHost }}"
   cdn-url: {{ .cdnUrl | default "" | quote }}
-  backoffice-service-url: {{ .backofficeUrl }}
-  pricing-views-url: {{ .pricingViewsUrl }}
-  email-service-url: {{ .emailServiceUrl }}
-  directory-service-url: {{ .directoryServiceUrl }}
-  logs-service-url: {{ .logsServiceUrl }}
-  logs-streaming-service-url: {{ .logsStreamingServiceUrl }}
-  entitlements-service-url: {{ .entitlementsServiceUrl }}
-  security-engines-url: {{ .securityEnginesUrl }}
-  applications-service-url: {{ .applicationsServiceUrl }}
-  signals-service-url: {{ .signalsServiceUrl }}
-  security-center-service-url: {{ .securityCenterServiceUrl }}
-  custom-code-service-url: {{ .customCodeServiceUrl }}
-  entitlements-agent-url: {{ .entitlementsAgentUrl }}
-  auth-hub-service-url: {{ .authHubServiceUrl }}
-  anomaly-detection-url: {{ .anomalyDetectionUrl }}
-  idgw-backend-url: {{ .idgwBackendUrl }}
-  mcp-server-url: {{ .mcpServerUrl }}
+  backoffice-service-url: "{{ .backofficeUrl }}"
+  pricing-views-url: "{{ .pricingViewsUrl }}"
+  email-service-url: "{{ .emailServiceUrl }}"
+  directory-service-url: "{{ .directoryServiceUrl }}"
+  logs-service-url: "{{ .logsServiceUrl }}"
+  logs-streaming-service-url: "{{ .logsStreamingServiceUrl }}"
+  entitlements-service-url: "{{ .entitlementsServiceUrl }}"
+  security-engines-url: "{{ .securityEnginesUrl }}"
+  applications-service-url: "{{ .applicationsServiceUrl }}"
+  signals-service-url: "{{ .signalsServiceUrl }}"
+  security-center-service-url: "{{ .securityCenterServiceUrl }}"
+  custom-code-service-url: "{{ .customCodeServiceUrl }}"
+  entitlements-agent-url: "{{ .entitlementsAgentUrl }}"
+  auth-hub-service-url: "{{ .authHubServiceUrl }}"
+  anomaly-detection-url: "{{ .anomalyDetectionUrl }}"
+  idgw-backend-url: "{{ .idgwBackendUrl }}"
+  mcp-server-url: "{{ .mcpServerUrl }}"
   {{- end }}
 
-  {{- with $values.externalServices.aws }}
+  {{- with $values.configCenter.externalServices.aws }}
   aws-region: {{ tpl .region $top  | default "" | quote }}
   policy-service-aws-region: {{ tpl .region $top  | default "" | quote }}
-  policy-service-s3-opa-policy-bucket: {{ $values.frontegg.applications.policy.opaPolicyBucket | default "" | quote }}
-  entitlements-service-s3-opa-policy-bucket: {{ $values.frontegg.applications.entitlements.opaPolicyBucket | default "" | quote }}
-  custom-code-service-lambda-management-role-arn: {{ $values.frontegg.applications.customCode.lambda.management.roleArn | default "" | quote }}
-  custom-code-service-lambda-execution-role-arn: {{ $values.frontegg.applications.customCode.lambda.execution.roleArn | default "" | quote }}
-  custom-code-service-lambda-execution-default-policies: {{ $values.frontegg.applications.customCode.lambda.execution.defaultPolicies | default "" | quote }}
-  custom-code-service-lambda-layers: {{ $values.frontegg.applications.customCode.lambda.layers | default "" | quote }}
-  custom-code-service-lambda-env-cx-domain: {{ $values.frontegg.applications.customCode.lambda.environment.variables.cxDomain | default "" | quote }}
+  policy-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.policy.opaPolicyBucket | default "" | quote }}
+  entitlements-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.entitlements.opaPolicyBucket | default "" | quote }}
+  custom-code-service-lambda-management-role-arn: {{ $values.configCenter.frontegg.applications.customCode.lambda.management.roleArn | default "" | quote }}
+  custom-code-service-lambda-execution-role-arn: {{ $values.configCenter.frontegg.applications.customCode.lambda.execution.roleArn | default "" | quote }}
+  custom-code-service-lambda-execution-default-policies: {{ $values.configCenter.frontegg.applications.customCode.lambda.execution.defaultPolicies | default "" | quote }}
+  custom-code-service-lambda-layers: {{ $values.configCenter.frontegg.applications.customCode.lambda.layers | default "" | quote }}
+  custom-code-service-lambda-env-cx-domain: {{ $values.configCenter.frontegg.applications.customCode.lambda.environment.variables.cxDomain | default "" | quote }}
   {{- end }}
 
-  {{- with $values.externalServices.iot }}
-  iot-kafka-topic-name: {{ tpl .topic $top  | default "" | quote }}
-  {{- end }}
 
-  {{- with $values.externalServices.database.redshift }}
-  redshift-database-name: {{ tpl .databaseName $top  | default "" | quote }}
-  {{- end }}
-
-  {{- with $values.frontegg.general }}
+  {{- with $values.configCenter.frontegg.general }}
   env-id: {{ .envID  | default "" | quote }}
   portal-url: {{ .portalUrl  | default "" | quote }}
   portal-v1-url: {{ .portalV1Url  | default "" | quote }}
@@ -88,15 +81,6 @@ data:
   tracing-collector-endpoint: {{ .tracingCollectorEndpoint | default "" | default ("" | quote)}}
   idgw-application-id: {{ .idgwApplicationId | default "" | default ("" | quote)}}
   splitio-proxy-endpoint: {{ .splitioProxyEndpoint | default "" | default ("" | quote)}}
-  {{- end }}
-
-  {{- with $values.frontegg.general.analytics }}
-  segment-analytics-enabled: {{ .segmentAnalyticsEnabled | default "false" | quote }}
-  use-firehose-analytics: {{ .useFirehoseAnalytics | default "false" | quote }}
-  {{- end }}
-
-  {{- with $values.frontegg.general.splitio }}
-  splitio-synchronizer: {{ .synchronizer | quote }}
   {{- end }}
 
   {{- with $apps.audits }}
@@ -154,17 +138,6 @@ data:
   frontegg-ui-events-url: {{ .fronteggUiEventsUrl | default "" | quote }}
   {{- end }}
 
-  {{- with $apps.idgwBff }}
-  idgw-cdn-url: {{ .idgwCdnUrl  | default "" | quote }}
-  idgw-cdn-bucket: {{ .idgwCdnBucket  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.dataIngest }}
-  data-ingest-db-schema: {{ .dataIngestDbSchema  | default "" | quote }}
-  data-ingest-kafka-topic: {{ .dataIngestKafkaTopic  | default "" | quote }}
-  data-ingest-kafka-vendors-topic: {{ .dataIngestKafkaVendorsTopic  | default "" | quote }}
-  {{- end }}
-
   {{- with $apps.envDuplicator }}
   env-duplicator-mysql-db-name: {{ .dbName  | default "" | quote }}
   env-duplicator-configuration-copy-result-topic-name: {{ .configCopyResultTopicName  | default "" | quote }}
@@ -196,41 +169,6 @@ data:
   {{- with $apps.oauth }}
   oauth-service-db-name: {{ .oauthServiceDbName  | default "" | quote }}
   oauth-service-redis-db-index: {{ .oauthServiceRedisDbIndex  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.pqlProcess }}
-  pql-process-hubspot-enable-companies-sync: {{ .pqlProcessHubspotEnableCompaniesSync  | default "" | quote }}
-  pql-process-hubspot-enable-reporting: {{ .pqlProcessHubspotEnableReporting  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.pricingViews }}
-  react-app-frontegg-pricing-url: {{ tpl .reactAppFronteggPricingUrl $top  | default "" | quote }}
-  react-app-frontegg-pricing-template-id: {{ .reactAppFronteggPricingTemplateId  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.reportingEngine }}
-  asset-blob-storage-container-name: {{ .assetBlobStorageContainerName  | default "" | quote }}
-  reporting-engine-approvers-notification-email-template-id: {{ .reportingEngineApproversNotificationEmailTemplateId  | default "" | quote }}
-  iot-redis-db-index: {{ .iotRedisDbIndex  | default "" | quote }}
-  iot-redis-record-ttl-seconds: {{ .iotRedisRecordTtlSeconds  | default "" | quote }}
-  iot-redis-max-poll-timeout-ms: {{ .iotRedisMaxPollTimeoutMs  | default "" | quote }}
-  iot-redis-poll-interval-ms: {{ .iotRedisPollIntervalMs  | default "" | quote }}
-  reporting-engine-s3-bucket-name: {{ .bucketUrl  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.reportsScheduler }}
-  reporting-service-fetch-pubsub-strategy: {{ .reportingServiceFetchPubsubStrategy  | default "" | quote }}
-  reporting-service-topic-name: {{ .reportingServiceTopicName  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.subscription }}
-  stripe-region: {{ .stripeRegion  | default "" | quote }}
-  default-stripe-region: {{ .defaultStripeRegion  | default "" | quote }}
-  {{- end }}
-
-  {{- with $apps.sidekick }}
-  sidekick-allowed-origin: {{ .sidekickAllowedOrigin | default "" | quote }}
-  sidekick-tenant-id: {{ .sidekickTenantId  | default "" | quote }}
   {{- end }}
 
   {{- with $apps.teamManagement }}
@@ -269,11 +207,6 @@ data:
   webhook-service-mongodb-connection-retry-delay: {{ .webhookServiceMongodbConnectionRetryDelay | default "" | quote }}
   webhook-mysql-db-name: {{ .webhookMysqlDbName | default "" | quote }}
   webhook-proxy-enabled: {{ .proxyEnabled | quote }}
-  {{- end }}
-
-  {{- with $apps.webpush }}
-  webpush-mongodb-connection-retry-attempts: {{ .webpushMongodbConnectionRetryAttempts  | default "" | quote }}
-  webpush-mongodb-connection-retry-delay: {{ .webpushMongodbConnectionRetryDelay  | default "" | quote }}
   {{- end }}
 
   {{- with $apps.forwardProxy }}
