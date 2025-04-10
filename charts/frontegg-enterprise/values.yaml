@@ -4213,11 +4213,6 @@ applications-service:
 
   jobs:
     migrate:
-      metadata:
-        annotations:
-          "helm.sh/hook": pre-install, pre-upgrade
-          "helm.sh/hook-weight": "-5"
-          "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
       enabled: true
       spec:
         command: ["/bin/bash"]
@@ -4233,7 +4228,6 @@ applications-service:
         FRONTEGG_CDN_BUCKET: cdn-bucket
         FRONTEGG_AWS_REGION: aws-region
         FRONTEGG_CDN_URL: cdn-url
-        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
         FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
 
@@ -4528,6 +4522,10 @@ api-gateway:
 
 ################### Config Center
 configCenter:
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-100"
+
   externalServices:
     secrets:
       url: ""
