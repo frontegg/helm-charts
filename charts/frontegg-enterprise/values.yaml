@@ -7,96 +7,51 @@ admins:
   image:
     repository: frontegg/admins-service
     prefix: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
-
   argoRollouts:
     enabled: false
-
   web:
-
     enabled: true
-
     command: [ "/bin/bash" ]
-
     args: [ "entrypoint.sh" ]
-
     resources:
-
       requests:
-
         cpu: 500m
-
         memory: 1Gi
-
       limits:
-
         memory: 1Gi
-
     service:
-
       ports:
-
         - port: 80
-
           targetPort: 3004
-
           protocol: TCP
-
           name: http
-
     ports:
-
       - name: http
-
         containerPort: 3004
-
     autoscaling:
-
       enabled: true
-
       minReplicas: 2
-
       maxReplicas: 10
-
       targetCPUUtilizationPercentage: 50
-
       targetMemoryUtilizationPercentage: 50
-
     livenessProbe:
-
       failureThreshold: 3
-
       httpGet:
-
         path: /health
-
         port: http
-
       initialDelaySeconds: 20
-
       periodSeconds: 10
-
     readinessProbe:
-
       httpGet:
-
         path: /health
-
         port: http
-
       initialDelaySeconds: 5
-
       periodSeconds: 5
-
   configmap:
-
     data:
-
       CLOUD_ENVIRONMENT: production
-
       NODE_ENV: production
-
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-
   configuration:
     map:
       config-center:
