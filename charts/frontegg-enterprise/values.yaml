@@ -13,7 +13,7 @@ admins:
   name: admins
   team: frontegg
   envID: &envId "prod-main-secret20250407120514343900000001"
-  appVersion: master-latest
+  appVersion: venv-latest
   image:
     repository: frontegg/admins-service
     prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
@@ -288,7 +288,7 @@ webhooks:
   name: webhooks
   team: frontegg
   envID: *envId
-  appVersion: master-latest
+  appVersion: 27605dd
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -475,7 +475,7 @@ vendors-service:
   name: vendors
   team: frontegg
   envID: *envId
-  appVersion: master-latest
+  appVersion: venv-latest
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -678,396 +678,178 @@ vendors-service:
         FRONTEGG_AWS_REGION: aws-region
         FRONTEGG_CDN_BUCKET: cdn-bucket
 
-#usage-tracking-service:
-#  name: usage-tracking
-#  team: adoption
-#
-#  envID: local
-#
-#  image:
-#    repository: "frontegg/usage-tracking-service"
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    command: ["/bin/bash"]
-#    args: ["entrypoint.sh"]
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3023
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3023
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 1Gi
-#      limits:
-#        memory: 1Gi
-#    livenessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 20
-#      periodSeconds: 10
-#    readinessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 5
-#      periodSeconds: 5
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 2
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 50
-#    nodeSelector:
-#      workload: general
-#
-#  configmap:
-#    data:
-#      CLOUD_ENVIRONMENT: dev
-#      FRONTEGG_SERVICE_NAME: usage-tracking-service
-#      FRONTEGG_USAGE_TRACKING_MYSQL_DB_NAME: frontegg_usage_tracking
-#      NODE_ENV: production
-#      FRONTEGG_JAEGER_ENABLED: "true"
-#      FRONTEGG_CONFIG_DIRECTORY: /etc/config
-#
-#  jobs:
-#    migrate:
-#      enabled: true
-#      spec:
-#        command: ["/bin/bash"]
-#        args: ["run-migrations.sh"]
-#        resources:
-#          requests:
-#            cpu: 500m
-#            memory: 500Mi
-#
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-#        FRONTEGG_REDSHIFT_DATABASE: redshift-database-name
-#
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.yaml
-#    text: |
-#      {{- $secret := .contents | fromYaml}}
-#      apiKey: {{ $secret.frontegg.apiKeys.usageTrackingApiKey | toYaml }}
-#      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
-#      frontegg:
-#        vendorId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-#      kafka:
-#        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-#        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-#        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-#      redshift:
-#        host: {{ $secret.databases.redshift.host | toYaml }}
-#        user: {{ $secret.databases.redshift.userName | toYaml }}
-#        password: {{ $secret.databases.redshift.password | toYaml }}
-#      mysql:
-#        hostname: {{ $secret.databases.generalMysql.host | toYaml }}
-#        username: {{ $secret.databases.generalMysql.username | toYaml }}
-#        password: {{ $secret.databases.generalMysql.password | toYaml }}
-#    additionalSecrets: ""
-#
-#  cronjobs:
-#    refresh:
-#      enabled: true
-#      command: ["npm"]
-#      args: ["run", "full-cronjob"]
-#      schedule: "0 * * * *"
-#      resources:
-#        requests:
-#          cpu: 500m
-#          memory: 500Mi
-#      ttlSecondsAfterFinished: 600
-#      concurrencyPolicy: Replace
-#      failedJobsHistoryLimit: 1
-#      successfulJobsHistoryLimit: 1
-#      restartPolicy: Never
-#
-#tenants-service:
-#  name: tenants
-#  team: tamago
-#
-#  envID: local
-#
-#  image:
-#    repository: frontegg/tenants-service
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    command: ["/bin/bash"]
-#    args: ["entrypoint.sh", "service"]
-#    resources:
-#      requests:
-#        cpu: 1
-#        memory: 1Gi
-#      limits:
-#        memory: 1Gi
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3015
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3015
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 2
-#      maxReplicas: 3
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 75
-#    livenessProbe:
-#      failureThreshold: 3
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 40
-#      periodSeconds: 60
-#    readinessProbe:
-#      failureThreshold: 1
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 5
-#      periodSeconds: 5
-#  worker:
-#    enabled: true
-#    command: ["/bin/bash"]
-#    args: ["entrypoint.sh", "worker"]
-#    labels:
-#      scrape-for-metrics: enabled
-#    podAnnotations:
-#      linkerd.io/inject: enabled
-#    replicaCount: 1
-#    nodeSelector:
-#      workload: general
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3015
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3015
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 2
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 75
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 1Gi
-#    livenessProbe:
-#      failureThreshold: 5
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 60
-#      periodSeconds: 60
-#    readinessProbe:
-#      failureThreshold: 1
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 5
-#      periodSeconds: 5
-#  jobs:
-#    migrate:
-#      enabled: true
-#      spec:
-#        command: ["/bin/bash"]
-#        args: ["run-migrations.sh"]
-#        resources:
-#          requests:
-#            cpu: 300m
-#            memory: 500Mi
-#
-#  configmap:
-#    data:
-#      CLOUD_ENVIRONMENT: dev
-#      NODE_ENV: production
-#      FRONTEGG_JAEGER_ENABLED: "true"
-#      FRONTEGG_ANALYTICS_TYPE: firehose
-#      LOG_LEVEL: verbose
-#      FRONTEGG_CONFIG_DIRECTORY: /etc/config
-#
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
-#        FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
-#        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-#        FRONTEGG_TENANT_ASSETS_S3_BUCKET: tenant-assets-s3-bucket
-#        FRONTEGG_TENANTS_SERVICE_MYSQL_DB_NAME: tenants-service-mysql-db-name
-#        FRONTEGG_USAGE_REPORTING_KAFKA_TOPIC_NAME: tenants-usage-reporting-topic-name
-#        FRONTEGG_TENANTS_SERVICE_REDIS_DB_INDEX: tenants-redis-db-index
-#        FRONTEGG_USE_FIREHOSE_ANALYTICS: use-firehose-analytics
-#        FRONTEGG_TENANT_ASSETS_S3_ENDPOINT: tenant-assets-s3-endpoint
-#        FRONTEGG_AWS_ENDPOINT: tenant-assets-s3-aws-endpoint
-#        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
-#
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.yaml
-#    text: |
-#      {{- $secret := .contents | fromYaml }}
-#      apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
-#      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-#      splitIO:
-#        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-#        redis:
-#          host: {{ $secret.databases.redis.host | toYaml }}
-#          port: {{ $secret.databases.redis.port | toYaml }}
-#          password: {{ $secret.databases.redis.password | toYaml }}
-#
-#      database:
-#        mongo:
-#          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
-#        sql:
-#          host: {{ $secret.databases.generalMysql.host | toYaml }}
-#          username: {{ $secret.databases.generalMysql.username | toYaml }}
-#          password: {{ $secret.databases.generalMysql.password | toYaml }}
-#      kafka:
-#        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-#        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-#        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-#      redis:
-#        host: {{ $secret.databases.redis.host | toYaml }}
-#        port: {{ $secret.databases.redis.port | toYaml }}
-#        password: {{ $secret.databases.redis.password | toYaml }}
-#        tls: {{ $secret.databases.redis.tls | toYaml }}
-#      analytics:
-#        firehose:
-#          awsRegion: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
-#          awsAccessKey: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
-#          awsSecretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
-#      cloudflare:
-#        cdn:
-#          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
-#          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
-#
-#    additionalSecrets: ""
-#
-#subscriptions-service:
-#  name: subscriptions
-#  team: adoption
-#
-#  envID: local
-#
-#  image:
-#    repository: frontegg/subscriptions-service
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    command: ["/bin/bash"]
-#    args: ["entrypoint.sh"]
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 1Gi
-#      limits:
-#        memory: 1Gi
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3017
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3017
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 2
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 75
-#    readinessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 20
-#      periodSeconds: 5
-#    livenessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 30
-#      periodSeconds: 20
-#    nodeSelector:
-#      workload: general
-#  jobs:
-#    migrate:
-#      enabled: true
-#      spec:
-#        command: ["/bin/bash"]
-#        args: ["run-migrations.sh"]
-#        resources:
-#          requests:
-#            cpu: 500m
-#            memory: 500Mi
-#
-#  configmap:
-#    data:
-#      CLOUD_ENVIRONMENT: dev
-#      FRONTEGG_SERVICE_NAME: subscriptions-service
-#      NODE_ENV: production
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_KAFKA_STRIPE_WEBHOOKS_TOPIC_NAME: stripe-webhooks-v1
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_ENCRYPT_ALGORITHM: aes-256-cbc
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_DB_NAME: frontegg_subscriptions
-#      FRONTEGG_JAEGER_ENABLED: "true"
-#      FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
-#        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
-#        FRONTEGG_API_GATEWAY_URL: api-gateway-url
-#        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-#        FRONTEGG_REGION: stripe-region
-#        FRONTEGG_DEFAULT_REGION: default-stripe-region
-#
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.env
-#    text: |
-#      {{- $secret := .contents | fromYaml}}
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.subscriptionsServiceApiKey | toYaml }}
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_DB_HOST={{ $secret.databases.generalMysql.host | toYaml }}
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_DB_USERNAME={{ $secret.databases.generalMysql.username | toYaml }}
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_DB_PASSWORD={{ $secret.databases.generalMysql.password | toYaml }}
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_DB_USE_SSL={{ $secret.databases.generalMysql.useSsl | toYaml }}
-#      FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
-#      FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
-#      FRONTEGG_KAFKA_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
-#      FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
-#      FRONTEGG_SUBSCRIPTIONS_SERVICE_ENCRYPT_SECRET_KEY={{ $secret.frontegg.applications.subscriptions.encryptSecretKey | toYaml }}
-#      FRONTEGG_TENANTS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
-#      FRONTEGG_IDENTITY_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-#    additionalSecrets: ""
-#
+tenants-service:
+  name: tenants
+  team: tamago
+
+  envID: local
+
+  image:
+    repository: frontegg/tenants-service
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    resources:
+      requests:
+        cpu: 1
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3015
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3015
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 40
+      periodSeconds: 60
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    labels:
+      scrape-for-metrics: enabled
+    podAnnotations:
+      linkerd.io/inject: enabled
+    replicaCount: 1
+    nodeSelector:
+      workload: general
+    service:
+      ports:
+        - port: 80
+          targetPort: 3015
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3015
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    livenessProbe:
+      failureThreshold: 5
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 60
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      NODE_ENV: production
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_ANALYTICS_TYPE: firehose
+      LOG_LEVEL: verbose
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_TENANT_ASSETS_S3_BUCKET: tenant-assets-s3-bucket
+        FRONTEGG_TENANTS_SERVICE_MYSQL_DB_NAME: tenants-service-mysql-db-name
+        FRONTEGG_USAGE_REPORTING_KAFKA_TOPIC_NAME: tenants-usage-reporting-topic-name
+        FRONTEGG_TENANTS_SERVICE_REDIS_DB_INDEX: tenants-redis-db-index
+        FRONTEGG_USE_FIREHOSE_ANALYTICS: use-firehose-analytics
+        FRONTEGG_TENANT_ASSETS_S3_ENDPOINT: tenant-assets-s3-endpoint
+        FRONTEGG_AWS_ENDPOINT: tenant-assets-s3-aws-endpoint
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+
+      database:
+        mongo:
+          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+        sql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      analytics:
+        firehose:
+          awsRegion: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
+          awsAccessKey: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
+          awsSecretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
+      cloudflare:
+        cdn:
+          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
+          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+
+    additionalSecrets: ""
+
 #security-engines:
 #  name: security-engines
 #  team: adoption
@@ -2306,7 +2088,7 @@ env-duplicator:
   name: env-duplicator
   team: frontegg
   envID: *envId
-  appVersion: master-latest
+  appVersion: venv-latest
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -2665,7 +2447,7 @@ directory-service:
   name: directory
   team: frontegg
   envID: *envId
-  appVersion: master-latest
+  appVersion: venv-latest
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -3007,7 +2789,7 @@ dashboard-env-builder:
   name: dashboard-env-builder
   team: frontegg
   envID: *envId
-  appVersion: master-latest
+  appVersion: venv-latest
   image:
     repository: frontegg/dashboard-env-builder
     prefix: *imagePrefix
@@ -3672,7 +3454,7 @@ dashboard-env-builder:
 #  envID: local
 #
 #  replicaCount: 1
-#  appVersion: master-latest
+#  appVersion: venv-latest
 #
 #  image:
 #    repository: frontegg/authentication-service
@@ -4105,7 +3887,7 @@ applications-service:
   name: applications
   team: frontegg
   envID: *envId
-  appVersion: master-latest
+  appVersion: venv-latest
 
   argoRollouts:
     enabled: false
@@ -4265,7 +4047,7 @@ api-gateway:
   image:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
-  appVersion: master-latest
+  appVersion: venv-latest
 
   argoRollouts:
     enabled: false
