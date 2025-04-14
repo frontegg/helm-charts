@@ -13,7 +13,7 @@ admins:
   name: admins
   team: frontegg
   envID: &envId "prod-main-secret20250407120514343900000001"
-  appVersion: venv-latest
+  appVersion: 0b5b99d
   image:
     repository: frontegg/admins-service
     prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
@@ -475,7 +475,7 @@ vendors-service:
   name: vendors
   team: frontegg
   envID: *envId
-  appVersion: venv-latest
+  appVersion: 148e2c5
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -680,16 +680,15 @@ vendors-service:
 
 tenants-service:
   name: tenants
-  team: tamago
-
-  envID: local
-
+  team: frontegg
+  envID: *envId
+  appVersion: 148e2c5
+  argoRollouts:
+    enabled: false
+  defaults: *defaultsAnnotations
   image:
     repository: frontegg/tenants-service
-
-  imagePullSecrets:
-    - name: regcred
-
+    prefix: *imagePrefix
   web:
     enabled: true
     command: ["/bin/bash"]
@@ -2088,7 +2087,7 @@ env-duplicator:
   name: env-duplicator
   team: frontegg
   envID: *envId
-  appVersion: venv-latest
+  appVersion: c29114a
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -2443,11 +2442,12 @@ env-duplicator:
 #        password: {{ $secret.databases.redis.password | toYaml }}
 #    additionalSecrets: ""
 #
+
 directory-service:
   name: directory
   team: frontegg
   envID: *envId
-  appVersion: venv-latest
+  appVersion: e140beb
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -2789,7 +2789,7 @@ dashboard-env-builder:
   name: dashboard-env-builder
   team: frontegg
   envID: *envId
-  appVersion: venv-latest
+  appVersion: 7029a23
   image:
     repository: frontegg/dashboard-env-builder
     prefix: *imagePrefix
@@ -3887,17 +3887,13 @@ applications-service:
   name: applications
   team: frontegg
   envID: *envId
-  appVersion: venv-latest
-
+  appVersion: 4d3e7d0
   argoRollouts:
     enabled: false
-
   image:
     repository: frontegg/applications-service
     prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
-
   defaults: *defaultsAnnotations
-
   web:
     enabled: true
     command: ["/bin/bash"]
@@ -4043,11 +4039,10 @@ api-gateway:
   name: api-gateway
   team: frontegg
   envID: *envId
-
   image:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
-  appVersion: venv-latest
+  appVersion: 84c8fe4
 
   argoRollouts:
     enabled: false
