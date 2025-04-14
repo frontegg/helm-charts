@@ -70,22 +70,22 @@ dependencies:
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
     alias: dashboard-env-builder
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: directory-service
-#
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: directory-service
+
 #  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: entitlements-service
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: env-duplicator
-#
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: env-duplicator
+
 #  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
