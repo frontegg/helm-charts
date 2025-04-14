@@ -734,11 +734,7 @@ tenants-service:
     args: ["entrypoint.sh", "worker"]
     labels:
       scrape-for-metrics: enabled
-    podAnnotations:
-      linkerd.io/inject: enabled
     replicaCount: 1
-    nodeSelector:
-      workload: general
     service:
       ports:
         - port: 80
