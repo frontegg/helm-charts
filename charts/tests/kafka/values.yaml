@@ -1,0 +1,76 @@
+kafka:
+  nodeSelector:
+    consolidation: disabled
+  fullnameOverride: kafka
+  global:
+    imageRegistry: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub
+    imagePullSecrets:
+      - regcred
+  listeners:
+    client:
+      protocol: PLAINTEXT
+    controller:
+      protocol: PLAINTEXT
+    interbroker:
+      protocol: PLAINTEXT
+  broker:
+    replicaCount: 1
+    extraConfig: |
+      auto.create.topics.enable: true
+      default.replication.factor: 1
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+    resources:
+      requests:
+        cpu: 1
+        memory: 4Gi
+      limits:
+        cpu: 1
+        memory: 4Gi
+    persistence:
+      enabled: true
+  controller:
+    replicaCount: 0
+  kraft:
+    enabled: false
+  zookeeper:
+    enabled: true
+    fullnameOverride: zookeeper
+    persistence:
+      enabled: true
+    resources:
+      requests:
+        memory: 256Mi
+        cpu: 250m
+      limits:
+        memory: 256Mi
+        cpu: 250m
+#kafka:
+#  image:
+#    tag: 2.7.0
+#  fullnameOverride: kafka
+#  resources:
+#    requests:
+#      cpu: 500m
+#      memory: 1Gi
+#    limits:
+#      cpu: 1
+#      memory: 2Gi
+#  persistence:
+#    enabled: true
+#  zookeeper:
+#    fullnameOverride: zookeeper
+#    persistence:
+#      enabled: true
+#    resources:
+#      limits:
+#        memory: 500Mi
+#        cpu: 500m
+#  livenessProbe:
+#    enabled: true
+#    initialDelaySeconds: 10
+#    timeoutSeconds: 5
+#    failureThreshold: 9
+#    periodSeconds: 10
+#    successThreshold: 1
