@@ -1,6 +1,8 @@
 # Configuration for the initial database setup job
 initDbJob:
-  enabled: true # Set to true to run this job
+  enabled: false # Set to true to run this job
+  # Set to true if you want Helm to manage the ExternalSecret for DB credentials
+  createCredentialsSecret: true
   image:
     repository: mysql
     tag: "8.0"
@@ -42,8 +44,8 @@ admins:
 
   web:
     enabled: true
-    command: [ "/bin/bash" ]
-    args: [ "entrypoint.sh" ]
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
     resources:
       requests:
         cpu: 500m

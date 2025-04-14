@@ -24,11 +24,20 @@ spec:
         imagePullPolicy: {{ .Values.initDbJob.image.pullPolicy }}
         env:
         - name: MYSQL_HOST
-          value: "prod-mysql8-0-35.c1hrwrvemzzh.us-east-1.rds.amazonaws.com"
+          valueFrom:
+            secretKeyRef:
+              name: general-mysql-credentials
+              key: host
         - name: MYSQL_USER
-          value: "rdsmaster_IhsLkE"
+          valueFrom:
+            secretKeyRef:
+              name: general-mysql-credentials
+              key: username
         - name: MYSQL_PASSWORD
-          value: "CGXiW7u4KJNKBRK2fjnja5QgnDbzOk57"
+          valueFrom:
+            secretKeyRef:
+              name: general-mysql-credentials
+              key: password
         command:
         - /bin/sh
         - -c
