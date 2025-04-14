@@ -802,10 +802,8 @@ tenants-service:
         FRONTEGG_TENANTS_SERVICE_MYSQL_DB_NAME: tenants-service-mysql-db-name
         FRONTEGG_USAGE_REPORTING_KAFKA_TOPIC_NAME: tenants-usage-reporting-topic-name
         FRONTEGG_TENANTS_SERVICE_REDIS_DB_INDEX: tenants-redis-db-index
-        FRONTEGG_USE_FIREHOSE_ANALYTICS: use-firehose-analytics
         FRONTEGG_TENANT_ASSETS_S3_ENDPOINT: tenant-assets-s3-endpoint
         FRONTEGG_AWS_ENDPOINT: tenant-assets-s3-aws-endpoint
-        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
 
   externalSecret:
     enabled: true
