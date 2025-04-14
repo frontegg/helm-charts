@@ -1,0 +1,37 @@
+{{- if .Values.initDbJob.enabled -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "frontegg-enterprise.fullname" . }}-initdb-scripts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "frontegg-enterprise.labels" . | nindent 4 }}
+  annotations:
+    # Run this early
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-10"
+    # "helm.sh/hook-delete-policy": hook-succeeded
+    "argocd.argoproj.io/sync-wave": "-10" # Run even earlier than the job itself
+data:
+  db.sql: |-
+    CREATE DATABASE IF NOT EXISTS frontegg_usage_tracking CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_vendors CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_subscriptions CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_audits CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_reports CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_notifications CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_events CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_team_management CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_webhooks CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_feature_flags CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_webpush CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_identity CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_oauth CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_tenants CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_backoffice CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_dashboard_env_builder CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_env_duplicator CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_event_retry CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_entitlements CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_security_engines CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+{{- end }} 
