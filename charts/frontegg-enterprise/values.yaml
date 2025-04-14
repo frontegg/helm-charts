@@ -19,12 +19,12 @@ admins:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
         "helm.sh/hook-weight": "-100"
-        "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+        "helm.sh/hook-delete-policy": "before-hook-creation"
     secret:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
         "helm.sh/hook-weight": "-100"
-        "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+        "helm.sh/hook-delete-policy": "before-hook-creation"
     sereviceAccount:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
@@ -4168,8 +4168,6 @@ applications-service:
         cpu: 500m
         memory: 1Gi
     replicaCount: 1
-    nodeSelector:
-      workload: general
     service:
       ports:
         - port: 80
@@ -4332,8 +4330,6 @@ api-gateway:
     args: ["--max-http-header-size=16384", "dist/worker/main"]
     labels:
       scrape-for-metrics: enabled
-    nodeSelector:
-      workload: general
     service:
       ports:
         - port: 80
