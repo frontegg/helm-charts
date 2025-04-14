@@ -1,3 +1,13 @@
+# Configuration for the initial database setup job
+initDbJob:
+  enabled: true # Set to true to run this job
+  image:
+    repository: mysql
+    tag: "8.0"
+    pullPolicy: IfNotPresent
+  # Add annotations or resource requests/limits if needed
+  # annotations: {}
+  # resources: {}
 # Configuration for the admins service
 admins:
   name: admins
