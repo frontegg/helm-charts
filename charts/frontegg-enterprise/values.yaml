@@ -4526,7 +4526,7 @@ configCenter:
     iot:
       topic: ""
     aws:
-      region: ""
+      region: "us-east-1"
       componentsCollectionIdentifier: ""
 
   frontegg:
