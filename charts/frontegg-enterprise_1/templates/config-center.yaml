@@ -10,6 +10,11 @@ metadata:
   name: config-center
   labels:
     {{- include "config-center.labels" . | nindent 4 }}
+  {{- with $values.configCenter.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+
 data:
   {{- with $values.configCenter.frontegg.services }}
   prehook-service-url: "{{ .prehookServiceUrl }}"
@@ -60,7 +65,7 @@ data:
   {{- end }}
 
   {{- with $values.configCenter.externalServices.aws }}
-  aws-region: {{ tpl .region $top  | default "" | quote }}
+  aws-region: {{ required ".Values.configCenter.externalServices.aws must be set" .region | tpl .region | quote }}
   policy-service-aws-region: {{ tpl .region $top  | default "" | quote }}
   policy-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.policy.opaPolicyBucket | default "" | quote }}
   entitlements-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.entitlements.opaPolicyBucket | default "" | quote }}

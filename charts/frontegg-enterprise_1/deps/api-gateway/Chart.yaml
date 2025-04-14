@@ -1,0 +1,17 @@
+apiVersion: v2
+name: api-gateway
+description: Frontegg Enterprise Helm Chart # FILL IN BY MARKETING
+type: application
+
+version: 0.0.1
+appVersion: 2025.04.01
+
+maintainers:
+  - name: "Frontegg"
+    email: "support@frontegg.com"
+
+dependencies:
+  - name: unified-chart-staging
+    version: 4.0.*
+    repository: file://../charts/unified-chart-staging
+    alias: api-gateway

@@ -11,10 +11,23 @@ maintainers:
     email: "support@frontegg.com"
 
 dependencies:
-  - name: &chartName unified-chart-staging
-    version: &chartVersion 4.0.*
+  - name: unified-chart-staging
+    version: 4.0.*
     repository: https://frontegg.github.io/helm-charts
+    condition: "false"
 
-  - name: admins
-    version: 0.0.1
-    repository: file://deps/admins
+#  - name: admins
+#    version: 0.0.1
+#    repository: file://deps/admins
+
+#  - name: api-gateway
+#    version: 0.0.1
+#    repository: file://deps/api-gateway
+#
+#  - name: tenants
+#    version: 0.0.1
+#    repository: file://deps/tenants
+#
+#  - name: webhooks
+#    version: 0.0.1
+#    repository: file://deps/webhooks
