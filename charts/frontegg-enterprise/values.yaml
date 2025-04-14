@@ -472,218 +472,214 @@ admins:
 #            region: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
 #
 #    additionalSecrets: ""
-#
-#vendors-service:
-#  name: vendors
-#  team: adoption
-#  repoName: vendor-service
-#
-#  envID: local
-#
-#  image:
-#    repository: frontegg/vendor-service
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 1Gi
-#      limits:
-#        memory: 1Gi
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3001
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3001
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 2
-#      maxReplicas: 3
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 50
-#      advanced:
-#        horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
-#          name: '{{ include "web.name" $ }}'
-#          behavior:
-#            scaleDown:
-#              stabilizationWindowSeconds: 300
-#              policies:
-#                - type: Pods
-#                  value: 1
-#                  periodSeconds: 60
-#            scaleUp:
-#              stabilizationWindowSeconds: 0
-#              policies:
-#                - type: Pods
-#                  value: 3
-#                  periodSeconds: 10
-#    livenessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 20
-#      periodSeconds: 10
-#    readinessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 5
-#      periodSeconds: 5
-#  worker:
-#    enabled: true
-#    nodeSelector:
-#      workload: general
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3001
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3001
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 2
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 75
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 1Gi
-#  configmap:
-#    data:
-#      CLOUD_ENVIRONMENT: dev
-#      FRONTEGG_SERVICE_NAME: vendors-service
-#      NODE_ENV: production
-#      FRONTEGG_SEGMENT_ENABLED: "true"
-#      FRONTEGG_SEGMENT_GOOGLE_ENABLED: "true"
-#      MIGRATION_DIR_PATH: "./dist/typeorm-migrations"
-#      FRONTEGG_JAEGER_ENABLED: "true"
-#      FRONTEGG_CONFIG_DIRECTORY: /etc/config
-#      NODE_NO_WARNINGS: "1"
-#      SENTRY_ENABLED: "true"
-#      SENTRY_DSN: "https://ce3574db1bf7977095443dfc7d19532e@o362363.ingest.us.sentry.io/4507860407484416"
-#      LOG_LEVEL: verbose
-#  jobs:
-#    migrate:
-#      enabled: true
-#      spec:
-#        command: ["/bin/bash"]
-#        args: ["run-migrations.sh"]
-#        resources:
-#          requests:
-#            cpu: 300m
-#            memory: 500Mi
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.yaml
-#    text: |
-#      {{- $secret := .contents | fromYaml }}
-#      apiKeyEncryptionSecret: {{ $secret.frontegg.applications.vendors.apiKeySecret | toYaml }}
-#      apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
-#      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-#      fronteggApiKey: {{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
-#      fronteggPrivateKey: {{ $secret.frontegg.applications.authentication.authenticationPrivateKey | toYaml }}
-#      splitIO:
-#        webhooks:
-#          secret: {{ $secret.externalServices.split.webhooks.secret | toYaml }}
-#        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-#        redis:
-#          host: {{ $secret.databases.redis.host | toYaml }}
-#          port: {{ $secret.databases.redis.port | toYaml }}
-#          password: {{ $secret.databases.redis.password | toYaml }}
-#      webhookSecret: {{ $secret.frontegg.applications.vendors.webhookSecret | toYaml }}
-#      prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
-#      adminsService:
-#        apiKey: {{ $secret.frontegg.apiKeys.adminsServiceApiKey | toYaml }}
-#        baseUrl: {{ $secret.frontegg.apiKeys.adminsServiceApiKey | toYaml }}
-#      tenantsService:
-#        apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
-#        baseUrl: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
-#      identityService:
-#        apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-#        baseUrl: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-#        baseP1Url: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-#      teamManagementService:
-#        apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
-#        baseUrl: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
-#      kafka:
-#        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-#        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-#        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-#      database:
-#        mysql:
-#          host: {{ $secret.databases.generalMysql.host | toYaml }}
-#          username: {{ $secret.databases.generalMysql.username | toYaml }}
-#          password: {{ $secret.databases.generalMysql.password | toYaml }}
-#        mongoDb:
-#          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
-#      mixpanel:
-#        token: {{ $secret.externalServices.mixpanel.token | toYaml }}
-#      heap:
-#        appId: {{ $secret.externalServices.heapApp.id | toYaml }}
-#      segment:
-#        writeKey: {{ $secret.frontegg.analytics.segmentWriteKey | toYaml }}
-#      segmentToGoogleAnalytics:
-#        writeKey: {{ $secret.frontegg.applications.vendors.segmentGoogleWriteKey | toYaml }}
-#      customDomainSettings:
-#        credentials:
-#          clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
-#        cloudflare:
-#          zone: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareZone | toYaml }}
-#          token: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareToken | toYaml }}
-#        secretHeader: {{ $secret.frontegg.customDomains.secretHeader | toYaml }}
-#      assetsStorage:
-#        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }}
-#      redis:
-#          host: {{ $secret.databases.redis.host | toYaml }}
-#          password: {{ $secret.databases.redis.password | toYaml }}
-#          tls: {{ $secret.databases.redis.tls | toYaml }}
-#          port: {{ $secret.databases.redis.port | toYaml }}
-#      cloudflare:
-#        cdn:
-#          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
-#          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
-#
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_ENV_ID: env-id
-#        FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
-#        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
-#        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
-#        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
-#        FRONTEGG_IDENTITY_P1_SERVICE_URL: identity-p1-service-url
-#        FRONTEGG_CUSTOM_DOMAIN_CLOUDFLARE_SSL_ENDPOINT: custom-domain-cloudflare-ssl-endpoint
-#        FRONTEGG_PORTAL_URL: portal-url
-#        FRONTEGG_VENDORS_SERVICE_DB_NAME: vendors-mysql-db-name
-#        FRONTEGG_KAFKA_VENDORS_TOPIC_NAME: vendors-service-kafka-vendors-topic
-#        ASSET_BLOB_STORAGE_CONTAINER_NAME: vendors-asset-blob-storage-container-name
-#        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
-#        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_INGRESS_CLASS: custom-domain-cluster-ingress-class
-#        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_ISSUER_NAME: custom-domain-cluster-issuer-name
-#        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_DEFAULT_PORT: custom-domain-cluster-default-port
-#        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_NAMESPACE: custom-domain-cluste-namespace
-#        FRONTEGG_SSL_ENDPOINT: custom-domain-ssl-endpoint
-#        FRONTEGG_CUSTOM_DOMAIN_CLOUDFLARE_TRANSFORM_RULE_SET_ID: custom-domain-cloudflare-transform-rule-set-id
-#        FRONTEGG_CUSTOM_DOMAIN_CLOUDFLARE_ORIGIN_RULE_SET_ID: custom-domain-cloudflare-origin-rule-set-id
-#        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
-#        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
-#        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-#        FRONTEGG_CDN_URL: cdn-url
-#        FRONTEGG_AWS_REGION: aws-region
-#        FRONTEGG_CDN_BUCKET: cdn-bucket
-#
+
+vendors-service:
+  name: vendors
+  team: frontegg
+  envID: *envId
+  appVersion: master-latest
+  argoRollouts:
+    enabled: false
+  defaults: *defaultsAnnotations
+  image:
+    repository: frontegg/vendor-service
+    prefix: *imagePrefix
+  web:
+    enabled: true
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3001
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3001
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+      advanced:
+        horizontalPodAutoscalerConfig: # Optional. Section to specify HPA related options
+          name: '{{ include "web.name" $ }}'
+          behavior:
+            scaleDown:
+              stabilizationWindowSeconds: 300
+              policies:
+                - type: Pods
+                  value: 1
+                  periodSeconds: 60
+            scaleUp:
+              stabilizationWindowSeconds: 0
+              policies:
+                - type: Pods
+                  value: 3
+                  periodSeconds: 10
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 5
+      periodSeconds: 5
+  worker:
+    enabled: true
+    nodeSelector:
+      workload: general
+    service:
+      ports:
+        - port: 80
+          targetPort: 3001
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3001
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: vendors-service
+      NODE_ENV: production
+      FRONTEGG_SEGMENT_ENABLED: "false"
+      FRONTEGG_SEGMENT_GOOGLE_ENABLED: "false"
+      MIGRATION_DIR_PATH: "./dist/typeorm-migrations"
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      NODE_NO_WARNINGS: "1"
+      SENTRY_ENABLED: "false"
+      LOG_LEVEL: verbose
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
+        resources:
+          requests:
+            cpu: 300m
+            memory: 500Mi
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKeyEncryptionSecret: {{ $secret.frontegg.applications.vendors.apiKeySecret | toYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      fronteggApiKey: {{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+      fronteggPrivateKey: {{ $secret.frontegg.applications.authentication.authenticationPrivateKey | toYaml }}
+      splitIO:
+        webhooks:
+          secret: {{ $secret.externalServices.split.webhooks.secret | toYaml }}
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      webhookSecret: {{ $secret.frontegg.applications.vendors.webhookSecret | toYaml }}
+      prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
+      adminsService:
+        apiKey: {{ $secret.frontegg.apiKeys.adminsServiceApiKey | toYaml }}
+        baseUrl: {{ $secret.frontegg.apiKeys.adminsServiceApiKey | toYaml }}
+      tenantsService:
+        apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+        baseUrl: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+      identityService:
+        apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+        baseUrl: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+        baseP1Url: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+      teamManagementService:
+        apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
+        baseUrl: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      database:
+        mysql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+        mongoDb:
+          uri: {{ $secret.databases.mongo.connectionString | toYaml }}
+      mixpanel:
+        token: {{ $secret.externalServices.mixpanel.token | toYaml }}
+      heap:
+        appId: {{ $secret.externalServices.heapApp.id | toYaml }}
+      segment:
+        writeKey: {{ $secret.frontegg.analytics.segmentWriteKey | toYaml }}
+      segmentToGoogleAnalytics:
+        writeKey: {{ $secret.frontegg.applications.vendors.segmentGoogleWriteKey | toYaml }}
+      customDomainSettings:
+        credentials:
+          clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
+        cloudflare:
+          zone: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareZone | toYaml }}
+          token: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareToken | toYaml }}
+        secretHeader: {{ $secret.frontegg.customDomains.secretHeader | toYaml }}
+      assetsStorage:
+        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }}
+      redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+          tls: {{ $secret.databases.redis.tls | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+      cloudflare:
+        cdn:
+          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
+          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_ADMINS_SERVICE_URL: admins-service-url
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
+        FRONTEGG_IDENTITY_P1_SERVICE_URL: identity-p1-service-url
+        FRONTEGG_CUSTOM_DOMAIN_CLOUDFLARE_SSL_ENDPOINT: custom-domain-cloudflare-ssl-endpoint
+        FRONTEGG_PORTAL_URL: portal-url
+        FRONTEGG_VENDORS_SERVICE_DB_NAME: vendors-mysql-db-name
+        FRONTEGG_KAFKA_VENDORS_TOPIC_NAME: vendors-service-kafka-vendors-topic
+        ASSET_BLOB_STORAGE_CONTAINER_NAME: vendors-asset-blob-storage-container-name
+        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
+        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_INGRESS_CLASS: custom-domain-cluster-ingress-class
+        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_ISSUER_NAME: custom-domain-cluster-issuer-name
+        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_DEFAULT_PORT: custom-domain-cluster-default-port
+        FRONTEGG_CUSTOM_DOMAIN_CLUSTER_NAMESPACE: custom-domain-cluste-namespace
+        FRONTEGG_SSL_ENDPOINT: custom-domain-ssl-endpoint
+        FRONTEGG_CUSTOM_DOMAIN_CLOUDFLARE_TRANSFORM_RULE_SET_ID: custom-domain-cloudflare-transform-rule-set-id
+        FRONTEGG_CUSTOM_DOMAIN_CLOUDFLARE_ORIGIN_RULE_SET_ID: custom-domain-cloudflare-origin-rule-set-id
+        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_AWS_REGION: aws-region
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+
 #usage-tracking-service:
 #  name: usage-tracking
 #  team: adoption

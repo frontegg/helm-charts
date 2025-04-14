@@ -1,0 +1,2 @@
+1. DB init job
+    a. Should take the creds from a the secret manager using external secret
