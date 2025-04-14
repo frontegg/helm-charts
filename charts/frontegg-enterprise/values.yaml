@@ -3003,110 +3003,110 @@ admins:
 #        name: {{ include "name" $ }}
 #
 #
-#dashboard-env-builder:
-#  name: dashboard-env-builder
-#  team: tamago
-#
-#  envID: local
-#
-#  image:
-#    repository: frontegg/dashboard-env-builder
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 3024
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 3024
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 1Gi
-#      limits:
-#        memory: 1Gi
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 2
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 50
-#    livenessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 20
-#      periodSeconds: 10
-#    readinessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 10
-#      periodSeconds: 5
-#  configmap:
-#    data:
-#      CLOUD_ENVIRONMENT: dev
-#      FRONTEGG_SERVICE_NAME: dashboard-env-builder
-#      NODE_ENV: production
-#      FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
-#      LOG_LEVEL: verbose
-#      FRONTEGG_CONFIG_DIRECTORY: /etc/config
-#
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_ENV_DUPLICATOR_URL: env-duplicator-service-url
-#        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
-#        FRONTEGG_IDENTITY_URL: identity-service-url
-#        FRONTEGG_IDENTITY_P1_SERVICE_URL: identity-p1-service-url
-#        FRONTEGG_OAUTH_URL: oauth-service-url
-#        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
-#        FRONTEGG_METADATA_URL: metadata-service-url
-#        FRONTEGG_EVENT_SERVICE_URL: events-service-url
-#        FRONTEGG_CDN_URL: cdn-url
-#        FRONTEGG_SPLITIO_PROXY_ENDPOINT: splitio-proxy-endpoint
-#        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
-#
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.yaml
-#    text: |
-#      {{- $secret := .contents | fromYaml}}
-#      apiKey: {{ $secret.frontegg.apiKeys.dahboardEnvBuilderApiKey | toYaml }}
-#      splitIO:
-#        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-#      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-#      database:
-#        host: {{ $secret.databases.generalMysql.host | toYaml }}
-#        username: {{ $secret.databases.generalMysql.username | toYaml }}
-#        password: {{ $secret.databases.generalMysql.password | toYaml }}
-#        useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-#      envDuplicatorService:
-#        apiKey: {{ $secret.frontegg.apiKeys.envDuplicatorApiKey | toYaml }}
-#      vendorsService:
-#        apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
-#      identityService:
-#        apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-#      teamManagementService:
-#        apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
-#      metadataService:
-#        apiKey: {{ $secret.frontegg.apiKeys.metadataServiceApiKey | toYaml }}
-#      oauthService:
-#        apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
-#      eventsService:
-#        apiKey: {{ $secret.frontegg.apiKeys.eventsServiceApiKey | toYaml }}
-#      kafka:
-#        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-#        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-#        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-#    additionalSecrets: ""
+dashboard-env-builder:
+  name: dashboard-env-builder
+  team: tamago
+
+  envID: local
+
+  image:
+    repository: frontegg/dashboard-env-builder
+
+  imagePullSecrets:
+    - name: regcred
+
+  web:
+    enabled: true
+    service:
+      ports:
+        - port: 80
+          targetPort: 3024
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3024
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 10
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 5
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: dashboard-env-builder
+      NODE_ENV: production
+      FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
+      LOG_LEVEL: verbose
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_DUPLICATOR_URL: env-duplicator-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_IDENTITY_URL: identity-service-url
+        FRONTEGG_IDENTITY_P1_SERVICE_URL: identity-p1-service-url
+        FRONTEGG_OAUTH_URL: oauth-service-url
+        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
+        FRONTEGG_METADATA_URL: metadata-service-url
+        FRONTEGG_EVENT_SERVICE_URL: events-service-url
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_SPLITIO_PROXY_ENDPOINT: splitio-proxy-endpoint
+        FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: splitio-synchronizer
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.dahboardEnvBuilderApiKey | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      database:
+        host: {{ $secret.databases.generalMysql.host | toYaml }}
+        username: {{ $secret.databases.generalMysql.username | toYaml }}
+        password: {{ $secret.databases.generalMysql.password | toYaml }}
+        useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+      envDuplicatorService:
+        apiKey: {{ $secret.frontegg.apiKeys.envDuplicatorApiKey | toYaml }}
+      vendorsService:
+        apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      identityService:
+        apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+      teamManagementService:
+        apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
+      metadataService:
+        apiKey: {{ $secret.frontegg.apiKeys.metadataServiceApiKey | toYaml }}
+      oauthService:
+        apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
+      eventsService:
+        apiKey: {{ $secret.frontegg.apiKeys.eventsServiceApiKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+    additionalSecrets: ""
 #
 #custom-code-service:
 #  name: custom-code
@@ -4259,7 +4259,6 @@ applications-service:
       encryption:
         secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
     additionalSecrets: ""
-
 
 api-gateway:
   name: api-gateway
