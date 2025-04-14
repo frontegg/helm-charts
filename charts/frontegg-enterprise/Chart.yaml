@@ -26,10 +26,10 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: applications-service
 
-  - name: *chartName
-    version: *chartVersion
-    repository: https://frontegg.github.io/helm-charts
-    alias: anomaly-detection
+#  - name: *chartName
+#    version: *chartVersion
+#    repository: https://frontegg.github.io/helm-charts
+#    alias: anomaly-detection
 #
 #  - name: *chartName
 #    version: *chartVersion
@@ -46,10 +46,10 @@ dependencies:
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: audits-service
 #
-  - name: *chartName
-    version: *chartVersion
-    repository: https://frontegg.github.io/helm-charts
-    alias: backoffice-service
+#  - name: *chartName
+#    version: *chartVersion
+#    repository: https://frontegg.github.io/helm-charts
+#    alias: backoffice-service
 #
 #  - name: *chartName
 #    version: *chartVersion
