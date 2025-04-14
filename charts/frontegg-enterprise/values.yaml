@@ -2300,18 +2300,16 @@ admins:
 
 env-duplicator:
   name: env-duplicator
-  team: tamago
-
-  envID: local
-
+  team: frontegg
+  envID: *envId
+  appVersion: master-latest
+  argoRollouts:
+    enabled: false
+  defaults: *defaultsAnnotations
   image:
     repository: frontegg/env-duplicator
-
+    prefix: *imagePrefix
   imagePullPolicy: Always
-
-  imagePullSecrets:
-    - name: regcred
-
   web:
     enabled: true
     command: ["/bin/bash"]
