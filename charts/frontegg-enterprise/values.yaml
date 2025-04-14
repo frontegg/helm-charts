@@ -682,7 +682,7 @@ tenants-service:
   name: tenants
   team: frontegg
   envID: *envId
-  appVersion: 148e2c5
+  appVersion: 5ef236f
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
