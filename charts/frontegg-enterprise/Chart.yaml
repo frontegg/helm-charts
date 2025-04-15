@@ -31,31 +31,21 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: authentication-service
 
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: audits-service
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: backoffice-service
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: connectors-worker
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: custom-code-service
-#
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: audits-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: backoffice-service
+
 #  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: dashboard
-#
+
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
