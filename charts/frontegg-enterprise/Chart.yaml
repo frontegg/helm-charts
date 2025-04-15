@@ -74,6 +74,11 @@ dependencies:
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
+    alias: identity-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
     alias: forward-proxy
 
   - name: *chartName

@@ -2972,6 +2972,286 @@ api-gateway:
           apiKey: {{ $secret.frontegg.apiKeys.nlpExecutionAssistantApiKey | toYaml }}
     additionalSecrets: ""
 
+identity-service:
+  name: identity
+  team: frontegg
+  envID: *envId
+  appVersion: f7acfe4
+  image:
+    repository: frontegg/identity-service
+    prefix: *imagePrefix
+  defaults: *defaultsAnnotations
+  argoRollouts:
+    enabled: false
+#  serviceAccount:
+#    enabled: true
+#    annotations:
+#    nameOverride: identity-sa
+  web:
+    enabled: true
+    command: [ "node" ]
+    args: [ "service/dist/deployments/service/main" ]
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 3Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3016
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3016
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    startupProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 5
+  hp:
+    enabled: true
+    command: [ "node" ]
+    args: [ "p1-service/dist/main" ]
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 3Gi
+    labels:
+      priority: "high"
+    service:
+      ports:
+        - port: 80
+          targetPort: 3016
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3016
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    readinessProbe:
+      failureThreshold: 1
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 60
+    startupProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 10
+      periodSeconds: 10
+      failureThreshold: 5
+  worker:
+    enabled: true
+    command: [ "node" ]
+    args: [ "service/dist/deployments/worker/main" ]
+    labels:
+      scrape-for-metrics: enabled
+    service:
+      ports:
+        - port: 80
+          targetPort: 3016
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3016
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: identity-service
+      NODE_ENV: production
+      FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
+      FRONTEGG_USE_FIREHOSE_ANALYTICS: "false"
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_TWILIO_SENDER: "+12055578527"
+      FRONTEGG_TWILIO_MESSAGING_SID: "MGf49702aad25a6a99b4acf68ad148af03"
+      LOG_LEVEL: verbose
+      MIGRATION_DIR_PATH: /service/dist/migrations,/service/dist/seeders
+      FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
+      SENTRY_ENABLED: "false"
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: [ "node" ]
+        args:
+          [
+            "./node_modules/@frontegg/common/dist/utils/text-to-json-output.js",
+            "./node_modules/typeorm/cli.js",
+            "--dataSource=service/dist/data-sources/production.ormconfig.js",
+            "migration:run",
+          ]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_REPORTS_ENGINE_URL: reports-engine-url
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
+        FRONTEGG_API_GW_URL: api-gateway-url
+        FRONTEGG_PREHOOK_SERVICE_URL: prehook-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_EMAIL_SERVICE_URL: email-service-url
+        FRONTEGG_MAX_CONCURRENT_SESSIONS: identity-service-max-concurrent-sessions
+        FRONTEGG_IDENTITY_SERVICE_DB_NAME: identity-service-db-name
+        FRONTEGG_AUDITS_KAFKA_TOPIC_NAME: identity-service-audit-triggered-topic-name
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_OAUTH_SERVICE_URL: oauth-service-url
+        FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
+        FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_AUTH_HUB_SERVICE_URL: auth-hub-service-url
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_ENTITLEMENTS_AGENT_URL: entitlements-agent-url
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      cryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      cryptoKeyV2: {{ $secret.frontegg.applications.identity.cryptoKeyV2 | toYaml }}
+      databases:
+        mySql:
+            host: {{ $secret.databases.identityMysql.host | toYaml }}
+            username: {{ $secret.databases.identityMysql.username | toYaml }}
+            password: {{ $secret.databases.identityMysql.password | toYaml }}
+            replicaHost: {{ $secret.databases.identityMysql.replicaHost | default "" }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      sharedCache:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      internalServices:
+        reportsEngine:
+            apiKey: {{ $secret.frontegg.apiKeys.reportsEngineApiKey | toYaml }}
+        teamManagement:
+            apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
+        tenantsService:
+            apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+        prehookService:
+            apiKey: {{ $secret.frontegg.apiKeys.prehookApiKey | toYaml }}
+        vendorsService:
+            apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+        emailService:
+            apiKey: {{ $secret.frontegg.apiKeys.emailServiceApiKey | toYaml }}
+        oauthService:
+            apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
+        securityEngines:
+            apiKey: {{ $secret.frontegg.apiKeys.securityEnginesApiKey | toYaml }}
+        applicationsService:
+            apiKey: {{ $secret.frontegg.apiKeys.applicationsServiceApiKey | toYaml }}
+        customCodeService:
+            apiKey: {{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+        authHubService:
+            apiKey: {{ $secret.frontegg.apiKeys.authHubServiceApiKey | toYaml }}
+      sendGrid:
+        apiKey: {{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      oidc:
+        google:
+          clientId: {{ $secret.frontegg.applications.identity.google.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.google.clientSecret | toYaml }}
+        github:
+          clientId: {{ $secret.frontegg.applications.identity.github.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.github.clientSecret | toYaml }}
+        microsoft:
+          clientId: {{ $secret.frontegg.applications.identity.microsoft.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.microsoft.clientSecret | toYaml }}
+        facebook:
+          clientId: {{ $secret.frontegg.applications.identity.facebook.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.facebook.clientSecret | toYaml }}
+        slack:
+          clientId: {{ $secret.frontegg.applications.identity.slack.clientId | toYaml }}
+          clientSecret: {{ $secret.frontegg.applications.identity.slack.clientSecret | toYaml }}
+        apple:
+          clientId: {{ $secret.frontegg.applications.identity.apple.AppleClientId | toYaml }}
+          clientPrivateKey: {{ $secret.frontegg.applications.identity.apple.ApplePrivateKey | trim | toJson }}
+          teamId: {{ $secret.frontegg.applications.identity.apple.AppleTeamId | toYaml }}
+          keyId: {{ $secret.frontegg.applications.identity.apple.AppleKeyId | toYaml }}
+      twilio:
+        token: {{ $secret.externalServices.twilio.token | toYaml }}
+        accountsId: {{ $secret.externalServices.twilio.accountId | toYaml }}
+      session:
+        secret: {{ $secret.frontegg.applications.identity.facebook.SessionSecret | toYaml }}
+      aws:
+        region: {{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
+        credentials:
+          accessKeyId: {{ $secret.frontegg.analytics.firehoseAccessKeyId | toYaml }}
+          secretAccessKey: {{ $secret.frontegg.analytics.firehoseSecretAccessKey | toYaml }}
+      cloudflare:
+        cdn:
+          zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
+          apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+    additionalSecrets: ""
+
 #dashboard:
 #  name: dashboard
 #  team: adoption
@@ -3195,7 +3475,7 @@ configCenter:
     general:
       analytics:
         segmentAnalyticsEnabled: "false"
-        useFirehoseAnalytics: "true"
+        useFirehoseAnalytics: "false"
       portalUrl: ""
       corsOrigin: ""
       portalV1Url: ""
@@ -3249,6 +3529,7 @@ configCenter:
         metadataServiceDbConnectionRetryAttempts: "3"
         metadataServiceDbConnectionRetryDelay: "1000"
         metadataServiceRedisDbIndex: "0"
+        metadataServiceIpStackUrl: "http://api.ipstack.com"
       notifications:
         eventsPubsubTopic: "events"
       reportingEngine:
