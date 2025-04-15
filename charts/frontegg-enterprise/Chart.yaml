@@ -95,12 +95,7 @@ dependencies:
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: forward-proxy
-  #
-  #  - name: *chartName
-  #    version: *chartVersion
-  #    repository: https://frontegg.github.io/helm-charts
-  #    alias: integrations
-
+#
 #  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
@@ -109,39 +104,27 @@ dependencies:
 #  - name: *chartName
 #    version: *chartVersion
 #    repository: https://frontegg.github.io/helm-charts
-#    alias: logs-streaming-service
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
 #    alias: metadata-service
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: nlp-execution-assistant
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: prehook-service
 
-#
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: security-center-service
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: security-engines
-#
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: team-management-service
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: prehook-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: security-center-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: security-engines
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: team-management-service
 
   - name: *chartName
     version: *chartVersion
