@@ -7,9 +7,9 @@ metadata:
   labels:
     {{- include "frontegg-enterprise.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-50"
-    "helm.sh/hook-delete-policy": hook-succeeded, before-hook-creation
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: hook-succeeded, before-hook-creation
 spec:
   template:
     metadata:
@@ -22,21 +22,27 @@ spec:
       - name: mysql-client
         image: "{{ .Values.initDbJob.image.repository }}:{{ .Values.initDbJob.image.tag }}"
         imagePullPolicy: {{ .Values.initDbJob.image.pullPolicy }}
+        # Add resource requests to help scheduling
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
         env:
         - name: MYSQL_HOST
           valueFrom:
             secretKeyRef:
-              name: general-mysql-credentials
+              # Reference the k8s Secret created by identity-mysql-external-secret.yaml
+              name: identity-mysql-credentials
               key: host
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-              name: general-mysql-credentials
+              name: identity-mysql-credentials
               key: username
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: general-mysql-credentials
+              name: identity-mysql-credentials
               key: password
         command:
         - /bin/sh
