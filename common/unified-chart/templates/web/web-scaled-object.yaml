@@ -10,6 +10,9 @@ metadata:
   name: {{ include "web.name" $top }}
   annotations:
     {{- include "keda.annotations" $top | nindent 4 }}
+    {{- with .scaledObject.annotations }}
+    {{- . | toYaml | nindent 4 }}
+    {{- end }}
   labels:
     {{- include "web.labels" $top | nindent 4 }}
 spec:

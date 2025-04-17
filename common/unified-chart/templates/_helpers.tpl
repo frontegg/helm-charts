@@ -137,7 +137,9 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- end -}}
 
 {{- define "keda.annotations" -}}
+{{- if .Values.keda.annotations }}
 {{- .Values.keda.annotations | toYaml }}
+{{- end }}
 {{- end -}}
 
 {{/* what is linkerd? */}}
