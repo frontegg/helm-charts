@@ -369,9 +369,9 @@ ingresses:
     annotations:
 
 keda:
-  annotations:
-    scaledobject.keda.sh/transfer-hpa-ownership: "true"
-    validations.keda.sh/hpa-ownership: "false"
+  annotations: {}
+  # scaledobject.keda.sh/transfer-hpa-ownership: "true"
+  # validations.keda.sh/hpa-ownership: "false"
 
 serviceAccount:
   enabled: true

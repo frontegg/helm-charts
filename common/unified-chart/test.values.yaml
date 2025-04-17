@@ -264,6 +264,8 @@ worker:
     targetMemoryUtilizationPercentage: 75
     scaledObject:
       enabled: true
+      annotations:
+        something/scaledobject/worker: annotation
       triggers:
         - type: cpu
           metadata:

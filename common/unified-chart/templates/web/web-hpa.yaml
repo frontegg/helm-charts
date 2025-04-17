@@ -1,5 +1,6 @@
 {{- if .Values.web.enabled -}}
 {{- if .Values.web.autoscaling.enabled }}
+{{- if not .Values.web.autoscaling.scaledObject.enabled }}
 ---
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
@@ -41,5 +42,6 @@ spec:
           type: Utilization
           averageUtilization: {{ .Values.web.autoscaling.targetMemoryUtilizationPercentage }}
     {{- end }}
+{{- end }}
 {{- end }}
 {{- end }}
