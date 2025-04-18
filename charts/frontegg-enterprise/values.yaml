@@ -2726,12 +2726,9 @@ api-gateway:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
   appVersion: 84c8fe4
-
   argoRollouts:
     enabled: false
-
   defaults: *defaultsAnnotations
-
   web:
     enabled: true
     command: ["node"]
