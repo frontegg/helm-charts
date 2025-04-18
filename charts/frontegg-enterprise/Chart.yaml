@@ -94,6 +94,11 @@ dependencies:
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
+    alias: oauth-service
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
     alias: prehook-service
 
   - name: *chartName

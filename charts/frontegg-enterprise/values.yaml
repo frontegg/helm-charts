@@ -3252,6 +3252,146 @@ identity-service:
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
     additionalSecrets: ""
 
+oauth-service:
+  name: oauth
+  team: frontegg
+  envID: *envId
+  appVersion: adb9c44
+  image:
+    repository: frontegg/oauth-service
+    prefix: *imagePrefix
+  defaults: *defaultsAnnotations
+  argoRollouts:
+    enabled: false
+  web:
+    enabled: true
+    command: [ "/bin/bash" ]
+    args: [ "entrypoint.sh" ]
+    resources:
+      requests:
+        cpu: 750m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    service:
+      ports:
+        - port: 80
+          targetPort: 3018
+          protocol: TCP
+          name: access-port
+    ports:
+      - name: access-port
+        containerPort: 3018
+    autoscaling:
+      enabled: true
+      minReplicas: 2
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: access-port
+      initialDelaySeconds: 40
+      periodSeconds: 5
+      failureThreshold: 1
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: access-port
+      initialDelaySeconds: 40
+      periodSeconds: 20
+    terminationGracePeriodSeconds: 60
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: oauth-service
+      NODE_ENV: production
+      FRONTEGG_OAUTH_SESSION_TIMEOUT: "86400"
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: "verbose"
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      SENTRY_ENABLED: "false"
+  jobs:
+    migrate:
+      enabled: true
+      spec:
+        command: [ "/bin/bash" ]
+        args: [ "run-migrations.sh" ]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+    upload-assets:
+      enabled: true
+      spec:
+        command: [ "/bin/sh" ]
+        args: [ "./s3-assets-upload.sh" ]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        FRONTEGG_API_GATEWAY_URL: api-gateway-url
+        FRONTEGG_API_GATEWAY_INTERNAL_URL: api-gateway-internal-url
+        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-p1-service-url
+        FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
+        FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_OAUTH_SERVICE_DB_NAME: oauth-service-db-name
+        FRONTEGG_OAUTH_SERVICE_REDIS_DB_INDEX: oauth-service-redis-db-index
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_CDN_URL: dashboard-cdn-url
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      splitIO:
+        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
+        redis:
+          host: {{ $secret.databases.redis.host | toYaml }}
+          port: {{ $secret.databases.redis.port | toYaml }}
+          password: {{ $secret.databases.redis.password | toYaml }}
+      databases:
+        mySql:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          ssl: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      cryptoKey: {{ $secret.frontegg.applications.oauth.oauthServiceCryptoKey | toYaml }}
+      identityCryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      oauthServiceSigningKey: {{ $secret.frontegg.applications.oauth.oauthServiceSigningKey | toYaml }}
+      internalServices:
+        identity:
+          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+        applications:
+          apiKey: {{ $secret.frontegg.apiKeys.applicationsServiceApiKey | toYaml }}
+        teamManagement:
+          apiKey: {{ $secret.frontegg.apiKeys.teamManagementApiKey | toYaml }}
+        tenantsService:
+          apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+        vendors:
+          apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+    additionalSecrets: ""
+
 #dashboard:
 #  name: dashboard
 #  team: adoption
@@ -3514,7 +3654,7 @@ configCenter:
         devrevApiUrl: "https://api.devrev.ai"
         dashboardDomainSuffix: ""
         cdnUrl: ""
-        cdnBucket: ""
+        cdnBucket: "dashboard-static-content-ebdiwxwk"
         backofficeViewerRoleId: ""
         backofficeEditorRoleId: ""
         fronteggUiEventsUrl: "https://ui-events.frontegg.com"
