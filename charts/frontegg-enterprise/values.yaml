@@ -1,6 +1,7 @@
 # Configuration for the initial database setup job
 initDbJob:
   enabled: true # Set to true to run this job
+  keyName: "prod-main-secret20250407120514343900000001"
   image:
     repository: mysql
     tag: "8.0"
@@ -2225,6 +2226,7 @@ dashboard-env-builder:
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
 
+
   configuration:
     map:
       config-center:
@@ -3383,6 +3385,8 @@ oauth-service:
       LOG_LEVEL: "verbose"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       SENTRY_ENABLED: "false"
+      FRONTEGG_CDN_URL: 'http://localhost:3001'
+      FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
   jobs:
     migrate:
       enabled: true
@@ -3393,15 +3397,15 @@ oauth-service:
           requests:
             cpu: 500m
             memory: 500Mi
-    upload-assets:
-      enabled: true
-      spec:
-        command: [ "/bin/sh" ]
-        args: [ "./s3-assets-upload.sh" ]
-        resources:
-          requests:
-            cpu: 500m
-            memory: 500Mi
+#    upload-assets:
+#      enabled: true
+#      spec:
+#        command: [ "/bin/sh" ]
+#        args: [ "./s3-assets-upload.sh" ]
+#        resources:
+#          requests:
+#            cpu: 500m
+#            memory: 500Mi
   configuration:
     map:
       config-center:
@@ -3417,7 +3421,7 @@ oauth-service:
         FRONTEGG_OAUTH_SERVICE_DB_NAME: oauth-service-db-name
         FRONTEGG_OAUTH_SERVICE_REDIS_DB_INDEX: oauth-service-redis-db-index
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-        FRONTEGG_CDN_URL: dashboard-cdn-url
+        #FRONTEGG_CDN_URL: dashboard-cdn-url
         FRONTEGG_CDN_BUCKET: cdn-bucket
   externalSecret:
     enabled: true

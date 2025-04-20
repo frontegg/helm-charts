@@ -9,17 +9,15 @@ metadata:
   annotations:
     helm.sh/hook: pre-install, pre-upgrade
     helm.sh/hook-weight: "-15"
-    helm.sh/hook-delete-policy: hook-succeeded
+    helm.sh/hook-delete-policy: before-hook-creation
 data:
   db.sql: |-
-    CREATE DATABASE IF NOT EXISTS frontegg_usage_tracking CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_vendors CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_subscriptions CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_audits CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_events CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_team_management CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_webhooks CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-    CREATE DATABASE IF NOT EXISTS frontegg_feature_flags CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_identity CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_oauth CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_tenants CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
