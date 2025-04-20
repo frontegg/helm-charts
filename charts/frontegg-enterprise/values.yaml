@@ -61,6 +61,8 @@ admins:
         containerPort: 3004
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
@@ -140,6 +142,8 @@ team-management-service:
         containerPort: 3003
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -180,6 +184,8 @@ team-management-service:
         containerPort: 3003
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -316,6 +322,8 @@ webhooks:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -361,6 +369,8 @@ webhooks:
       scrape-for-metrics: enabled
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -496,6 +506,8 @@ vendors-service:
         containerPort: 3001
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
@@ -541,6 +553,8 @@ vendors-service:
         containerPort: 3001
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -703,6 +717,8 @@ tenants-service:
         containerPort: 3015
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
@@ -739,6 +755,8 @@ tenants-service:
         containerPort: 3015
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -868,6 +886,8 @@ security-engines:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
@@ -900,6 +920,8 @@ security-engines:
         containerPort: 3032
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -1022,6 +1044,8 @@ security-center-service:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
@@ -1053,6 +1077,8 @@ security-center-service:
         containerPort: 3033
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -1158,6 +1184,8 @@ prehook-service:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -1265,6 +1293,8 @@ metadata-service:
       periodSeconds: 60
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
@@ -1358,6 +1388,8 @@ logs-service:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -1392,6 +1424,8 @@ logs-service:
         containerPort: 3029
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -1527,6 +1561,8 @@ forward-proxy:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
@@ -1643,6 +1679,8 @@ event-service:
         containerPort: 3011
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -1761,6 +1799,8 @@ env-duplicator:
       periodSeconds: 5
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 70
@@ -1860,6 +1900,8 @@ entitlements-service:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
@@ -1891,6 +1933,8 @@ entitlements-service:
         containerPort: 3031
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -2014,6 +2058,8 @@ directory-service:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2051,6 +2097,8 @@ directory-service:
         containerPort: 3027
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2150,6 +2198,8 @@ dashboard-env-builder:
         memory: 1Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2254,6 +2304,8 @@ backoffice-service:
         memory: 2Gi
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2285,6 +2337,8 @@ backoffice-service:
         containerPort: 3025
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2431,6 +2485,8 @@ audits-service:
       periodSeconds: 5
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2529,6 +2585,8 @@ authentication-service:
       periodSeconds: 5
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2598,6 +2656,8 @@ applications-service:
         containerPort: 3035
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
@@ -2637,6 +2697,8 @@ applications-service:
         containerPort: 3035
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -2751,6 +2813,8 @@ api-gateway:
         containerPort: 9090
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
@@ -2794,6 +2858,8 @@ api-gateway:
         containerPort: 9090
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -3003,6 +3069,8 @@ identity-service:
         containerPort: 3016
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
@@ -3049,6 +3117,8 @@ identity-service:
         containerPort: 3016
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
@@ -3091,6 +3161,8 @@ identity-service:
         containerPort: 3016
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
@@ -3281,6 +3353,8 @@ oauth-service:
         containerPort: 3018
     autoscaling:
       enabled: true
+      scaledObject:
+        enabled: false
       minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
