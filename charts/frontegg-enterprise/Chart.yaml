@@ -91,10 +91,10 @@ dependencies:
 #    repository: https://frontegg.github.io/helm-charts
 #    alias: metadata-service
 #
-  - name: *chartName
-    version: *chartVersion
-    repository: https://frontegg.github.io/helm-charts
-    alias: oauth-service
+#  - name: *chartName
+#    version: *chartVersion
+#    repository: https://frontegg.github.io/helm-charts
+#    alias: oauth-service
 #
 #  - name: *chartName
 #    version: *chartVersion
@@ -136,7 +136,7 @@ dependencies:
     repository: oci://quay.io/strimzi-helm
     condition: strimzi-kafka-operator.enabled
 
-  - name: debezium-operator
-    version: '3.1.0-final'
-    repository: https://charts.debezium.io
-    #condition: "false"
+#  - name: debezium-operator
+#    version: '3.1.0-final'
+#    repository: https://charts.debezium.io
+#    condition: "false"

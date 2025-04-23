@@ -12,10 +12,10 @@ spec:
   class: io.debezium.connector.mysql.MySqlConnector
   tasksMax: 1
   config:
-    database.hostname: ${secrets:{{ .Release.Namespace }}/identity-mysql-credentials:host}
+    database.hostname: ${secrets:{{ .Release.Namespace }}/{{ $values.initDbJob.secret.name }}:host}
     database.port: 3306
-    database.user: ${secrets:{{ .Release.Namespace }}/identity-mysql-credentials:username}
-    database.password: ${secrets:{{ .Release.Namespace }}/identity-mysql-credentials:password}
+    database.user: ${secrets:{{ .Release.Namespace }}/{{ $values.initDbJob.secret.name }}:username}
+    database.password: ${secrets:{{ .Release.Namespace }}/{{ $values.initDbJob.secret.name }}:password}
     snapshot.locking.mode: none
     message.key.columns: frontegg_identity.users_tenants:vendorId,tenantId,userId;frontegg_identity.users:vendorId,email
     transforms.unwrap.delete.handling.mode: rewrite
@@ -31,8 +31,9 @@ spec:
     database.allowPublicKeyRetrieval: true
     database.server.id: 184051
     database.history.kafka.bootstrap.servers: {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
+{{/*    database.history.kafka.bootstrap.servers: ${secrets:{{ .Release.Namespace }}/{{ $values.debezium.secret.name }}:brokerList}*/}}
     database.server.name: identity
-    ransforms.unwrap.drop.tombstones: false
+    transforms.unwrap.drop.tombstones: false
     key.converter.schemas.enable: false
     value.converter.schemas.enable: false
     transforms.unwrap.add.fields: op,table,source.ts_ms

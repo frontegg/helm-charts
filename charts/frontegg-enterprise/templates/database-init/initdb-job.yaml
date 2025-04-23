@@ -1,4 +1,6 @@
-{{- if .Values.initDbJob.enabled -}}
+{{- if .Values.initDbJob.enabled }}
+{{- $top := . }}
+{{- $values := .Values }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -10,6 +12,9 @@ metadata:
     helm.sh/hook: pre-install, pre-upgrade
     helm.sh/hook-weight: "-10"
     helm.sh/hook-delete-policy: hook-succeeded, before-hook-creation
+    {{- with $values.initDbJob.job.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   template:
     metadata:
@@ -20,29 +25,28 @@ spec:
       restartPolicy: Never
       containers:
       - name: mysql-client
-        image: "{{ .Values.initDbJob.image.repository }}:{{ .Values.initDbJob.image.tag }}"
-        imagePullPolicy: {{ .Values.initDbJob.image.pullPolicy }}
-        # Add resource requests to help scheduling
+        image: "{{ $values.initDbJob.job.image.repository }}:{{ $values.initDbJob.job.image.tag }}"
+        imagePullPolicy: {{ .Values.initDbJob.job.image.pullPolicy }}
         resources:
-          requests:
-            cpu: "100m"
-            memory: "128Mi"
+          {{- with $values.initDbJob.job.resources }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- $secretName := $values.initDbJob.secret.name }}
         env:
         - name: MYSQL_HOST
           valueFrom:
             secretKeyRef:
-              # Reference the k8s Secret created by identity-mysql-external-secret.yaml
-              name: identity-mysql-credentials
+              name: {{ $secretName }}
               key: host
         - name: MYSQL_USER
           valueFrom:
             secretKeyRef:
-              name: identity-mysql-credentials
+              name: {{ $secretName }}
               key: username
         - name: MYSQL_PASSWORD
           valueFrom:
             secretKeyRef:
-              name: identity-mysql-credentials
+              name: {{ $secretName }}
               key: password
         command:
         - /bin/sh
