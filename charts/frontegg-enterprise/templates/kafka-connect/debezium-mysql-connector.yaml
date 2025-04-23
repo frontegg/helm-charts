@@ -1,0 +1,42 @@
+{{ $values := .Values }}
+{{- $debezium := $values.debezium }}
+{{- $top := $ }}
+{{- if $values.debezium.enabled }}
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: debezium-connector-mysql
+  labels:
+    strimzi.io/cluster: debezium-connect-cluster
+spec:
+  class: io.debezium.connector.mysql.MySqlConnector
+  tasksMax: 1
+  config:
+    database.hostname: ${secrets:{{ .Release.Namespace }}/identity-mysql-credentials:host}
+    database.port: 3306
+    database.user: ${secrets:{{ .Release.Namespace }}/identity-mysql-credentials:username}
+    database.password: ${secrets:{{ .Release.Namespace }}/identity-mysql-credentials:password}
+    snapshot.locking.mode: none
+    message.key.columns: frontegg_identity.users_tenants:vendorId,tenantId,userId;frontegg_identity.users:vendorId,email
+    transforms.unwrap.delete.handling.mode: rewrite
+    tasks.max: 1
+    database.history.kafka.topic: dbhistory.identity
+    transforms: unwrap
+    include.schema.changes: true
+    tombstones.on.delete: false
+    topic.prefix: identity
+    transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    database.allowPublicKeyRetrieval: true
+    database.server.id: 184051
+    database.history.kafka.bootstrap.servers: {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
+    database.server.name: identity
+    ransforms.unwrap.drop.tombstones: false
+    key.converter.schemas.enable: false
+    value.converter.schemas.enable: false
+    transforms.unwrap.add.fields: op,table,source.ts_ms
+    table.include.list: frontegg_identity.users,frontegg_identity.users_tenants,frontegg_identity.users_tenants_roles,frontegg_identity.roles
+    database.include.list: frontegg_identity
+    snapshot.mode: schema_only
+{{- end }}

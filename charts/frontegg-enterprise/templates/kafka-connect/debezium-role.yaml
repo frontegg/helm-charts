@@ -1,0 +1,15 @@
+{{ $values := .Values }}
+{{- $debezium := $values.debezium }}
+{{- $top := $ }}
+{{- if $values.debezium.enabled }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: connector-configuration-role
+  namespace: {{ .Release.Namespace }}
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["identity-mysql-credentials"] #change to secret name to variable
+  verbs: ["get"]
+{{- end }}

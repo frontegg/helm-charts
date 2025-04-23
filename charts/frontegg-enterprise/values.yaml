@@ -1,3 +1,24 @@
+strimzi-kafka-operator:
+  enabled: true
+
+debezium:
+  enabled: true
+  bootstrapServers: "b-3.prodmsk360.s7wugt.c1.kafka.us-east-1.amazonaws.com:9092,b-2.prodmsk360.s7wugt.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.s7wugt.c1.kafka.us-east-1.amazonaws.com:9092"
+  kafkaConnect:
+    version: "3.8.0"
+    image:  "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
+    replicas: 1
+    config:
+      config.providers: secrets
+      config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+      group.id: connect-cluster
+      offset.storage.topic: connect-cluster-offsets
+      config.storage.topic: connect-cluster-configs
+      status.storage.topic: connect-cluster-status
+      config.storage.replication.factor: -1
+      offset.storage.replication.factor: -1
+      status.storage.replication.factor: -1
+
 # Configuration for the initial database setup job
 initDbJob:
   enabled: true # Set to true to run this job
