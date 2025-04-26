@@ -3,7 +3,7 @@ strimzi-kafka-operator:
 
 debezium:
   enabled: true
-  bootstrapServers: "b-2.prodmsk360.901zcz.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.901zcz.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.901zcz.c1.kafka.us-east-1.amazonaws.com:9092"
+  bootstrapServers: "b-1.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-2.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092"
   secret:
     externalSecretEnabled: true
     name: kafka-secret
@@ -41,13 +41,13 @@ initDbJob:
   secret:
     enabled: true
     name: database-credentials
-    remoteRefKey: "prod-main-secret20250407120514343900000001"
+    remoteRefKey: "prod-main-secret"
 
 # Configuration for the admins service
 admins:
   name: admins
   team: frontegg
-  envID: &envId "prod-main-secret20250407120514343900000001"
+  envID: &envId "prod-main-secret"
   appVersion: 0b5b99d
   image:
     repository: frontegg/admins-service

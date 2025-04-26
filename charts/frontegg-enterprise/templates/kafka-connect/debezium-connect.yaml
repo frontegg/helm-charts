@@ -12,7 +12,7 @@ spec:
   version: {{ $debezium.kafkaConnect.version }}
   image: {{ $debezium.kafkaConnect.image }}
   replicas: {{ $debezium.kafkaConnect.replicas }}
-  bootstrapServers: ${secrets:{{ .Release.Namespace }}/{{ $values.initDbJob.secret.name }}:username}
+  bootstrapServers: {{ $debezium.bootstrapServers }}
   config:
     config.providers: secrets
     config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider

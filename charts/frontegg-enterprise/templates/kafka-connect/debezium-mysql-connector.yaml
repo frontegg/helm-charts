@@ -31,7 +31,6 @@ spec:
     database.allowPublicKeyRetrieval: true
     database.server.id: 184051
     database.history.kafka.bootstrap.servers: {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
-{{/*    database.history.kafka.bootstrap.servers: ${secrets:{{ .Release.Namespace }}/{{ $values.debezium.secret.name }}:brokerList}*/}}
     database.server.name: identity
     transforms.unwrap.drop.tombstones: false
     key.converter.schemas.enable: false
