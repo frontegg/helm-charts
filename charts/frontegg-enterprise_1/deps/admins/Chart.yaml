@@ -1,17 +1,14 @@
 apiVersion: v2
 name: admins
-description: Frontegg Enterprise Helm Chart # FILL IN BY MARKETING
+description: Frontegg Dependency Chart for admins
 type: application
-
 version: 0.0.1
-appVersion: 2025.04.01
-
+appVersion: "0.0.1" # Or use your main chart's appVersion
 maintainers:
   - name: "Frontegg"
     email: "support@frontegg.com"
-
 dependencies:
   - name: unified-chart-staging
-    version: 4.0.*
+    version: 4.0.* # Adjust version as needed
     repository: file://../charts/unified-chart-staging
     alias: admins

@@ -1678,6 +1678,7 @@ forward-proxy:
         unsafe_allow_private_ranges: false
 
 
+
 event-service:
   name: events
   team: frontegg
