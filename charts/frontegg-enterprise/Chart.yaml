@@ -136,7 +136,7 @@ dependencies:
     repository: oci://quay.io/strimzi-helm
     condition: strimzi-kafka-operator.enabled
 
-#  - name: debezium-operator
-#    version: '3.1.0-final'
-#    repository: https://charts.debezium.io
-#    condition: "false"
+  - name: debezium-operator
+    version: '3.1.0-final'
+    repository: https://charts.debezium.io
+    condition: debezium-operator.enabled

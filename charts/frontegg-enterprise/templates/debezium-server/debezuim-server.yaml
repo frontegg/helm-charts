@@ -1,13 +1,17 @@
-{{- if false }}
+{{ $values := .Values }}
+{{- $debezium := $values.debezium }}
+{{- $top := $ }}
+{{- if $values.debezium.enabled }}
+{{- if $values.debezium.debeziumOperator.enabled }}
 apiVersion: debezium.io/v1alpha1
 kind: DebeziumServer
 metadata:
   name: debezium-mysql-server
 spec:
   # Debezium server version (must match operator compatibility)
-  version: "3.1.0.Final"
+  version: {{ $debezium.debeziumOperator.version | quote }}
   # (optional) override image; otherwise operator picks default for version
-  image: quay.io/debezium/server:3.1
+  image: {{ $debezium.debeziumOperator.image | quote }}
 
   # === RUN-TIME / K8S SETTINGS ===
   runtime:
@@ -15,7 +19,7 @@ spec:
     environment:
       from:
         - secretRef:
-            name: identity-mysql-credentials
+            name: {{ $values.initDbJob.secret.name }}
     # ephemeral storage for offsets & schema history (Pod-local)
     storage:
       data:
@@ -25,59 +29,46 @@ spec:
   source:
     class: io.debezium.connector.mysql.MySqlConnector
     config:
-      # from Secret: host, username, password
       database.hostname: ${host}
       database.port: 3306
       database.user: ${username}
       database.password: ${password}
 
-      # Debezium history stored in Kafka
-      #database.history.kafka.bootstrap.servers: "b-3.prodmsk360.u4vegd.c12.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.u4vegd.c12.kafka.us-east-1.amazonaws.com:9092,b-2.prodmsk360.u4vegd.c12.kafka.us-east-1.amazonaws.com:9092"
-
-      database.history.kafka.topic: dbhistory.identity
-
-      # connector settings
+      schema.history.internal.kafka.bootstrap.servers: |
+        {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
+      schema.history.internal.kafka.topic: dbhistory.identity
       database.server.id: 184051
       database.server.name: identity
-
       database.include.list: frontegg_identity
       table.include.list: >
         frontegg_identity.users,
         frontegg_identity.users_tenants,
         frontegg_identity.users_tenants_roles,
         frontegg_identity.roles
-
       snapshot.mode: schema_only
       include.schema.changes: true
       tombstones.on.delete: false
-
-      # message key routing
       message.key.columns: >
         frontegg_identity.users_tenants:vendorId,tenantId,userId;
         frontegg_identity.users:vendorId,email
-
-      # format converters
       key.converter: org.apache.kafka.connect.json.JsonConverter
       value.converter: org.apache.kafka.connect.json.JsonConverter
       key.converter.schemas.enable: false
       value.converter.schemas.enable: false
-
-      # extract-new-record SMT
       transforms: unwrap
       transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
       transforms.unwrap.delete.handling.mode: rewrite
       transforms.unwrap.drop.tombstones: false
       transforms.unwrap.add.fields: op,table,source.ts_ms
-
       topic.prefix: identity
   # === SINK === (write into Kafka)
   sink:
     type: kafka
     config:
-      producer.bootstrap.servers: "b-3.prodmsk360.u4vegd.c12.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.u4vegd.c12.kafka.us-east-1.amazonaws.com:9092,b-2.prodmsk360.u4vegd.c12.kafka.us-east-1.amazonaws.com:9092"
-      topic.prefix: identity
+      producer.bootstrap.servers: {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
       producer.key.serializer: org.apache.kafka.common.serialization.StringSerializer
       producer.value.serializer: org.apache.kafka.common.serialization.StringSerializer
+      topic.prefix: identity
 
   # === OUTPUT FORMAT ===
   format:
@@ -89,4 +80,5 @@ spec:
       type: json
       config:
         schemas.enable: false
-  {{- end }}
+{{- end }}
+{{- end }}

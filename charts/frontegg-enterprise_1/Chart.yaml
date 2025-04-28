@@ -14,11 +14,11 @@ dependencies:
   - name: unified-chart-staging
     version: 4.0.*
     repository: https://frontegg.github.io/helm-charts
-    condition: "false"
+    condition: crap
 
-#  - name: admins
-#    version: 0.0.1
-#    repository: file://deps/admins
+  - name: admins
+    version: 0.0.1
+    repository: file://deps/admins
 
 #  - name: api-gateway
 #    version: 0.0.1

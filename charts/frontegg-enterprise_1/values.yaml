@@ -1,3 +1,5 @@
+crap: false
+
 initDbJob:
   enabled: true # Set to true to run this job
   image:

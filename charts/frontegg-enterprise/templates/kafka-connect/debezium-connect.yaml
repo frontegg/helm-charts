@@ -2,6 +2,7 @@
 {{- $debezium := $values.debezium }}
 {{- $top := $ }}
 {{- if $values.debezium.enabled }}
+
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnect
 metadata:
@@ -24,4 +25,4 @@ spec:
     config.storage.replication.factor: -1
     offset.storage.replication.factor: -1
     status.storage.replication.factor: -1
-  {{- end }}
+{{- end }}

@@ -2,6 +2,7 @@
 {{- $debezium := $values.debezium }}
 {{- $top := $ }}
 {{- if $values.debezium.enabled }}
+{{- if $values.debezium.kafkaConnect.enabled }}
 apiVersion: kafka.strimzi.io/v1beta2
 kind: KafkaConnector
 metadata:
@@ -19,8 +20,8 @@ spec:
     snapshot.locking.mode: none
     message.key.columns: frontegg_identity.users_tenants:vendorId,tenantId,userId;frontegg_identity.users:vendorId,email
     transforms.unwrap.delete.handling.mode: rewrite
-    tasks.max: 1
-    database.history.kafka.topic: dbhistory.identity
+    schema.history.internal.kafka.topic: dbhistory.identity
+    schema.history.internal.kafka.bootstrap.servers: {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
     transforms: unwrap
     include.schema.changes: true
     tombstones.on.delete: false
@@ -30,7 +31,6 @@ spec:
     key.converter: org.apache.kafka.connect.json.JsonConverter
     database.allowPublicKeyRetrieval: true
     database.server.id: 184051
-    database.history.kafka.bootstrap.servers: {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
     database.server.name: identity
     transforms.unwrap.drop.tombstones: false
     key.converter.schemas.enable: false
@@ -39,4 +39,5 @@ spec:
     table.include.list: frontegg_identity.users,frontegg_identity.users_tenants,frontegg_identity.users_tenants_roles,frontegg_identity.roles
     database.include.list: frontegg_identity
     snapshot.mode: schema_only
+{{- end }}
 {{- end }}
