@@ -1,1 +1,42 @@
-crap: false
+unifiedChart: false
+
+strimzi-kafka-operator:
+  enabled: false
+debezium-operator:
+  enabled: true
+
+debezium:
+  enabled: true
+  bootstrapServers: "b-2.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092"
+  secret:
+    externalSecretEnabled: true
+    name: kafka-secret
+  kafkaConnect:
+    enabled: true
+    version: "3.8.0"
+    image:  "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
+  debeziumOperator:
+    enabled: true
+    version: "3.1.0.Final"
+    image: "quay.io/debezium/server:3.1"
+
+# Configuration for the initial database setup job
+initDbJob:
+  enabled: true # Set to true to run this job
+  job:
+    image:
+      repository: mysql
+      tag: "8.0"
+      pullPolicy: IfNotPresent
+    annotations: {}
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
+  secret:
+    enabled: true
+    name: database-credentials
+    remoteRefKey: "prod-main-secret"

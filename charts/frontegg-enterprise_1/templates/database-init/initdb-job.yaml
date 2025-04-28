@@ -1,4 +1,6 @@
-{{- if .Values.initDbJob.enabled -}}
+{{- if .Values.initDbJob.enabled }}
+{{- $top := . }}
+{{- $values := .Values }}
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -7,9 +9,12 @@ metadata:
   labels:
     {{- include "frontegg-enterprise.labels" . | nindent 4 }}
   annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-50"
-    "helm.sh/hook-delete-policy": hook-succeeded, before-hook-creation
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: hook-succeeded, before-hook-creation
+    {{- with $values.initDbJob.job.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
 spec:
   template:
     metadata:
@@ -20,15 +25,29 @@ spec:
       restartPolicy: Never
       containers:
       - name: mysql-client
-        image: "{{ .Values.initDbJob.image.repository }}:{{ .Values.initDbJob.image.tag }}"
-        imagePullPolicy: {{ .Values.initDbJob.image.pullPolicy }}
+        image: "{{ $values.initDbJob.job.image.repository }}:{{ $values.initDbJob.job.image.tag }}"
+        imagePullPolicy: {{ .Values.initDbJob.job.image.pullPolicy }}
+        resources:
+          {{- with $values.initDbJob.job.resources }}
+          {{- toYaml . | nindent 10 }}
+          {{- end }}
+        {{- $secretName := $values.initDbJob.secret.name }}
         env:
         - name: MYSQL_HOST
-          value: "prod-mysql8-0-35.c1hrwrvemzzh.us-east-1.rds.amazonaws.com"
+          valueFrom:
+            secretKeyRef:
+              name: {{ $secretName }}
+              key: host
         - name: MYSQL_USER
-          value: "rdsmaster_IhsLkE"
+          valueFrom:
+            secretKeyRef:
+              name: {{ $secretName }}
+              key: username
         - name: MYSQL_PASSWORD
-          value: "CGXiW7u4KJNKBRK2fjnja5QgnDbzOk57"
+          valueFrom:
+            secretKeyRef:
+              name: {{ $secretName }}
+              key: password
         command:
         - /bin/sh
         - -c

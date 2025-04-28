@@ -1,4 +1,0 @@
-1. DB init job
-    a. Should take the creds from a the secret manager using external secret
-2. Config-Center
-    a. region should be mandatory
