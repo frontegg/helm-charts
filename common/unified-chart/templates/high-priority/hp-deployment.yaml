@@ -7,7 +7,7 @@ kind: Deployment
 metadata:
   name: {{ include "hp.name" . }}
   labels:
-  {{- include "hp.labels" . | nindent 4 }}
+  {{- include "hp.appversion.labels" . | nindent 4 }}
   {{- toYaml .Values.hp.labels | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 2 }}
@@ -22,7 +22,7 @@ spec:
   template:
     metadata:
       labels:
-        {{- include "hp.labels" . | nindent 8 }}
+        {{- include "hp.appversion.labels" . | nindent 8 }}
       annotations:
         checksum/secret: {{ printf "%s%s" (print $values.externalSecret.text) (print $values.externalSecret.additionalSecrets) | sha256sum }}
         {{- $valshp := .Values.hp -}}

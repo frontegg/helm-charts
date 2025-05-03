@@ -120,6 +120,15 @@ app.frontegg.com/name: {{ include "name" . }}-worker
 {{/*
 Common labels includes HP selector.labels
 */}}
+{{- define "hp.appversion.labels" -}}
+{{- include "hp.labels" . }}
+app.frontegg.com/appVersion: {{ include "appVersion" . | quote }}
+{{ include "hp.selector.labels" . }}
+{{- end -}}
+
+{{/*
+Common labels includes HP selector.labels
+*/}}
 {{- define "hp.labels" -}}
 app.frontegg.com/team: {{ .Values.team }}
 helm.sh/chart: {{ include "unified.chart" . }}
