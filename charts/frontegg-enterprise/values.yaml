@@ -1,7 +1,7 @@
-strimzi-kafka-operator:
-  enabled: false
-debezium-operator:
-  enabled: true
+#strimzi-kafka-operator:
+
+#debezium-operator:
+
 
 debezium:
   enabled: true
@@ -10,10 +10,12 @@ debezium:
     externalSecretEnabled: true
     name: kafka-secret
   kafkaConnect:
-    enabled: true
+    install: false
+    enabled: false
     version: "3.8.0"
     image:  "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
   debeziumOperator:
+    install: true
     enabled: true
     version: "3.1.0.Final"
     image: "quay.io/debezium/server:3.1"

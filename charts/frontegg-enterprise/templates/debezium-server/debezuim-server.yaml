@@ -2,7 +2,10 @@
 {{- $debezium := $values.debezium }}
 {{- $top := $ }}
 {{- if $values.debezium.enabled }}
-{{- if $values.debezium.debeziumOperator.enabled }}
+  {{- if and (.Values.debezium.kafkaConnect.enabled) (.Values.debezium.debeziumOperator.enabled) }}
+    {{- fail "You cannot enable both debezium.kafkaConnect.enabled and debezium.debeziumOperator.enabled. Please choose one of them."}}
+  {{- end }}
+  {{- if $values.debezium.debeziumOperator.enabled }}
 apiVersion: debezium.io/v1alpha1
 kind: DebeziumServer
 metadata:
