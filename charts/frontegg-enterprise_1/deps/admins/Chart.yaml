@@ -10,5 +10,5 @@ maintainers:
 dependencies:
   - name: unified-chart-staging
     version: 4.0.* # Adjust version as needed
-    repository: file://../charts/unified-chart-staging
+    repository: file://../unified-chart-staging
     alias: admins

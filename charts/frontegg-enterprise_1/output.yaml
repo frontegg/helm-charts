@@ -1,4 +1,171 @@
+---
+# Source: frontegg-enterprise/templates/kafka-connect/debezium-role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: connector-configuration-role
+  namespace: default
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  resourceNames: ["database-credentials"]
+  verbs: ["get"]
+---
+# Source: frontegg-enterprise/templates/kafka-connect/connector-role-binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: connector-configuration-role-binding
+  namespace: default
+subjects:
+  - kind: ServiceAccount
+    name: debezium-connect-cluster-connect
+    namespace: default
+roleRef:
+  kind: Role
+  name: connector-configuration-role
+  apiGroup: rbac.authorization.k8s.io
+---
+# Source: frontegg-enterprise/templates/debezium-server/debezuim-server.yaml
+apiVersion: debezium.io/v1alpha1
+kind: DebeziumServer
+metadata:
+  name: debezium-mysql-server
+spec:
+  # Debezium server version (must match operator compatibility)
+  version: "3.1.0.Final"
+  # (optional) override image; otherwise operator picks default for version
+  image: "quay.io/debezium/server:3.1"
 
+  # === RUN-TIME / K8S SETTINGS ===
+  runtime:
+    # inject all keys from the Secret as env vars
+    environment:
+      from:
+        - secretRef:
+            name: database-credentials
+    # ephemeral storage for offsets & schema history (Pod-local)
+    storage:
+      data:
+        type: ephemeral
+
+  # === SOURCE CONNECTOR ===
+  source:
+    class: io.debezium.connector.mysql.MySqlConnector
+    config:
+      database.hostname: ${host}
+      database.port: 3306
+      database.user: ${username}
+      database.password: ${password}
+
+      schema.history.internal.kafka.bootstrap.servers: |
+        b-2.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092
+      schema.history.internal.kafka.topic: dbhistory.identity
+      database.server.id: 184051
+      database.server.name: identity
+      database.include.list: frontegg_identity
+      table.include.list: >
+        frontegg_identity.users,
+        frontegg_identity.users_tenants,
+        frontegg_identity.users_tenants_roles,
+        frontegg_identity.roles
+      snapshot.mode: schema_only
+      include.schema.changes: true
+      tombstones.on.delete: false
+      message.key.columns: >
+        frontegg_identity.users_tenants:vendorId,tenantId,userId;
+        frontegg_identity.users:vendorId,email
+      key.converter: org.apache.kafka.connect.json.JsonConverter
+      value.converter: org.apache.kafka.connect.json.JsonConverter
+      key.converter.schemas.enable: false
+      value.converter.schemas.enable: false
+      transforms: unwrap
+      transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+      transforms.unwrap.delete.handling.mode: rewrite
+      transforms.unwrap.drop.tombstones: false
+      transforms.unwrap.add.fields: op,table,source.ts_ms
+      topic.prefix: identity
+  # === SINK === (write into Kafka)
+  sink:
+    type: kafka
+    config:
+      producer.bootstrap.servers: b-2.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092
+      producer.key.serializer: org.apache.kafka.common.serialization.StringSerializer
+      producer.value.serializer: org.apache.kafka.common.serialization.StringSerializer
+      topic.prefix: identity
+
+  # === OUTPUT FORMAT ===
+  format:
+    key:
+      type: json
+      config:
+        schemas.enable: false
+    value:
+      type: json
+      config:
+        schemas.enable: false
+---
+# Source: frontegg-enterprise/templates/kafka-connect/debezium-connect.yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnect
+metadata:
+  name: debezium-connect-cluster
+  annotations:
+    strimzi.io/use-connector-resources: "true"
+spec:
+  version: 3.8.0
+  image: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0
+  replicas: 
+  bootstrapServers: b-2.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092
+  config:
+    config.providers: secrets
+    config.providers.secrets.class: io.strimzi.kafka.KubernetesSecretConfigProvider
+    group.id: connect-cluster
+    offset.storage.topic: connect-cluster-offsets
+    config.storage.topic: connect-cluster-configs
+    status.storage.topic: connect-cluster-status
+    # -1 means it will use the default replication factor configured in the broker
+    config.storage.replication.factor: -1
+    offset.storage.replication.factor: -1
+    status.storage.replication.factor: -1
+---
+# Source: frontegg-enterprise/templates/kafka-connect/debezium-mysql-connector.yaml
+apiVersion: kafka.strimzi.io/v1beta2
+kind: KafkaConnector
+metadata:
+  name: debezium-connector-mysql
+  labels:
+    strimzi.io/cluster: debezium-connect-cluster
+spec:
+  class: io.debezium.connector.mysql.MySqlConnector
+  tasksMax: 1
+  config:
+    database.hostname: ${secrets:default/database-credentials:host}
+    database.port: 3306
+    database.user: ${secrets:default/database-credentials:username}
+    database.password: ${secrets:default/database-credentials:password}
+    snapshot.locking.mode: none
+    message.key.columns: frontegg_identity.users_tenants:vendorId,tenantId,userId;frontegg_identity.users:vendorId,email
+    transforms.unwrap.delete.handling.mode: rewrite
+    schema.history.internal.kafka.topic: dbhistory.identity
+    schema.history.internal.kafka.bootstrap.servers: b-2.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092,b-1.prodmsk360.7nikpr.c1.kafka.us-east-1.amazonaws.com:9092
+    transforms: unwrap
+    include.schema.changes: true
+    tombstones.on.delete: false
+    topic.prefix: identity
+    transforms.unwrap.type: io.debezium.transforms.ExtractNewRecordState
+    value.converter: org.apache.kafka.connect.json.JsonConverter
+    key.converter: org.apache.kafka.connect.json.JsonConverter
+    database.allowPublicKeyRetrieval: true
+    database.server.id: 184051
+    database.server.name: identity
+    transforms.unwrap.drop.tombstones: false
+    key.converter.schemas.enable: false
+    value.converter.schemas.enable: false
+    transforms.unwrap.add.fields: op,table,source.ts_ms
+    table.include.list: frontegg_identity.users,frontegg_identity.users_tenants,frontegg_identity.users_tenants_roles,frontegg_identity.roles
+    database.include.list: frontegg_identity
+    snapshot.mode: schema_only
 ---
 # Source: frontegg-enterprise/templates/config-center.yaml
 apiVersion: v1
@@ -107,7 +274,7 @@ data:
   devrev-api-url: "https://api.devrev.ai"
   dashboard-domain-suffix: ""
   dashboard-cdn-url: ""
-  cdn-bucket: ""
+  cdn-bucket: "dashboard-static-content-ebdiwxwk"
   backoffice-viewer-role-id: ""
   backoffice-editor-role-id: ""
   frontegg-ui-events-url: "https://ui-events.frontegg.com"
@@ -121,7 +288,7 @@ data:
   metadata-service-db-connection-timeout-ms: "30000"
   metadata-service-db-connection-retry-attempts: "3"
   metadata-service-db-connection-retry-delay: "1000"
-  metadata-service-ip-stack-url: ""
+  metadata-service-ip-stack-url: "http://api.ipstack.com"
   metadata-service-redis-db-index: "0"
   events-pubsub-topic: "events"
   oauth-service-db-name: "frontegg_oauth"
@@ -158,7 +325,7 @@ data:
 
   # TODO: add secret '$secret.frontegg.forwardProxy.auth.password'
 ---
-# Source: frontegg-enterprise/templates/initdb-configmap.yaml
+# Source: frontegg-enterprise/templates/database-init/initdb-configmap.yaml
 apiVersion: v1
 kind: ConfigMap
 metadata:
@@ -171,19 +338,17 @@ metadata:
     app.kubernetes.io/version: "2025.04.01"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    # Run this early
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-100"
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "-15"
+    helm.sh/hook-delete-policy: before-hook-creation
 data:
   db.sql: |-
-    CREATE DATABASE IF NOT EXISTS frontegg_usage_tracking CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_vendors CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_subscriptions CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_audits CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_events CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_team_management CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_webhooks CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-    CREATE DATABASE IF NOT EXISTS frontegg_feature_flags CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_identity CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_oauth CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_tenants CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
@@ -194,7 +359,7 @@ data:
     CREATE DATABASE IF NOT EXISTS frontegg_entitlements CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_security_engines CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 ---
-# Source: frontegg-enterprise/templates/initdb-job.yaml
+# Source: frontegg-enterprise/templates/database-init/initdb-job.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
@@ -207,9 +372,9 @@ metadata:
     app.kubernetes.io/version: "2025.04.01"
     app.kubernetes.io/managed-by: Helm
   annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-50"
-    "helm.sh/hook-delete-policy": hook-succeeded, before-hook-creation
+    helm.sh/hook: pre-install, pre-upgrade
+    helm.sh/hook-weight: "-10"
+    helm.sh/hook-delete-policy: hook-succeeded, before-hook-creation
 spec:
   template:
     metadata:
@@ -223,13 +388,29 @@ spec:
       - name: mysql-client
         image: "mysql:8.0"
         imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 100m
+            memory: 128Mi
+          requests:
+            cpu: 100m
+            memory: 128Mi
         env:
         - name: MYSQL_HOST
-          value: "prod-mysql8-0-35.c1hrwrvemzzh.us-east-1.rds.amazonaws.com"
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: host
         - name: MYSQL_USER
-          value: "rdsmaster_IhsLkE"
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: username
         - name: MYSQL_PASSWORD
-          value: "CGXiW7u4KJNKBRK2fjnja5QgnDbzOk57"
+          valueFrom:
+            secretKeyRef:
+              name: database-credentials
+              key: password
         command:
         - /bin/sh
         - -c
@@ -255,3 +436,66 @@ spec:
       - name: initdb-scripts
         configMap:
           name: xxx-frontegg-enterprise-initdb-scripts
+---
+# Source: frontegg-enterprise/templates/database-init/databases-external-secret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: database-secret
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-20"
+spec:
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: external-secret-store
+    kind: ClusterSecretStore
+  target:
+    name: database-credentials
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data: 
+        host: |      
+          {{ $secret := .raw_yaml  | fromYaml }} 
+          {{- $secret.databases.identityMysql.host -}}
+        username: |
+          {{ $secret := .raw_yaml  | fromYaml }} 
+          {{- $secret.databases.identityMysql.username -}}
+        password: |
+          {{ $secret := .raw_yaml  | fromYaml }}
+          {{- $secret.databases.identityMysql.password -}}
+        useSsl: |
+          {{ $secret := .raw_yaml  | fromYaml }} 
+          {{- $secret.databases.identityMysql.useSsl -}}
+  data:
+    - secretKey: raw_yaml
+      remoteRef:
+        key: prod-main-secret
+---
+# Source: frontegg-enterprise/templates/kafka-connect/kafka-external-secret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: debezium-secret
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-20"
+spec:
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: external-secret-store
+    kind: ClusterSecretStore
+  target:
+    name: kafka-secret
+    creationPolicy: Owner
+    template:
+      engineVersion: v2
+      data: 
+        brokerList: |
+          {{ $secret := .raw_yaml  | fromYaml }} 
+          {{- $secret.databases.kafka.brokerList | toYaml -}}
+  data:
+    - secretKey: raw_yaml
+      remoteRef:
+        key: prod-main-secret

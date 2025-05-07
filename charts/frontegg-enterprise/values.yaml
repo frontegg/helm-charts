@@ -1677,8 +1677,6 @@ forward-proxy:
         allow_missing_role: true # skip mTLS client validation
         unsafe_allow_private_ranges: false
 
-
-
 event-service:
   name: events
   team: frontegg
