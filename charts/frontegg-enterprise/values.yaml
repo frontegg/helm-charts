@@ -39,13 +39,13 @@ initDbJob:
   secret:
     enabled: true
     name: database-credentials
-    remoteRefKey: "prod-main-secret"
+    remoteRefKey: "prod-frontegg-private-deployment-main-secret"
 
 # Configuration for the admins service
 admins:
   name: admins
   team: frontegg
-  envID: &envId "prod-main-secret"
+  envID: &envId "prod-frontegg-private-deployment-main-secret"
   appVersion: 0b5b99d
   image:
     repository: frontegg/admins-service
