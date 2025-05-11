@@ -292,10 +292,6 @@ team-management-service:
       FRONTEGG_TEAM_MANAGEMENT_SERVICE_DB_PASSWORD={{ $secret.databases.generalMysql.password | toYaml }}
       FRONTEGG_TEAM_MANAGEMENT_SERVICE_DB_USE_SSL={{ $secret.databases.generalMysql.useSsl | toYaml }}
       FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-      AZURE_CLIENT_ID={{ $secret.externalServices.azure.clientId | toYaml }}
-      AZURE_CLIENT_SECRET={{ $secret.externalServices.azure.clientSecret | toYaml }}
-      AZURE_TENANT_ID={{ $secret.externalServices.azure.tenantId | toYaml }}
-      FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
       FRONTEGG_TEAM_MANAGEMENT_SERVICE_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
       FRONTEGG_TEAM_MANAGEMENT_SERVICE_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
       FRONTEGG_TEAM_MANAGEMENT_SERVICE_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
@@ -679,7 +675,7 @@ vendors-service:
           token: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareToken | toYaml }}
         secretHeader: {{ $secret.frontegg.customDomains.secretHeader | toYaml }}
       assetsStorage:
-        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }}
+        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }} #// TODO ask tomer if applicable or can be removed
       redis:
           host: {{ $secret.databases.redis.host | toYaml }}
           password: {{ $secret.databases.redis.password | toYaml }}
@@ -3496,6 +3492,224 @@ oauth-service:
         brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
         saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+    additionalSecrets: ""
+
+task-master:
+  name: task-master
+  team: adoption
+  envID: *envId
+  appVersion: 4f43a04
+  image:
+    repository: frontegg/task-master
+    prefix: *imagePrefix
+  defaults: *defaultsAnnotations
+  argoRollouts:
+    enabled: false
+  imagePullSecrets:
+    - name: regcred
+  web:
+    enabled: true
+    service:
+      ports:
+        - port: 80
+          targetPort: 3024
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3024
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: false
+      minReplicas: 2
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 20
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 5
+    nodeSelector:
+      workload: general
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: task-master
+      NODE_ENV: production
+      FRONTEGG_TENANTS_KAFKA_TOPIC_NAME: tenants-v1
+      FRONTEGG_TASKMASTER_SERVICE_ENCRYPT_ALGORITHM: aes-256-cbc
+      FRONTEGG_TASKMASTER_SERVICE_DB_NAME: FRONTEGG_TASKMASTER
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
+      FRONTEGG_BACKOFFICE_SERVICE_DB_NAME: frontegg_backoffice
+      FRONTEGG_VENDOR_SERVICE_DB_NAME: frontegg_vendors
+      FRONTEGG_TENANTS_SERVICE_DB_NAME: frontegg_tenants
+      FRONTEGG_ENTITLEMENTS_SERVICE_DB_NAME: frontegg_entitlements
+      FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
+      FRONTEGG_TEAM_MANAGEMENT_DB_NAME: frontegg_team_management
+      FRONTEGG_SUBSCRIPTIONS_DB_NAME: frontegg_subscriptions
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        IDENTITY_SERVICE_DB_NAME: identity-service-db-name
+        FRONTEGG_API_GW_URL: api-gateway-url
+        FRONTEGG_AUDITS_SERVICE_URL: audits-service-url
+        FRONTEGG_WEBHOOK_SERVICE_URL: webhook-service-url
+        FRONTEGG_DIRECTORY_SERVICE_URL: directory-service-url
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
+        FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_AWS_REGION: aws-region
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      fronteggApiKey: {{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+      identityCryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      logsStreamingCryptoKey: {{ $secret.frontegg.applications.logsStreaming.cryptoKey | toYaml }}
+      apiKeyEncryptionSecret: {{ $secret.frontegg.applications.vendors.apiKeySecret | toYaml }}
+      prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
+      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      oauthCryptoKey: {{ $secret.frontegg.applications.oauth.oauthServiceCryptoKey | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      sharedCache:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      internalServices:
+        audits:
+          apiKey: {{ $secret.frontegg.apiKeys.auditsServiceApiKey | toYaml }}
+        webhook:
+          apiKey: {{ $secret.frontegg.apiKeys.webhooksServiceApiKey | toYaml }}
+        logsStreaming:
+          apiKey: {{ $secret.frontegg.apiKeys.logsStreamingServiceApiKey | toYaml }}
+        customCode:
+          apiKey: {{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+        directory:
+          apiKey: {{ $secret.frontegg.apiKeys.directoryServiceApiKey | toYaml }}
+        identity:
+          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+        tenants:
+          apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+        vendors:
+          apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      database:
+        identity:
+          host: {{ $secret.databases.identityMysql.host | toYaml }}
+          username: {{ $secret.databases.identityMysql.username | toYaml }}
+          password: {{ $secret.databases.identityMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.identityMysql.useSsl | toYaml }}
+        backoffice:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        vendors:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        tenants:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        entitlements:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}        
+        dashboardEnvBuilder:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        securityEngines:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        teamManagement:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        subscriptions:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        logsStreaming:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        webhook:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        eventRetry:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        applications:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        oauth:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        customCode:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      mongodb:
+        url: {{ $secret.databases.mongo.connectionString | toYaml }}
+      mongo6:
+        url: {{ $secret.databases.mongo6.connectionString | toYaml }}
+      customDomainSettings:
+        credentials:
+          clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
+      encryption:
+        secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
+
     additionalSecrets: ""
 
 #dashboard:

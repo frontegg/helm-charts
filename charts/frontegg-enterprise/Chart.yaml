@@ -41,10 +41,10 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: backoffice-service
 
-#  - name: *chartName
-#    version: *chartVersion
-#    repository: https://frontegg.github.io/helm-charts
-#    alias: dashboard
+  #  - name: *chartName
+  #    version: *chartVersion
+  #    repository: https://frontegg.github.io/helm-charts
+  #    alias: dashboard
 
   - name: *chartName
     version: *chartVersion
@@ -137,6 +137,11 @@ dependencies:
     condition: debezium.kafkaConnect.install
 
   - name: debezium-operator
-    version: '3.1.0-final'
+    version: "3.1.0-final"
     repository: https://charts.debezium.io
     condition: debezium.debeziumOperator.install
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: task-master
