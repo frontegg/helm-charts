@@ -3540,8 +3540,8 @@ task-master:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 5
-    nodeSelector:
-      workload: general
+    # nodeSelector:
+    #   workload: general
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
