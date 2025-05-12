@@ -96,7 +96,7 @@ admins:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -177,7 +177,7 @@ team-management-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -537,7 +537,7 @@ vendors-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -748,7 +748,7 @@ tenants-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -917,7 +917,7 @@ security-engines:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -1075,7 +1075,7 @@ security-center-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -1215,7 +1215,7 @@ prehook-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -1258,7 +1258,7 @@ prehook-service:
     map:
       config-center:
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_HTTP_CLIENT_PROXY_HOST: frontegg-proxy-host
         FRONTEGG_HTTP_CLIENT_PROXY_PORT: frontegg-proxy-port
         FRONTEGG_HTTP_CLIENT_PROXY_PROTO: frontegg-proxy-protocol
@@ -1275,7 +1275,7 @@ prehook-service:
       FRONTEGG_KAFKA_BROKER_LIST={{ $secret.databases.kafka.brokerList | toYaml }}
       FRONTEGG_KAFKA_SASL_PASSWORD={{ $secret.databases.kafka.saslPassword | toYaml }}
       FRONTEGG_KAFKA_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
-      FRONTEGG_CUSTOM_CODE_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+      # FRONTEGG_CUSTOM_CODE_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
     additionalSecrets: ""
 
 metadata-service:
@@ -1324,7 +1324,7 @@ metadata-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1592,7 +1592,7 @@ forward-proxy:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1930,7 +1930,7 @@ entitlements-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -2687,7 +2687,7 @@ applications-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -2844,7 +2844,7 @@ api-gateway:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -2943,11 +2943,11 @@ api-gateway:
         FRONTEGG_PRICING_VIEWS_URL: pricing-views-url
         FRONTEGG_DIRECTORY_SERVICE_URL: directory-service-url
         FRONTEGG_LOGS_SERVICE_URL: logs-service-url
-        FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
+        # FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
         FRONTEGG_ENTITLEMENTS_SERVICE_URL: entitlements-service-url
         FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
         FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
-        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_SECURITY_CENTER_SERVICE_URL: security-center-service-url
         FRONTEGG_SIGNALS_SERVICE_URL: signals-service-url
         FRONTEGG_AUTH_HUB_URL: auth-hub-service-url
@@ -3100,7 +3100,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -3148,7 +3148,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3249,7 +3249,7 @@ identity-service:
         FRONTEGG_OAUTH_SERVICE_URL: oauth-service-url
         FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
         FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
-        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_AUTH_HUB_SERVICE_URL: auth-hub-service-url
         FRONTEGG_CDN_URL: cdn-url
         FRONTEGG_ENTITLEMENTS_AGENT_URL: entitlements-agent-url
@@ -3384,7 +3384,7 @@ oauth-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3505,8 +3505,6 @@ task-master:
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
-  imagePullSecrets:
-    - name: regcred
   web:
     enabled: true
     service:
@@ -3526,7 +3524,7 @@ task-master:
         memory: 1Gi
     autoscaling:
       enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3572,8 +3570,8 @@ task-master:
         FRONTEGG_WEBHOOK_SERVICE_URL: webhook-service-url
         FRONTEGG_DIRECTORY_SERVICE_URL: directory-service-url
         FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
-        FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
-        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        # FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
+        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
         FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
         FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
@@ -3745,7 +3743,7 @@ task-master:
 #        memory: 500Mi
 #    autoscaling:
 #      enabled: true
-#      minReplicas: 2
+#      minReplicas: 1
 #      maxReplicas: 5
 #      targetCPUUtilizationPercentage: 50
 #      targetMemoryUtilizationPercentage: 50
