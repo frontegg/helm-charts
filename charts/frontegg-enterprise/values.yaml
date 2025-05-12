@@ -15,8 +15,8 @@ debezium:
     version: "3.8.0"
     image:  "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
   debeziumOperator:
-    install: true
-    enabled: true
+    install: false
+    enabled: false
     version: "3.1.0.Final"
     image: "quay.io/debezium/server:3.1"
 
@@ -718,7 +718,7 @@ tenants-service:
   name: tenants
   team: frontegg
   envID: *envId
-  appVersion: 5ef236f
+  appVersion: 40a0b38
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -766,6 +766,14 @@ tenants-service:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
+    additionalVolumes: |
+      - name: vol-settings
+        configMap:
+          name: 'settings'
+    additionalVolumeMounts: |
+      - name: vol-settings
+        mountPath: /etc/config/settings.yaml
+        subPath: settings.yaml
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -808,6 +816,14 @@ tenants-service:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
+    additionalVolumes: |
+      - name: vol-settings
+        configMap:
+          name: 'settings'
+    additionalVolumeMounts: |
+      - name: vol-settings
+        mountPath: /etc/config/settings.yaml
+        subPath: settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -827,6 +843,7 @@ tenants-service:
       FRONTEGG_ANALYTICS_TYPE: firehose
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
 
   configuration:
     map:
@@ -848,13 +865,6 @@ tenants-service:
       {{- $secret := .contents | fromYaml }}
       apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
       fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-      splitIO:
-        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
-
       database:
         mongo:
           uri: {{ $secret.databases.mongo.connectionString | toYaml }}

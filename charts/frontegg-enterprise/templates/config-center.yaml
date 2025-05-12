@@ -1,8 +1,8 @@
 {{- $values := .Values -}}
-{{- $top := . -}}
-{{- $apps := .Values.configCenter.frontegg.applications -}}
-{{- $infra := .Values.configCenter.externalServices -}}
-{{- $secrets := .Values.configCenter.externalServices.secrets -}}
+{{- $top := . }}
+{{- $apps := .Values.configCenter.frontegg.applications }}
+{{- $infra := .Values.configCenter.externalServices }}
+{{- $secrets := .Values.configCenter.externalServices.secrets }}
 
 apiVersion: v1
 kind: ConfigMap
@@ -218,8 +218,7 @@ data:
   frontegg-proxy-host: {{ .host | default "" | quote }}
   frontegg-proxy-port: {{ .port | default "8080" | quote }}
   frontegg-proxy-protocol: {{ .protocol | default "http" | quote }}
-
   # TODO: add secret '$secret.frontegg.forwardProxy.auth.password'
-
   {{- end }}
+
   {{- end }}
