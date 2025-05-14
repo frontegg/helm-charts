@@ -27,4 +27,6 @@ data:
     CREATE DATABASE IF NOT EXISTS frontegg_event_retry CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_entitlements CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
     CREATE DATABASE IF NOT EXISTS frontegg_security_engines CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+    CREATE DATABASE IF NOT EXISTS frontegg_custom_code CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci; 
+    CREATE DATABASE IF NOT EXISTS frontegg_logs_streaming CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 {{- end }} 

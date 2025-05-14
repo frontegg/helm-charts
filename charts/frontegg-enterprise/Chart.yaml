@@ -41,7 +41,7 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: backoffice-service
 
-  #  - name: *chartName
+  # - name: *chartName
   #    version: *chartVersion
   #    repository: https://frontegg.github.io/helm-charts
   #    alias: dashboard

@@ -2,7 +2,6 @@
 
 #debezium-operator:
 
-
 debezium:
   enabled: true
   bootstrapServers: "b-1.prodmsk360.b35ne2.c1.kafka.us-east-1.amazonaws.com:9092,b-2.prodmsk360.b35ne2.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.b35ne2.c1.kafka.us-east-1.amazonaws.com:9092"
@@ -13,7 +12,7 @@ debezium:
     install: false
     enabled: false
     version: "3.8.0"
-    image:  "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
+    image: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
   debeziumOperator:
     install: false
     enabled: false
@@ -30,12 +29,12 @@ initDbJob:
       pullPolicy: IfNotPresent
     annotations: {}
     resources:
-        requests:
-            cpu: 100m
-            memory: 128Mi
-        limits:
-            cpu: 100m
-            memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: 100m
+        memory: 128Mi
   secret:
     enabled: true
     name: database-credentials
@@ -75,8 +74,8 @@ admins:
 
   web:
     enabled: true
-    command: [ "/bin/bash" ]
-    args: [ "entrypoint.sh" ]
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
     resources:
       requests:
         cpu: 500m
@@ -408,8 +407,6 @@ webhooks:
       requests:
         cpu: 500m
         memory: 1Gi
-      limits:
-        memory: 1Gi
     readinessProbe:
       httpGet:
         path: /health
@@ -659,10 +656,6 @@ vendors-service:
           password: {{ $secret.databases.generalMysql.password | toYaml }}
         mongoDb:
           uri: {{ $secret.databases.mongo.connectionString | toYaml }}
-      mixpanel:
-        token: {{ $secret.externalServices.mixpanel.token | toYaml }}
-      heap:
-        appId: {{ $secret.externalServices.heapApp.id | toYaml }}
       segment:
         writeKey: {{ $secret.frontegg.analytics.segmentWriteKey | toYaml }}
       segmentToGoogleAnalytics:
@@ -670,12 +663,9 @@ vendors-service:
       customDomainSettings:
         credentials:
           clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
-        cloudflare:
-          zone: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareZone | toYaml }}
-          token: {{ $secret.frontegg.applications.vendors.customDomains.cloudflareToken | toYaml }}
         secretHeader: {{ $secret.frontegg.customDomains.secretHeader | toYaml }}
       assetsStorage:
-        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }} #// TODO ask tomer if applicable or can be removed
+        connectionString: {{ $secret.databases.storage.azure.connectionString | toYaml }} 
       redis:
           host: {{ $secret.databases.redis.host | toYaml }}
           password: {{ $secret.databases.redis.password | toYaml }}
@@ -1031,10 +1021,6 @@ security-engines:
         accessKey: {{ $secret.frontegg.xxx.ipStackApiKey | toYaml }}
       ipData:
         apiKey: {{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
-      ipqs:
-        apiKey: {{ $secret.externalServices.ipqs.apiKey | toYaml }}
-      zeroBounce:
-        apiKey: {{ $secret.externalServices.zeroBounce.apiKey | toYaml }}
       redis:
         host: {{ $secret.databases.redis.host | toYaml }}
         password: {{ $secret.databases.redis.password | toYaml }}
@@ -1268,7 +1254,7 @@ prehook-service:
     map:
       config-center:
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_HTTP_CLIENT_PROXY_HOST: frontegg-proxy-host
         FRONTEGG_HTTP_CLIENT_PROXY_PORT: frontegg-proxy-port
         FRONTEGG_HTTP_CLIENT_PROXY_PROTO: frontegg-proxy-protocol
@@ -1627,11 +1613,11 @@ forward-proxy:
       periodSeconds: 10
       failureThreshold: 5
     terminationGracePeriodSeconds: 60
-#  configmap:
-#    data:
-#  configuration:
-#    map:
-#      config-center:
+  #  configmap:
+  #    data:
+  #  configuration:
+  #    map:
+  #      config-center:
   externalSecret:
     enabled: false
   additionalResources: |
@@ -1741,7 +1727,7 @@ event-service:
       NODE_ENV: production
       NODE_OPTIONS: "--no-warnings"
       PORT: "3011"
-      LOG_LEVEL: 'verbose'
+      LOG_LEVEL: "verbose"
       FRONTEGG_SERVICE_NAME: event-service
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
@@ -1822,18 +1808,18 @@ env-duplicator:
         cpu: 250m
         memory: 1Gi
       limits:
-        memory: 1Gi
+        memory: 2Gi
     livenessProbe:
       httpGet:
         path: /health/liveness
         port: http
-      initialDelaySeconds: 20
+      initialDelaySeconds: 30
       periodSeconds: 10
     readinessProbe:
       httpGet:
         path: /health
         port: http
-      initialDelaySeconds: 10
+      initialDelaySeconds: 30
       periodSeconds: 5
     autoscaling:
       enabled: true
@@ -2262,7 +2248,6 @@ dashboard-env-builder:
       FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-
 
   configuration:
     map:
@@ -2953,11 +2938,11 @@ api-gateway:
         FRONTEGG_PRICING_VIEWS_URL: pricing-views-url
         FRONTEGG_DIRECTORY_SERVICE_URL: directory-service-url
         FRONTEGG_LOGS_SERVICE_URL: logs-service-url
-        # FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
+        FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
         FRONTEGG_ENTITLEMENTS_SERVICE_URL: entitlements-service-url
         FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
         FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
-        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_SECURITY_CENTER_SERVICE_URL: security-center-service-url
         FRONTEGG_SIGNALS_SERVICE_URL: signals-service-url
         FRONTEGG_AUTH_HUB_URL: auth-hub-service-url
@@ -3085,14 +3070,14 @@ identity-service:
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
-#  serviceAccount:
-#    enabled: true
-#    annotations:
-#    nameOverride: identity-sa
+  #  serviceAccount:
+  #    enabled: true
+  #    annotations:
+  #    nameOverride: identity-sa
   web:
     enabled: true
-    command: [ "node" ]
-    args: [ "service/dist/deployments/service/main" ]
+    command: ["node"]
+    args: ["service/dist/deployments/service/main"]
     resources:
       requests:
         cpu: 1000m
@@ -3137,8 +3122,8 @@ identity-service:
       failureThreshold: 5
   hp:
     enabled: true
-    command: [ "node" ]
-    args: [ "p1-service/dist/main" ]
+    command: ["node"]
+    args: ["p1-service/dist/main"]
     resources:
       requests:
         cpu: 1000m
@@ -3185,8 +3170,8 @@ identity-service:
       failureThreshold: 5
   worker:
     enabled: true
-    command: [ "node" ]
-    args: [ "service/dist/deployments/worker/main" ]
+    command: ["node"]
+    args: ["service/dist/deployments/worker/main"]
     labels:
       scrape-for-metrics: enabled
     service:
@@ -3228,7 +3213,7 @@ identity-service:
     migrate:
       enabled: true
       spec:
-        command: [ "node" ]
+        command: ["node"]
         args:
           [
             "./node_modules/@frontegg/common/dist/utils/text-to-json-output.js",
@@ -3259,7 +3244,7 @@ identity-service:
         FRONTEGG_OAUTH_SERVICE_URL: oauth-service-url
         FRONTEGG_SECURITY_ENGINES_SERVICE_URL: security-engines-url
         FRONTEGG_APPLICATIONS_SERVICE_URL: applications-service-url
-        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
         FRONTEGG_AUTH_HUB_SERVICE_URL: auth-hub-service-url
         FRONTEGG_CDN_URL: cdn-url
         FRONTEGG_ENTITLEMENTS_AGENT_URL: entitlements-agent-url
@@ -3373,8 +3358,8 @@ oauth-service:
     enabled: false
   web:
     enabled: true
-    command: [ "/bin/bash" ]
-    args: [ "entrypoint.sh" ]
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh"]
     resources:
       requests:
         cpu: 750m
@@ -3422,27 +3407,27 @@ oauth-service:
       LOG_LEVEL: "verbose"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       SENTRY_ENABLED: "false"
-      FRONTEGG_CDN_URL: 'http://localhost:3001'
+      FRONTEGG_CDN_URL: "http://localhost:3001"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
   jobs:
     migrate:
       enabled: true
       spec:
-        command: [ "/bin/bash" ]
-        args: [ "run-migrations.sh" ]
+        command: ["/bin/bash"]
+        args: ["run-migrations.sh"]
         resources:
           requests:
             cpu: 500m
             memory: 500Mi
-#    upload-assets:
-#      enabled: true
-#      spec:
-#        command: [ "/bin/sh" ]
-#        args: [ "./s3-assets-upload.sh" ]
-#        resources:
-#          requests:
-#            cpu: 500m
-#            memory: 500Mi
+  #    upload-assets:
+  #      enabled: true
+  #      spec:
+  #        command: [ "/bin/sh" ]
+  #        args: [ "./s3-assets-upload.sh" ]
+  #        resources:
+  #          requests:
+  #            cpu: 500m
+  #            memory: 500Mi
   configuration:
     map:
       config-center:
@@ -3503,427 +3488,6 @@ oauth-service:
         saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
-
-task-master:
-  name: task-master
-  team: adoption
-  envID: *envId
-  appVersion: 4f43a04
-  image:
-    repository: frontegg/task-master
-    prefix: *imagePrefix
-  defaults: *defaultsAnnotations
-  argoRollouts:
-    enabled: false
-  web:
-    enabled: true
-    service:
-      ports:
-        - port: 80
-          targetPort: 3024
-          protocol: TCP
-          name: http
-    ports:
-      - name: http
-        containerPort: 3024
-    resources:
-      requests:
-        cpu: 500m
-        memory: 1Gi
-      limits:
-        memory: 1Gi
-    autoscaling:
-      enabled: false
-      minReplicas: 1
-      maxReplicas: 10
-      targetCPUUtilizationPercentage: 50
-      targetMemoryUtilizationPercentage: 75
-    livenessProbe:
-      httpGet:
-        path: /health
-        port: http
-      initialDelaySeconds: 30
-      periodSeconds: 20
-    readinessProbe:
-      httpGet:
-        path: /health
-        port: http
-      initialDelaySeconds: 30
-      periodSeconds: 5
-    # nodeSelector:
-    #   workload: general
-  configmap:
-    data:
-      CLOUD_ENVIRONMENT: dev
-      FRONTEGG_SERVICE_NAME: task-master
-      NODE_ENV: production
-      FRONTEGG_TENANTS_KAFKA_TOPIC_NAME: tenants-v1
-      FRONTEGG_TASKMASTER_SERVICE_ENCRYPT_ALGORITHM: aes-256-cbc
-      FRONTEGG_TASKMASTER_SERVICE_DB_NAME: FRONTEGG_TASKMASTER
-      FRONTEGG_JAEGER_ENABLED: "true"
-      FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
-      FRONTEGG_BACKOFFICE_SERVICE_DB_NAME: frontegg_backoffice
-      FRONTEGG_VENDOR_SERVICE_DB_NAME: frontegg_vendors
-      FRONTEGG_TENANTS_SERVICE_DB_NAME: frontegg_tenants
-      FRONTEGG_ENTITLEMENTS_SERVICE_DB_NAME: frontegg_entitlements
-      FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
-      FRONTEGG_TEAM_MANAGEMENT_DB_NAME: frontegg_team_management
-      FRONTEGG_SUBSCRIPTIONS_DB_NAME: frontegg_subscriptions
-      FRONTEGG_CONFIG_DIRECTORY: /etc/config
-  configuration:
-    map:
-      config-center:
-        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-        IDENTITY_SERVICE_DB_NAME: identity-service-db-name
-        FRONTEGG_API_GW_URL: api-gateway-url
-        FRONTEGG_AUDITS_SERVICE_URL: audits-service-url
-        FRONTEGG_WEBHOOK_SERVICE_URL: webhook-service-url
-        FRONTEGG_DIRECTORY_SERVICE_URL: directory-service-url
-        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
-        # FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
-        # FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
-        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
-        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
-        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
-        FRONTEGG_CDN_URL: cdn-url
-        FRONTEGG_AWS_REGION: aws-region
-        FRONTEGG_CDN_BUCKET: cdn-bucket
-  externalSecret:
-    enabled: true
-    mountPath: /etc/config/config.yaml
-    text: |
-      {{- $secret := .contents | fromYaml}}
-      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-      fronteggApiKey: {{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
-      identityCryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
-      logsStreamingCryptoKey: {{ $secret.frontegg.applications.logsStreaming.cryptoKey | toYaml }}
-      apiKeyEncryptionSecret: {{ $secret.frontegg.applications.vendors.apiKeySecret | toYaml }}
-      prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
-      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
-      oauthCryptoKey: {{ $secret.frontegg.applications.oauth.oauthServiceCryptoKey | toYaml }}
-      redis:
-        host: {{ $secret.databases.redis.host | toYaml }}
-        port: {{ $secret.databases.redis.port | toYaml }}
-        password: {{ $secret.databases.redis.password | toYaml }}
-        tls: {{ $secret.databases.redis.tls | toYaml }}
-      sharedCache:
-        host: {{ $secret.databases.redis.host | toYaml }}
-        port: {{ $secret.databases.redis.port | toYaml }}
-        password: {{ $secret.databases.redis.password | toYaml }}
-        tls: {{ $secret.databases.redis.tls | toYaml }}
-      internalServices:
-        audits:
-          apiKey: {{ $secret.frontegg.apiKeys.auditsServiceApiKey | toYaml }}
-        webhook:
-          apiKey: {{ $secret.frontegg.apiKeys.webhooksServiceApiKey | toYaml }}
-        logsStreaming:
-          apiKey: {{ $secret.frontegg.apiKeys.logsStreamingServiceApiKey | toYaml }}
-        customCode:
-          apiKey: {{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
-        directory:
-          apiKey: {{ $secret.frontegg.apiKeys.directoryServiceApiKey | toYaml }}
-        identity:
-          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-        tenants:
-          apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
-        vendors:
-          apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
-      database:
-        identity:
-          host: {{ $secret.databases.identityMysql.host | toYaml }}
-          username: {{ $secret.databases.identityMysql.username | toYaml }}
-          password: {{ $secret.databases.identityMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.identityMysql.useSsl | toYaml }}
-        backoffice:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        vendors:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        tenants:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        entitlements:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}        
-        dashboardEnvBuilder:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        securityEngines:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        teamManagement:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        subscriptions:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        logsStreaming:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        webhook:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        eventRetry:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        applications:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        oauth:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-        customCode:
-          host: {{ $secret.databases.generalMysql.host | toYaml }}
-          username: {{ $secret.databases.generalMysql.username | toYaml }}
-          password: {{ $secret.databases.generalMysql.password | toYaml }}
-          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
-      kafka:
-        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-      mongodb:
-        url: {{ $secret.databases.mongo.connectionString | toYaml }}
-      mongo6:
-        url: {{ $secret.databases.mongo6.connectionString | toYaml }}
-      customDomainSettings:
-        credentials:
-          clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
-      encryption:
-        secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
-
-    additionalSecrets: ""
-
-#dashboard:
-#  name: dashboard
-#  team: adoption
-#
-#  envID: local
-#
-#  image:
-#    repository: frontegg/dashboard
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    command: ["/bin/sh"]
-#    args: ["./entrypoint.sh"]
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 8080
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 8080
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 300Mi
-#      limits:
-#        memory: 500Mi
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 5
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 50
-#    readinessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 20
-#      periodSeconds: 5
-#
-#    livenessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 30
-#      periodSeconds: 20
-#
-#  configmap:
-#    data:
-#      ALLOWED_IPS: "*"
-#      NODE_ENV: production
-#      CLOUD_ENVIRONMENT: dev
-#      REACT_APP_FRONTEGG_PRICING_URL: dev
-#      REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: dev
-#      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-#      # Based on entitlements.plans-migration
-#      FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
-#      FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
-#
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_ENV_ID: env-id
-#        PUBLIC_URL: portal-url
-#        CORS_ORIGIN: cors-origin
-#        FRONTEGG_API_GATEWAY_URL: api-gateway-url
-#        FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
-#        FRONTEGG_CDN_URL: dashboard-cdn-url
-#        FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
-#        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
-#        FRONTEGG_CDN_BUCKET: cdn-bucket #staging-group-dashboard-static-content
-#        FRONTEGG_HUBSPOT_ENABLED: dashboard-hubspot-enabled
-#        FRONTEGG_DEVREV_ENABLED: dashboard-devrev-enabled
-#        FRONTEGG_DOMAIN_SUFFIX: dashboard-domain-suffix
-#        REACT_APP_FRONTEGG_PRICING_URL: react-app-frontegg-pricing-url
-#        REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: react-app-frontegg-pricing-template-id
-#        FRONTEGG_BACKOFFICE_VIEWER_ROLE_ID: backoffice-viewer-role-id
-#        FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
-#        FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
-#
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.env
-#    text: |
-#      {{- $secret := .contents | fromYaml}}
-#      SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
-#      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-#      FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
-#      FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
-#      SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
-#      GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
-#      FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
-#      FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
-#      FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
-#      FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
-#    additionalSecrets: ""
-#
-#  cronjobs:
-#    restart:
-#      enabled: false
-#      name: dashboard-deplopyment-restart
-#      role: '{{ include "name" $ }}'
-#      roleBinding: '{{ include "name" $ }}'
-#      schedule: "0 0 * * *"
-#      image: bitnami/kubectl
-#      command:
-#        - bash
-#        - -c
-#        - >-
-#          kubectl rollout restart deployment/{{ include "web.name" $ }} &&
-#          kubectl rollout status deployment/{{ include "web.name" $ }}
-#
-#  jobs:
-#    upload-assets:
-#      enabled: true
-#      spec:
-#        command: ["/bin/sh"]
-#        args: ["./s3-assets-upload.sh"]
-#        resources:
-#          requests:
-#            cpu: 500m
-#            memory: 500Mi
-#
-#  prometheusRule:
-#    enabled: true
-#    namespace: observability
-#    labels:
-#      release: prometheus
-#    rpsAlertLimit: 50
-#    rules:
-#      - alert: DashboardRequestRateIsTooHigh
-#        expr: |
-#          round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "name" . }}-tesla"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
-#        for: 1m
-#        labels:
-#          severity: critical
-#        annotations:
-#          description: Dashboard RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
-#          summary: Dashboard RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
-#
-#  serviceAccount:
-#    enabled: true
-#
-#  additionalTemplates: |
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: Role
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    rules:
-#      - apiGroups: ["apps", "extensions"]
-#        resources: ["deployments"]
-#        resourceNames: ["{{ include "web.name" $ }}"]
-#        verbs: ["get", "patch", "list", "watch"]
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: RoleBinding
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    roleRef:
-#      apiGroup: rbac.authorization.k8s.io
-#      kind: Role
-#      name: {{ include "name" $ }}
-#    subjects:
-#      - kind: ServiceAccount
-#        name: {{ include "name" $ }}
-#
-#  additionalResources: |
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: Role
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    rules:
-#      - apiGroups: ["apps", "extensions"]
-#        resources: ["deployments"]
-#        resourceNames: ["{{ include "web.name" $ }}"]
-#        verbs: ["get", "patch", "list", "watch"]
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: RoleBinding
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    roleRef:
-#      apiGroup: rbac.authorization.k8s.io
-#      kind: Role
-#      name: {{ include "name" $ }}
-#    subjects:
-#      - kind: ServiceAccount
-#        name: {{ include "name" $ }}
-#
-#
 
 configCenter:
   annotations:
@@ -4136,3 +3700,423 @@ configCenter:
       nlpExecutionAssistantUrl: "http://nlp-execution-assistant-v2-web"
       anomalyDetectionUrl: "http://anomaly-detection-v2-web"
       fronteggVendorHost: "EMPTY"
+
+task-master:
+  name: task-master
+  team: adoption
+  envID: *envId
+  appVersion: 4f43a04
+  image:
+    repository: frontegg/task-master
+    prefix: *imagePrefix
+  defaults: *defaultsAnnotations
+  argoRollouts:
+    enabled: false
+  web:
+    enabled: true
+    service:
+      ports:
+        - port: 80
+          targetPort: 3024
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3024
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 10
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 20
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 5
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: task-master
+      NODE_ENV: production
+      FRONTEGG_TENANTS_KAFKA_TOPIC_NAME: tenants-v1
+      FRONTEGG_TASKMASTER_SERVICE_ENCRYPT_ALGORITHM: aes-256-cbc
+      FRONTEGG_TASKMASTER_SERVICE_DB_NAME: FRONTEGG_TASKMASTER
+      FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
+      FRONTEGG_BACKOFFICE_SERVICE_DB_NAME: frontegg_backoffice
+      FRONTEGG_VENDOR_SERVICE_DB_NAME: frontegg_vendors
+      FRONTEGG_TENANTS_SERVICE_DB_NAME: frontegg_tenants
+      FRONTEGG_ENTITLEMENTS_SERVICE_DB_NAME: frontegg_entitlements
+      FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
+      FRONTEGG_TEAM_MANAGEMENT_DB_NAME: frontegg_team_management
+      FRONTEGG_SUBSCRIPTIONS_DB_NAME: frontegg_subscriptions
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        IDENTITY_SERVICE_DB_NAME: identity-service-db-name
+        FRONTEGG_API_GW_URL: api-gateway-url
+        FRONTEGG_AUDITS_SERVICE_URL: audits-service-url
+        FRONTEGG_WEBHOOK_SERVICE_URL: webhook-service-url
+        FRONTEGG_DIRECTORY_SERVICE_URL: directory-service-url
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
+        FRONTEGG_LOGS_STREAMING_SERVICE_URL: logs-streaming-service-url
+        FRONTEGG_CUSTOM_CODE_SERVICE_URL: custom-code-service-url
+        FRONTEGG_VENDORS_DOMAIN: vendors-service-vendors-domain
+        FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_CDN_URL: cdn-url
+        FRONTEGG_AWS_REGION: aws-region
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      fronteggApiKey: {{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+      identityCryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
+      logsStreamingCryptoKey: {{ $secret.frontegg.applications.logsStreaming.cryptoKey | toYaml }}
+      apiKeyEncryptionSecret: {{ $secret.frontegg.applications.vendors.apiKeySecret | toYaml }}
+      prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
+      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      oauthCryptoKey: {{ $secret.frontegg.applications.oauth.oauthServiceCryptoKey | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      sharedCache:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      internalServices:
+        audits:
+          apiKey: {{ $secret.frontegg.apiKeys.auditsServiceApiKey | toYaml }}
+        webhook:
+          apiKey: {{ $secret.frontegg.apiKeys.webhooksServiceApiKey | toYaml }}
+        logsStreaming:
+          apiKey: {{ $secret.frontegg.apiKeys.logsStreamingServiceApiKey | toYaml }}
+        customCode:
+          apiKey: {{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
+        directory:
+          apiKey: {{ $secret.frontegg.apiKeys.directoryServiceApiKey | toYaml }}
+        identity:
+          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+        tenants:
+          apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
+        vendors:
+          apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+      database:
+        identity:
+          host: {{ $secret.databases.identityMysql.host | toYaml }}
+          username: {{ $secret.databases.identityMysql.username | toYaml }}
+          password: {{ $secret.databases.identityMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.identityMysql.useSsl | toYaml }}
+        backoffice:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        vendors:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        tenants:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        entitlements:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}        
+        dashboardEnvBuilder:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        securityEngines:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        teamManagement:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        subscriptions:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        logsStreaming:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        webhook:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        eventRetry:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        applications:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        oauth:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+        customCode:
+          host: {{ $secret.databases.generalMysql.host | toYaml }}
+          username: {{ $secret.databases.generalMysql.username | toYaml }}
+          password: {{ $secret.databases.generalMysql.password | toYaml }}
+          useSSL: {{ $secret.databases.generalMysql.useSsl | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+      mongodb:
+        url: {{ $secret.databases.mongo.connectionString | toYaml }}
+      mongo6:
+        url: {{ $secret.databases.mongo6.connectionString | toYaml }}
+      customDomainSettings:
+        credentials:
+          clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
+      encryption:
+        secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
+
+    additionalSecrets: ""
+
+
+#dashboard:
+#  name: dashboard
+#  team: adoption
+#
+#  envID: local
+#
+#  image:
+#    repository: frontegg/dashboard
+#
+#  imagePullSecrets:
+#    - name: regcred
+#
+#  web:
+#    enabled: true
+#    command: ["/bin/sh"]
+#    args: ["./entrypoint.sh"]
+#    service:
+#      ports:
+#        - port: 80
+#          targetPort: 8080
+#          protocol: TCP
+#          name: http
+#    ports:
+#      - name: http
+#        containerPort: 8080
+#    resources:
+#      requests:
+#        cpu: 500m
+#        memory: 300Mi
+#      limits:
+#        memory: 500Mi
+#    autoscaling:
+#      enabled: true
+#      minReplicas: 1
+#      maxReplicas: 5
+#      targetCPUUtilizationPercentage: 50
+#      targetMemoryUtilizationPercentage: 50
+#    readinessProbe:
+#      httpGet:
+#        path: /health
+#        port: http
+#      initialDelaySeconds: 20
+#      periodSeconds: 5
+#
+#    livenessProbe:
+#      httpGet:
+#        path: /health
+#        port: http
+#      initialDelaySeconds: 30
+#      periodSeconds: 20
+#
+#  configmap:
+#    data:
+#      ALLOWED_IPS: "*"
+#      NODE_ENV: production
+#      CLOUD_ENVIRONMENT: dev
+#      REACT_APP_FRONTEGG_PRICING_URL: dev
+#      REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: dev
+#      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+#      # Based on entitlements.plans-migration
+#      FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
+#      FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
+#
+#  configuration:
+#    map:
+#      config-center:
+#        FRONTEGG_ENV_ID: env-id
+#        PUBLIC_URL: portal-url
+#        CORS_ORIGIN: cors-origin
+#        FRONTEGG_API_GATEWAY_URL: api-gateway-url
+#        FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
+#        FRONTEGG_CDN_URL: dashboard-cdn-url
+#        FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
+#        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
+#        FRONTEGG_CDN_BUCKET: cdn-bucket #staging-group-dashboard-static-content
+#        FRONTEGG_HUBSPOT_ENABLED: dashboard-hubspot-enabled
+#        FRONTEGG_DEVREV_ENABLED: dashboard-devrev-enabled
+#        FRONTEGG_DOMAIN_SUFFIX: dashboard-domain-suffix
+#        REACT_APP_FRONTEGG_PRICING_URL: react-app-frontegg-pricing-url
+#        REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: react-app-frontegg-pricing-template-id
+#        FRONTEGG_BACKOFFICE_VIEWER_ROLE_ID: backoffice-viewer-role-id
+#        FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
+#        FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
+#
+#  externalSecret:
+#    enabled: true
+#    mountPath: /etc/config/config.env
+#    text: |
+#      {{- $secret := .contents | fromYaml}}
+#      SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
+#      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+#      FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+#      FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
+#      SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
+#      GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
+#      FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
+#      FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
+#      FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
+#      FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
+#    additionalSecrets: ""
+#
+#  cronjobs:
+#    restart:
+#      enabled: false
+#      name: dashboard-deplopyment-restart
+#      role: '{{ include "name" $ }}'
+#      roleBinding: '{{ include "name" $ }}'
+#      schedule: "0 0 * * *"
+#      image: bitnami/kubectl
+#      command:
+#        - bash
+#        - -c
+#        - >-
+#          kubectl rollout restart deployment/{{ include "web.name" $ }} &&
+#          kubectl rollout status deployment/{{ include "web.name" $ }}
+#
+#  jobs:
+#    upload-assets:
+#      enabled: true
+#      spec:
+#        command: ["/bin/sh"]
+#        args: ["./s3-assets-upload.sh"]
+#        resources:
+#          requests:
+#            cpu: 500m
+#            memory: 500Mi
+#
+#  prometheusRule:
+#    enabled: true
+#    namespace: observability
+#    labels:
+#      release: prometheus
+#    rpsAlertLimit: 50
+#    rules:
+#      - alert: DashboardRequestRateIsTooHigh
+#        expr: |
+#          round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "name" . }}-tesla"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+#        for: 1m
+#        labels:
+#          severity: critical
+#        annotations:
+#          description: Dashboard RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
+#          summary: Dashboard RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
+#
+#  serviceAccount:
+#    enabled: true
+#
+#  additionalTemplates: |
+#    ---
+#    apiVersion: rbac.authorization.k8s.io/v1
+#    kind: Role
+#    metadata:
+#      name: {{ include "name" $ }}
+#      labels:
+#        {{- include "labels" . | nindent 4 }}
+#    rules:
+#      - apiGroups: ["apps", "extensions"]
+#        resources: ["deployments"]
+#        resourceNames: ["{{ include "web.name" $ }}"]
+#        verbs: ["get", "patch", "list", "watch"]
+#    ---
+#    apiVersion: rbac.authorization.k8s.io/v1
+#    kind: RoleBinding
+#    metadata:
+#      name: {{ include "name" $ }}
+#      labels:
+#        {{- include "labels" . | nindent 4 }}
+#    roleRef:
+#      apiGroup: rbac.authorization.k8s.io
+#      kind: Role
+#      name: {{ include "name" $ }}
+#    subjects:
+#      - kind: ServiceAccount
+#        name: {{ include "name" $ }}
+#
+#  additionalResources: |
+#    ---
+#    apiVersion: rbac.authorization.k8s.io/v1
+#    kind: Role
+#    metadata:
+#      name: {{ include "name" $ }}
+#      labels:
+#        {{- include "labels" . | nindent 4 }}
+#    rules:
+#      - apiGroups: ["apps", "extensions"]
+#        resources: ["deployments"]
+#        resourceNames: ["{{ include "web.name" $ }}"]
+#        verbs: ["get", "patch", "list", "watch"]
+#    ---
+#    apiVersion: rbac.authorization.k8s.io/v1
+#    kind: RoleBinding
+#    metadata:
+#      name: {{ include "name" $ }}
+#      labels:
+#        {{- include "labels" . | nindent 4 }}
+#    roleRef:
+#      apiGroup: rbac.authorization.k8s.io
+#      kind: Role
+#      name: {{ include "name" $ }}
+#    subjects:
+#      - kind: ServiceAccount
+#        name: {{ include "name" $ }}
+#
+#
