@@ -3955,6 +3955,9 @@ dashboard:
   team: adoption
   envID: *envId
   appVersion: d1cc12d
+  defaults: *defaultsAnnotations
+  argoRollouts:
+    enabled: false
   image:
     repository: frontegg/dashboard
     prefix: *imagePrefix
@@ -4092,21 +4095,7 @@ dashboard:
             memory: 500Mi
 
   prometheusRule:
-    enabled: true
-    namespace: observability
-    labels:
-      release: prometheus
-    rpsAlertLimit: 50
-    rules:
-      - alert: DashboardRequestRateIsTooHigh
-        expr: |
-          round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "name" . }}-tesla"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
-        for: 1m
-        labels:
-          severity: critical
-        annotations:
-          description: Dashboard RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
-          summary: Dashboard RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
+    enabled: false
 
   serviceAccount:
     enabled: true
