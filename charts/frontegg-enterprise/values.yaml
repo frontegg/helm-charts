@@ -309,7 +309,7 @@ team-management-service:
       FRONTEGG_SPLIT_IO_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
       FRONTEGG_SPLIT_IO_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
       FRONTEGG_SPLIT_IO_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
-      
+
       FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
 
     additionalSecrets: ""
@@ -3949,207 +3949,220 @@ task-master:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
 
     additionalSecrets: ""
-#dashboard:
-#  name: dashboard
-#  team: adoption
-#
-#  envID: local
-#
-#  image:
-#    repository: frontegg/dashboard
-#
-#  imagePullSecrets:
-#    - name: regcred
-#
-#  web:
-#    enabled: true
-#    command: ["/bin/sh"]
-#    args: ["./entrypoint.sh"]
-#    service:
-#      ports:
-#        - port: 80
-#          targetPort: 8080
-#          protocol: TCP
-#          name: http
-#    ports:
-#      - name: http
-#        containerPort: 8080
-#    resources:
-#      requests:
-#        cpu: 500m
-#        memory: 300Mi
-#      limits:
-#        memory: 500Mi
-#    autoscaling:
-#      enabled: true
-#      minReplicas: 1
-#      maxReplicas: 5
-#      targetCPUUtilizationPercentage: 50
-#      targetMemoryUtilizationPercentage: 50
-#    readinessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 20
-#      periodSeconds: 5
-#
-#    livenessProbe:
-#      httpGet:
-#        path: /health
-#        port: http
-#      initialDelaySeconds: 30
-#      periodSeconds: 20
-#
-#  configmap:
-#    data:
-#      ALLOWED_IPS: "*"
-#      NODE_ENV: production
-#      CLOUD_ENVIRONMENT: dev
-#      REACT_APP_FRONTEGG_PRICING_URL: dev
-#      REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: dev
-#      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-#      # Based on entitlements.plans-migration
-#      FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
-#      FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
-#
-#  configuration:
-#    map:
-#      config-center:
-#        FRONTEGG_ENV_ID: env-id
-#        PUBLIC_URL: portal-url
-#        CORS_ORIGIN: cors-origin
-#        FRONTEGG_API_GATEWAY_URL: api-gateway-url
-#        FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
-#        FRONTEGG_CDN_URL: dashboard-cdn-url
-#        FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
-#        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
-#        FRONTEGG_CDN_BUCKET: cdn-bucket #staging-group-dashboard-static-content
-#        FRONTEGG_HUBSPOT_ENABLED: dashboard-hubspot-enabled
-#        FRONTEGG_DEVREV_ENABLED: dashboard-devrev-enabled
-#        FRONTEGG_DOMAIN_SUFFIX: dashboard-domain-suffix
-#        REACT_APP_FRONTEGG_PRICING_URL: react-app-frontegg-pricing-url
-#        REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: react-app-frontegg-pricing-template-id
-#        FRONTEGG_BACKOFFICE_VIEWER_ROLE_ID: backoffice-viewer-role-id
-#        FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
-#        FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
-#
-#  externalSecret:
-#    enabled: true
-#    mountPath: /etc/config/config.env
-#    text: |
-#      {{- $secret := .contents | fromYaml}}
-#      SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
-#      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-#      FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
-#      FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
-#      SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
-#      GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
-#      FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
-#      FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
-#      FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
-#      FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
-#    additionalSecrets: ""
-#
-#  cronjobs:
-#    restart:
-#      enabled: false
-#      name: dashboard-deplopyment-restart
-#      role: '{{ include "name" $ }}'
-#      roleBinding: '{{ include "name" $ }}'
-#      schedule: "0 0 * * *"
-#      image: bitnami/kubectl
-#      command:
-#        - bash
-#        - -c
-#        - >-
-#          kubectl rollout restart deployment/{{ include "web.name" $ }} &&
-#          kubectl rollout status deployment/{{ include "web.name" $ }}
-#
-#  jobs:
-#    upload-assets:
-#      enabled: true
-#      spec:
-#        command: ["/bin/sh"]
-#        args: ["./s3-assets-upload.sh"]
-#        resources:
-#          requests:
-#            cpu: 500m
-#            memory: 500Mi
-#
-#  prometheusRule:
-#    enabled: true
-#    namespace: observability
-#    labels:
-#      release: prometheus
-#    rpsAlertLimit: 50
-#    rules:
-#      - alert: DashboardRequestRateIsTooHigh
-#        expr: |
-#          round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "name" . }}-tesla"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
-#        for: 1m
-#        labels:
-#          severity: critical
-#        annotations:
-#          description: Dashboard RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
-#          summary: Dashboard RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
-#
-#  serviceAccount:
-#    enabled: true
-#
-#  additionalTemplates: |
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: Role
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    rules:
-#      - apiGroups: ["apps", "extensions"]
-#        resources: ["deployments"]
-#        resourceNames: ["{{ include "web.name" $ }}"]
-#        verbs: ["get", "patch", "list", "watch"]
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: RoleBinding
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    roleRef:
-#      apiGroup: rbac.authorization.k8s.io
-#      kind: Role
-#      name: {{ include "name" $ }}
-#    subjects:
-#      - kind: ServiceAccount
-#        name: {{ include "name" $ }}
-#
-#  additionalResources: |
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: Role
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    rules:
-#      - apiGroups: ["apps", "extensions"]
-#        resources: ["deployments"]
-#        resourceNames: ["{{ include "web.name" $ }}"]
-#        verbs: ["get", "patch", "list", "watch"]
-#    ---
-#    apiVersion: rbac.authorization.k8s.io/v1
-#    kind: RoleBinding
-#    metadata:
-#      name: {{ include "name" $ }}
-#      labels:
-#        {{- include "labels" . | nindent 4 }}
-#    roleRef:
-#      apiGroup: rbac.authorization.k8s.io
-#      kind: Role
-#      name: {{ include "name" $ }}
-#    subjects:
-#      - kind: ServiceAccount
-#        name: {{ include "name" $ }}
-#
-#
+
+dashboard:
+  name: dashboard
+  team: adoption
+  envID: *envId
+  appVersion: d1cc12d
+  image:
+    repository: frontegg/dashboard
+    prefix: *imagePrefix
+  imagePullSecrets:
+    - name: regcred
+
+  ingresses:
+    tesla:
+      enabled: true
+      ingressClassName: nginx
+      hostname: "portal.onprem.backegg.io"
+      service:
+        name: '{{ include "web.name" $ }}'
+        port: 80
+      annotations:
+        nginx.ingress.kubernetes.io/server-snippet: |
+          location ~* ^/(metrics|health) {
+            deny all;
+            return 403;
+          }
+
+  web:
+    enabled: true
+    command: ["/bin/sh"]
+    args: ["./entrypoint.sh"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 8080
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 8080
+    resources:
+      requests:
+        cpu: 500m
+        memory: 300Mi
+      limits:
+        memory: 500Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 20
+
+  configmap:
+    data:
+      ALLOWED_IPS: "*"
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      REACT_APP_FRONTEGG_PRICING_URL: dev
+      REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: dev
+      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      # Based on entitlements.plans-migration
+      FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
+      FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        PUBLIC_URL: portal-url
+        CORS_ORIGIN: cors-origin
+        FRONTEGG_API_GATEWAY_URL: api-gateway-url
+        FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
+        FRONTEGG_CDN_URL: dashboard-cdn-url
+        FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
+        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
+        FRONTEGG_CDN_BUCKET: cdn-bucket #staging-group-dashboard-static-content
+        FRONTEGG_HUBSPOT_ENABLED: dashboard-hubspot-enabled
+        FRONTEGG_DEVREV_ENABLED: dashboard-devrev-enabled
+        FRONTEGG_DOMAIN_SUFFIX: dashboard-domain-suffix
+        REACT_APP_FRONTEGG_PRICING_URL: react-app-frontegg-pricing-url
+        REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: react-app-frontegg-pricing-template-id
+        FRONTEGG_BACKOFFICE_VIEWER_ROLE_ID: backoffice-viewer-role-id
+        FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
+        FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
+      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+      FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
+      SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
+      GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
+      FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
+      FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
+      FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
+      FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
+    additionalSecrets: ""
+
+  cronjobs:
+    restart:
+      enabled: false
+      name: dashboard-deplopyment-restart
+      role: '{{ include "name" $ }}'
+      roleBinding: '{{ include "name" $ }}'
+      schedule: "0 0 * * *"
+      image: bitnami/kubectl
+      command:
+        - bash
+        - -c
+        - >-
+          kubectl rollout restart deployment/{{ include "web.name" $ }} &&
+          kubectl rollout status deployment/{{ include "web.name" $ }}
+
+  jobs:
+    upload-assets:
+      enabled: true
+      spec:
+        command: ["/bin/sh"]
+        args: ["./s3-assets-upload.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  prometheusRule:
+    enabled: true
+    namespace: observability
+    labels:
+      release: prometheus
+    rpsAlertLimit: 50
+    rules:
+      - alert: DashboardRequestRateIsTooHigh
+        expr: |
+          round(sum(irate(nginx_ingress_controller_requests{ingress="{{ include "name" . }}-tesla"}[2m])) , 0.001) > {{ .Values.prometheusRule.rpsAlertLimit }}
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          description: Dashboard RPS is higher then {{ .Values.prometheusRule.rpsAlertLimit }} for 2 minutes or more
+          summary: Dashboard RPS is higher than {{ .Values.prometheusRule.rpsAlertLimit }}
+
+  serviceAccount:
+    enabled: true
+
+  additionalTemplates: |
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: {{ include "name" $ }}
+      labels:
+        {{- include "labels" . | nindent 4 }}
+    rules:
+      - apiGroups: ["apps", "extensions"]
+        resources: ["deployments"]
+        resourceNames: ["{{ include "web.name" $ }}"]
+        verbs: ["get", "patch", "list", "watch"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: {{ include "name" $ }}
+      labels:
+        {{- include "labels" . | nindent 4 }}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: {{ include "name" $ }}
+    subjects:
+      - kind: ServiceAccount
+        name: {{ include "name" $ }}
+
+  additionalResources: |
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: {{ include "name" $ }}
+      labels:
+        {{- include "labels" . | nindent 4 }}
+    rules:
+      - apiGroups: ["apps", "extensions"]
+        resources: ["deployments"]
+        resourceNames: ["{{ include "web.name" $ }}"]
+        verbs: ["get", "patch", "list", "watch"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: {{ include "name" $ }}
+      labels:
+        {{- include "labels" . | nindent 4 }}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: {{ include "name" $ }}
+    subjects:
+      - kind: ServiceAccount
+        name: {{ include "name" $ }}
