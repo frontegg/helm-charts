@@ -309,7 +309,7 @@ team-management-service:
       FRONTEGG_SPLIT_IO_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
       FRONTEGG_SPLIT_IO_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
       FRONTEGG_SPLIT_IO_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
-#      This should be removed No azure in on-prem Artur
+      
       FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
 
     additionalSecrets: ""
