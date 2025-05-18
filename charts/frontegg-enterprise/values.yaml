@@ -1,5 +1,5 @@
 #strimzi-kafka-operator:
-#debezium-operator: 
+#debezium-operator:
 
 debezium:
   enabled: true
@@ -2823,6 +2823,30 @@ api-gateway:
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
+  ingresses:
+  tesla:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      nginx.ingress.kubernetes.io/proxy-body-size: 4m
+      nginx.ingress.kubernetes.io/configuration-snippet: |
+        more_clear_input_headers "Host" "X-Forwarded-Host";
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+        proxy_set_header X-Trace-ID $opentelemetry_trace_id;
+      nginx.ingress.kubernetes.io/server-snippet: |
+        add_header Cache-Control "no-transform";
+        location ~* ^/(metrics|healthcheck) {
+          deny all;
+          return 403;
+        }
+      nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+    rules:
+      - hostname: "*.onprem.backegg.io"
+        paths:
+          - path: /
+            servicePort: 80
+            pathType: ImplementationSpecific
   web:
     enabled: true
     command: ["node"]
@@ -3222,13 +3246,7 @@ identity-service:
       enabled: true
       spec:
         command: ["node"]
-        args:
-          [
-            "./node_modules/@frontegg/common/dist/utils/text-to-json-output.js",
-            "./node_modules/typeorm/cli.js",
-            "--dataSource=service/dist/data-sources/production.ormconfig.js",
-            "migration:run",
-          ]
+        args: ["./node_modules/@frontegg/common/dist/utils/text-to-json-output.js", "./node_modules/typeorm/cli.js", "--dataSource=service/dist/data-sources/production.ormconfig.js", "migration:run"]
         resources:
           requests:
             cpu: 500m
@@ -3929,8 +3947,6 @@ task-master:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
 
     additionalSecrets: ""
-
-
 #dashboard:
 #  name: dashboard
 #  team: adoption
