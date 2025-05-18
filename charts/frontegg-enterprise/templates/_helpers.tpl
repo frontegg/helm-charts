@@ -49,4 +49,13 @@ Selector labels
 {{- define "frontegg-enterprise.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "frontegg-enterprise.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end -}}
+
+{{/*
+Generate a unique Debezium server ID as an integer based on the release name.
+*/}}
+{{- define "frontegg-enterprise.debeziumServerId" -}}
+{{- $hash := sha256sum .Release.Name -}}
+{{- $id := (regexFind "[0-9]+" $hash) | trunc 6 -}}
+{{- if $id }}{{ $id }}{{ else }}184051{{ end }}
 {{- end -}} 

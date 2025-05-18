@@ -40,7 +40,7 @@ spec:
       schema.history.internal.kafka.bootstrap.servers: |
         {{ required "Values.debezium.bootstrapServers must be set" $values.debezium.bootstrapServers }}
       schema.history.internal.kafka.topic: dbhistory.identity
-      database.server.id: 184051
+      database.server.id: {{ include "frontegg-enterprise.debeziumServerId" . }}
       database.server.name: identity
       database.include.list: frontegg_identity
       table.include.list: >

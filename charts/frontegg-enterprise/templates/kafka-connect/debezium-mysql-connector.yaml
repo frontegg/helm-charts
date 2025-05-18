@@ -30,7 +30,7 @@ spec:
     value.converter: org.apache.kafka.connect.json.JsonConverter
     key.converter: org.apache.kafka.connect.json.JsonConverter
     database.allowPublicKeyRetrieval: true
-    database.server.id: 184051
+    database.server.id: {{ include "frontegg-enterprise.debeziumServerId" . }}
     database.server.name: identity
     transforms.unwrap.drop.tombstones: false
     key.converter.schemas.enable: false
