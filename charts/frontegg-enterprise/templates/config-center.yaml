@@ -141,6 +141,7 @@ data:
   backoffice-viewer-role-id: {{ .backofficeViewerRoleId | default "" | quote }}
   backoffice-editor-role-id: {{ .backofficeEditorRoleId | default "" | quote }}
   frontegg-ui-events-url: {{ .fronteggUiEventsUrl | default "" | quote }}
+  react-app-frontegg-pricing-template-id: placeHolder
   {{- end }}
 
   {{- with $apps.envDuplicator }}
