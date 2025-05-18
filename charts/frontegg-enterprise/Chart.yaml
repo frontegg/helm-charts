@@ -111,10 +111,10 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: security-engines
 
-  - name: *chartName
-    version: *chartVersion
-    repository: https://frontegg.github.io/helm-charts
-    alias: team-management-service
+  # - name: *chartName
+  #   version: *chartVersion
+  #   repository: https://frontegg.github.io/helm-charts
+  #   alias: team-management-service
 
   - name: *chartName
     version: *chartVersion
