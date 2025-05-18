@@ -1,6 +1,6 @@
 #strimzi-kafka-operator:
 
-#debezium-operator:
+#debezium-operator: 
 
 debezium:
   enabled: true
