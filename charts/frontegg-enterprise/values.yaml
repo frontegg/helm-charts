@@ -1782,7 +1782,7 @@ env-duplicator:
   name: env-duplicator
   team: frontegg
   envID: *envId
-  appVersion: c29114a
+  appVersion: venv-c31ef6c
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -1829,7 +1829,14 @@ env-duplicator:
       maxReplicas: 3
       targetCPUUtilizationPercentage: 70
       targetMemoryUtilizationPercentage: 80
-
+    additionalVolumes: |
+      - name: vol-settings
+        configMap:
+          name: 'settings'
+    additionalVolumeMounts: |
+      - name: vol-settings
+        mountPath: /etc/config/settings.yaml
+        subPath: settings.yaml
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -1838,6 +1845,7 @@ env-duplicator:
       FRONTEGG_ENV_DUPLICATOR_DB_NAME: frontegg_env_duplicator
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_SPLIT_IO_COMBINED_TOKEN: /etc/config/settings.yaml
 
   jobs:
     migrate:
@@ -1869,7 +1877,8 @@ env-duplicator:
     text: |
       {{- $secret := .contents | fromYaml }}
       apiKey: {{ $secret.frontegg.apiKeys.envDuplicatorApiKey | toYaml }}
-      splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
+      splitIO:
+        splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
       vendorServiceApiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
       oauthService:
         apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
@@ -3349,7 +3358,7 @@ oauth-service:
   name: oauth
   team: frontegg
   envID: *envId
-  appVersion: adb9c44
+  appVersion: venv-99a2c9b
   image:
     repository: frontegg/oauth-service
     prefix: *imagePrefix
@@ -3397,6 +3406,14 @@ oauth-service:
       initialDelaySeconds: 40
       periodSeconds: 20
     terminationGracePeriodSeconds: 60
+    additionalVolumes: |
+      - name: vol-settings
+        configMap:
+          name: 'settings'
+    additionalVolumeMounts: |
+      - name: vol-settings
+        mountPath: /etc/config/settings.yaml
+        subPath: settings.yaml
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -3409,6 +3426,8 @@ oauth-service:
       SENTRY_ENABLED: "false"
       FRONTEGG_CDN_URL: "http://localhost:3001"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
+      FRONTEGG_USE_FRONTEND_STATIC_FILES: "../frontend/dist/index.html"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -3440,6 +3459,7 @@ oauth-service:
         FRONTEGG_TEAM_MANAGEMENT_URL: team-service-url
         FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
         FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
+        FRONTEGG_AUTH_HUB_SERVICE_URL: auth-hub-service-url
         FRONTEGG_OAUTH_SERVICE_DB_NAME: oauth-service-db-name
         FRONTEGG_OAUTH_SERVICE_REDIS_DB_INDEX: oauth-service-redis-db-index
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
@@ -3452,12 +3472,6 @@ oauth-service:
       {{- $secret := .contents | fromYaml}}
       apiKey: {{ $secret.frontegg.apiKeys.oauthServiceApiKey | toYaml }}
       fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-      splitIO:
-        key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       databases:
         mySql:
           host: {{ $secret.databases.generalMysql.host | toYaml }}
@@ -3483,6 +3497,8 @@ oauth-service:
           apiKey: {{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
         vendors:
           apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+        authHubService:
+          apiKey: {{ $secret.frontegg.apiKeys.authHubServiceApiKey | toYaml }}
       kafka:
         brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
         saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
