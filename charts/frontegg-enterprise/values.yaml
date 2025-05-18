@@ -4085,7 +4085,7 @@ dashboard:
 
   jobs:
     upload-assets:
-      enabled: true
+      enabled: false
       spec:
         command: ["/bin/sh"]
         args: ["./s3-assets-upload.sh"]
