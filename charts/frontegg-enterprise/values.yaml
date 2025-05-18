@@ -13,8 +13,8 @@ debezium:
     version: "3.8.0"
     image: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/strimzi-debezium-kafka-connect:3.8.0"
   debeziumOperator:
-    install: false
-    enabled: false
+    install: true
+    enabled: true
     version: "3.1.0.Final"
     image: "quay.io/debezium/server:3.1"
 
@@ -309,6 +309,8 @@ team-management-service:
       FRONTEGG_SPLIT_IO_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
       FRONTEGG_SPLIT_IO_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
       FRONTEGG_SPLIT_IO_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
+#      This should be removed No azure in on-prem Artur
+      FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
 
     additionalSecrets: ""
 
