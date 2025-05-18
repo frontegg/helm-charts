@@ -1,0 +1,38 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: IngressClass
+metadata:
+  name: nginx
+spec:
+  controller: k8s.io/ingress-nginx
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    alb.ingress.kubernetes.io/group.name: nginx
+    alb.ingress.kubernetes.io/backend-protocol: HTTP
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:109940070146:certificate/2ad1f998-7c88-4249-869f-97e1deb5ee9c
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    # alb.ingress.kubernetes.io/inbound-cidrs: 13.51.82.143/32, 13.50.152.185/32, 13.53.49.224/32,
+    #   173.245.48.0/20, 103.21.244.0/22, 103.22.200.0/22, 103.31.4.0/22, 141.101.64.0/18,
+    #   108.162.192.0/18, 190.93.240.0/20, 188.114.96.0/20, 197.234.240.0/22, 198.41.128.0/17,
+    #   162.158.0.0/15, 104.16.0.0/13, 104.24.0.0/14, 172.64.0.0/13, 131.0.72.0/22
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-redirect: "443"
+    alb.ingress.kubernetes.io/target-type: instance
+  name: ingress-nginx-controller
+spec:
+  ingressClassName: alb
+  rules:
+    - host: "*.onprem.frontegg.com"
+      http:
+        paths:
+          - backend:
+              service:
+                name: ingress-nginx-controller
+                port:
+                  number: 80
+            path: "/*"
+            pathType: ImplementationSpecific
