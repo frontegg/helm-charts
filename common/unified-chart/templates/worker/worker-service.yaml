@@ -1,6 +1,5 @@
 {{- $values := .Values -}}
 {{- if $values.worker.enabled -}}
-{{- if $values.argoRollouts -}}
 ---
 apiVersion: v1
 kind: Service
@@ -14,6 +13,7 @@ metadata:
 spec:
   type: {{ $values.worker.service.type }}
   ports:
+    {{- include "validate.ports" $values.worker.service }}
     {{- range $values.worker.service.ports }}
     - port: {{ required ".Values.worker.service.ports[*].port number is required" .port }}
       targetPort: {{ required "need to know if someone listening: .Values.worker.service.ports[*].targetPort is required" .targetPort }}
@@ -22,5 +22,4 @@ spec:
     {{- end }}
   selector:
     {{- include "worker.selector.labels" . | nindent 4 }}
-{{- end }}
 {{- end }}

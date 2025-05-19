@@ -1,6 +1,5 @@
 {{- $values := .Values -}}
 {{- if $values.web.enabled -}}
-{{- if $values.argoRollouts -}}
 ---
 apiVersion: v1
 kind: Service
@@ -17,15 +16,15 @@ metadata:
 spec:
   type: {{ $values.web.service.type }}
   ports:
+    {{- include "validate.ports" $values.web.service }}
     {{- range $values.web.service.ports }}
     - port: {{ required ".Values.web.service.ports[*].port number is required" .port }}
       targetPort: {{ required "need to know if someone listening: .Values.web.service.ports[*].targetPort is required" .targetPort }}
       protocol: {{ .protocol | default "TCP" }}
       name: {{ .name | default "http" }}
     {{- end }}
-  {{- if not .Values.argoRollouts.progressiveDelivery.enabled }}
+  {{- if not $values.argoRollouts.progressiveDelivery.enabled }}
   selector:
     {{- include "web.selector.labels" . | nindent 4 }}
   {{- end }}
-{{- end }}
 {{- end }}

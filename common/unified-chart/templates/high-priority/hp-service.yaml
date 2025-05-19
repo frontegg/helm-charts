@@ -1,6 +1,5 @@
 {{- $values := .Values -}}
 {{- if $values.hp.enabled }}
-{{- if $values.argoRollouts.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -17,6 +16,7 @@ metadata:
 spec:
   type: {{ $values.hp.service.type | default "ClusterIP" }}
   ports:
+    {{- include "validate.ports" $values.hp.service }}
     {{- range $values.hp.service.ports }}
     - port: {{ required ".Values.hp.service.ports[*].port number is required" .port }}
       targetPort: {{ required "need to know if someone listening: .Values.hp.service.ports[*].targetPort is required" .targetPort }}
@@ -25,5 +25,4 @@ spec:
     {{- end }}
   selector:
     {{- include "hp.selector.labels" . | nindent 4 }}
-{{- end }}
 {{- end }}
