@@ -100,11 +100,11 @@ web:
     labels: {}
     type: ClusterIP
     protocol: TCP
-    ports:
-      - port: 80
-        targetPort: 3000
-        protocol: TCP
-        name: http
+    ports: []
+    # - port: 80
+    #   targetPort: 3000
+    #   protocol: TCP
+    #   name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   replicaCount: 1
@@ -170,11 +170,11 @@ worker:
     labels: {}
     type: ClusterIP
     protocol: TCP
-    ports:
-      - port: 80
-        targetPort: 3000
-        protocol: TCP
-        name: http
+    ports: []
+    # - port: 80
+    #   targetPort: 3000
+    #   protocol: TCP
+    #   name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "worker"]
   podAnnotations: {}
@@ -240,6 +240,10 @@ hp:
     type: ClusterIP
     protocol: TCP
     ports: []
+    # - port: 80
+    #   targetPort: 3000
+    #   protocol: TCP
+    #   name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:

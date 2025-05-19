@@ -7,6 +7,7 @@ metadata:
   name: {{ include "web.name" . }}
   labels:
     {{- include "web.labels" . | nindent 4 }}
+    {{- include "fail.if.empty" $values.web.service }}
     {{- with $values.web.service.labels }}
     {{- toYaml . | nindent 4 }}
     {{- end }}

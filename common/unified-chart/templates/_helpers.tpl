@@ -176,3 +176,8 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- end }}
 {{- end }}
 
+{{- define "fail.if.empty" }}
+{{- if not . -}}
+{{- fail "nil value provided - check your values" }}
+{{- end }}
+{{- end }}
