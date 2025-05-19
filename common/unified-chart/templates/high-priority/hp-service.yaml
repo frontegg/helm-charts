@@ -1,6 +1,5 @@
 {{- $values := .Values -}}
 {{- if $values.hp.enabled }}
-{{- if $values.argoRollouts.enabled }}
 ---
 apiVersion: v1
 kind: Service
@@ -25,5 +24,4 @@ spec:
     {{- end }}
   selector:
     {{- include "hp.selector.labels" . | nindent 4 }}
-{{- end }}
 {{- end }}

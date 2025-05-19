@@ -1,6 +1,5 @@
 {{- $values := .Values -}}
 {{- if $values.worker.enabled -}}
-{{- if $values.argoRollouts -}}
 ---
 apiVersion: v1
 kind: Service
@@ -22,5 +21,4 @@ spec:
     {{- end }}
   selector:
     {{- include "worker.selector.labels" . | nindent 4 }}
-{{- end }}
 {{- end }}
