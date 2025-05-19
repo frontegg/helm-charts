@@ -244,6 +244,7 @@ team-management-service:
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_ANALYTICS_TYPE: firehose
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.yaml"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: "/etc/config/settings.yaml"
       LOG_LEVEL: verbose
 
   jobs:
