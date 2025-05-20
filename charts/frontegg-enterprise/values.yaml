@@ -3482,7 +3482,7 @@ oauth-service:
         FRONTEGG_OAUTH_SERVICE_DB_NAME: oauth-service-db-name
         FRONTEGG_OAUTH_SERVICE_REDIS_DB_INDEX: oauth-service-redis-db-index
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
-        #FRONTEGG_CDN_URL: dashboard-cdn-url
+        FRONTEGG_CDN_URL: dashboard-cdn-url
         FRONTEGG_CDN_BUCKET: cdn-bucket
   externalSecret:
     enabled: true
@@ -3543,8 +3543,8 @@ configCenter:
       analytics:
         segmentAnalyticsEnabled: "false"
         useFirehoseAnalytics: "false"
-      portalUrl: ""
-      corsOrigin: ""
+      portalUrl: "https://portal.onprem.backegg.io"
+      corsOrigin: "https://portal.onprem.backegg.io"
       portalV1Url: ""
       customDomainCloudflareEndpoint: ""
       tracingCollectorEndpoint: "http://logzio-otel-traces.observability.svc.cluster.local:14268/api/traces"
@@ -3580,7 +3580,7 @@ configCenter:
         dashboardDevrevEnabled: "true"
         devrevApiUrl: "https://api.devrev.ai"
         dashboardDomainSuffix: ""
-        cdnUrl: ""
+        cdnUrl: "https://frontegg-prod.onprem.backegg.io/oauth"
         cdnBucket: "dashboard-static-content-ebdiwxwk"
         backofficeViewerRoleId: ""
         backofficeEditorRoleId: ""
@@ -3640,7 +3640,7 @@ configCenter:
       vendors:
         vendorsServiceMysqlDbName: "frontegg_vendors"
         vendorsAssetBlobStorageContainerName: "public-vendor-assets"
-        vendorsServiceVendorsDomain: "dev.frontegg.com" #TODO: WHAT THE VALUE SHOULD BE?
+        vendorsServiceVendorsDomain: "onprem.backegg.io" #TODO: DYAMICALLY SET
         customDomainClusterIngressClass: "nginx"
         customDomainClusterIssuerName: "letsencrypt"
         customDomainClusterDefaultPort: "443"
@@ -3737,7 +3737,7 @@ configCenter:
       pricingViewsUrl: "http://pricing-views-v2-web"
       authHubServiceUrl: "http://auth-hub-v2-web"
       apiGatewayUrl: "https://api.onprem.backegg.io" #TODO SET THIS ON INSTALL
-      fronteggVendorHost: "EMPTY"
+      fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #TODO DYNAMIC
 
 task-master:
   name: task-master
@@ -3957,7 +3957,7 @@ dashboard:
   name: dashboard
   team: adoption
   envID: *envId
-  appVersion: d1cc12d
+  appVersion: venv-2ee577a
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
@@ -4032,6 +4032,7 @@ dashboard:
       # Based on entitlements.plans-migration
       FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
       FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
+      #FRONTEGG_CDN_URL: "https://portal.onprem.backegg.io"
 
   configuration:
     map:
@@ -4041,7 +4042,7 @@ dashboard:
         CORS_ORIGIN: cors-origin
         FRONTEGG_API_GATEWAY_URL: api-gateway-url
         FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
-        FRONTEGG_CDN_URL: dashboard-cdn-url
+        #FRONTEGG_CDN_URL: dashboard-cdn-url
         FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
         FRONTEGG_VENDOR_HOST: frontegg-vendor-host
         FRONTEGG_CDN_BUCKET: cdn-bucket #staging-group-dashboard-static-content
