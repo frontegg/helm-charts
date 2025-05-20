@@ -111,11 +111,20 @@ admins:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
+    additionalVolumes: &additionalVolumes |
+      - name: vol-settings
+        configMap:
+          name: 'settings'
+    additionalVolumeMounts: &additionalVolumeMounts |
+      - name: vol-settings
+        mountPath: /etc/config/settings.yaml
+        subPath: settings.yaml
   configmap:
     data:
       CLOUD_ENVIRONMENT: production
       NODE_ENV: production
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: &settingConfigPath "/etc/config/settings.yaml"
   configuration:
     map:
       config-center:
@@ -3675,10 +3684,10 @@ configCenter:
         apiGatewayUsageReportingEnabled: ""
         apiGatewayMetricsEnabled: ""
         apiGatewayRedisDbIndex: "9"
-        enableMultiHosts: ""
+        enableMultiHosts: "true" # TODO WHAT IS THIS PURPOSE
         apiGatewayEnableRateLimiters: ""
         apiGatewayEnableRedisStore: ""
-        apiGatewayIgnoredHosts:
+        apiGatewayIgnoredHosts: "api.onprem.backegg.io" # DYANMICALLY SET
         redirectEnabled: "false"
         redirectUrl: ""
       connectorsWorker:
@@ -3779,10 +3788,6 @@ configCenter:
       oauth:
         oauthServiceDbName: "frontegg_oauth"
         oauthServiceRedisDbIndex: "10"
-      policy:
-        opaPolicyBucket: ""
-        configCopyResultTopicName: "configuration-copy-result-v1"
-        configCopyTopicName: "configuration-copy-v1"
       envDuplicator:
         configCopyResultTopicName: "configuration-copy-result-v1"
         configCopyTopicName: "configuration-copy-v1"
@@ -3794,7 +3799,7 @@ configCenter:
         redisDBIndex: "12"
         vendorSnapshotJobDelayMS: "10000"
         vendorSnapshotJobAttempts: "3"
-        opaPolicyBucket: "prod-policy20250505093256548900000004"
+        opaPolicyBucket: "prod-policy20250505093256548900000004" # TODO DYNAMICALLY SET
       forwardProxy:
         isAuthRequired: "false"
         host: "frontegg-forward-proxy"
@@ -4122,14 +4127,14 @@ dashboard:
         port: http
       initialDelaySeconds: 20
       periodSeconds: 5
-
     livenessProbe:
       httpGet:
         path: /health
         port: http
       initialDelaySeconds: 30
       periodSeconds: 20
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       ALLOWED_IPS: "*"
@@ -4267,5 +4272,3 @@ dashboard:
     subjects:
       - kind: ServiceAccount
         name: {{ include "name" $ }}
-
-
