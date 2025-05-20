@@ -3794,7 +3794,7 @@ configCenter:
         redisDBIndex: "12"
         vendorSnapshotJobDelayMS: "10000"
         vendorSnapshotJobAttempts: "3"
-        opaPolicyBucket: ""
+        opaPolicyBucket: "prod-policy20250505093256548900000004"
       forwardProxy:
         isAuthRequired: "false"
         host: "frontegg-forward-proxy"
