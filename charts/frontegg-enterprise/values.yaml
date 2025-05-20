@@ -3054,7 +3054,8 @@ api-gateway:
       FRONTEGG_METRICS_ENABLED: "false"
       FRONTEGG_JAEGER_ENABLED: "true"
       NODE_ENV: "production"
-      LOG_LEVEL: "verbose"
+      #LOG_LEVEL: "verbose"
+      LOG_LEVEL: "debug"
       #SENTRY_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
@@ -3857,7 +3858,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: 4f43a04
+  appVersion: 81c1d62
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix

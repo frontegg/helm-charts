@@ -67,7 +67,7 @@ data:
   {{- with $values.configCenter.externalServices.aws }}
   aws-region: {{ required ".Values.configCenter.externalServices.aws must be set" .region | tpl .region | quote }}
   policy-service-aws-region: {{ tpl .region $top  | default "" | quote }}
-  #policy-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.policy.opaPolicyBucket | default "" | quote }}
+{{/*  policy-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.policy.opaPolicyBucket | default "" | quote }}*/}}
   entitlements-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.entitlements.opaPolicyBucket | default "" | quote }}
   custom-code-service-lambda-management-role-arn: {{ $values.configCenter.frontegg.applications.customCode.lambda.management.roleArn | default "" | quote }}
   custom-code-service-lambda-execution-role-arn: {{ $values.configCenter.frontegg.applications.customCode.lambda.execution.roleArn | default "" | quote }}
