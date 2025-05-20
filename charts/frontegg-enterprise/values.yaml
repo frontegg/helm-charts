@@ -2060,6 +2060,115 @@ entitlements-service:
         password: {{ $secret.databases.redis.password | toYaml }}
     additionalSecrets: ""
 
+entitlements-agent:
+  name: entitlements-agent
+  team: adoption
+  envID: *envId
+  appVersion: e6ac14f
+  defaults: *defaultsAnnotations
+  argoRollouts:
+    enabled: false
+  image:
+    repository: frontegg/entitlements-agent
+    prefix: *imagePrefix
+  web:
+    enabled: true
+    command: ["opa"]
+    args:
+      - "run"
+      - "--server"
+      - "--watch"
+      - "--addr=0.0.0.0:8181"
+      - "--config-file=/etc/config/config.yaml"
+      - "--log-level=$(LOG_LEVEL)"
+    service:
+      ports:
+        - port: 80
+          targetPort: 8181
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 8181
+    resources:
+      requests:
+        cpu: 500m
+        memory: 500Mi
+      limits:
+        memory: 1Gi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 4
+      targetCPUUtilizationPercentage: 60
+      targetMemoryUtilizationPercentage: 60
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 3
+      periodSeconds: 5
+    startupProbe:
+      httpGet:
+        path: /health?bundles
+        port: http
+      initialDelaySeconds: 5
+      failureThreshold: 10
+      periodSeconds: 10
+
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: entitlements-agent
+      FRONTEGG_JAEGER_ENABLED: "true"
+      LOG_LEVEL: info
+      ALLOW_INSECURE_TLS: "false"
+      DECISION_LOG_CONSOLE_ENABLED: "false"
+      POLLING_MIN_DELAY: "30"
+      POLLING_MAX_DELAY: "60"
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
+        FRONTEGG_URL: api-gateway-url
+        FRONTEGG_PORTAL_URL: frontegg-vendor-host
+        ENTITLEMENTS_SERVICE_URL: entitlements-service-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      services:
+        - name: frontegg-bundle-endpoint
+          url: "${ENTITLEMENTS_SERVICE_URL}"
+          headers:
+            frontegg-vendor-id: "{{ $secret.frontegg.xxx.fronteggClientId | toYaml }}"
+            frontegg-internal-request: "true"
+            x-frontegg-api-key: "{{ $secret.frontegg.apiKeys.entitlementsServiceApiKey | toYaml }}"
+          # use this when you want to use self-signed certificate
+          allow_insecure_tls: ${ALLOW_INSECURE_TLS}
+      decision_logs:
+        console: ${DECISION_LOG_CONSOLE_ENABLED}
+      status:
+        prometheus: true
+      bundles:
+        frontegg:
+          service: frontegg-bundle-endpoint
+          resource: resources/bundles/v1
+          persist: false
+          polling:
+            min_delay_seconds: ${POLLING_MIN_DELAY}
+            max_delay_seconds: ${POLLING_MAX_DELAY}
+    additionalSecrets: ""
+    
 directory-service:
   name: directory
   team: frontegg
@@ -3737,7 +3846,7 @@ configCenter:
       pricingViewsUrl: "http://pricing-views-v2-web"
       authHubServiceUrl: "http://auth-hub-v2-web"
       apiGatewayUrl: "https://api.onprem.backegg.io" #TODO SET THIS ON INSTALL
-      fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #TODO DYNAMIC
+      fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #should be modified for customer
 
 task-master:
   name: task-master
@@ -4158,3 +4267,5 @@ dashboard:
     subjects:
       - kind: ServiceAccount
         name: {{ include "name" $ }}
+
+
