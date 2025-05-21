@@ -3496,7 +3496,7 @@ oauth-service:
   name: oauth
   team: frontegg
   envID: *envId
-  appVersion: venv-4753e07
+  appVersion: venv-9be8508
   image:
     repository: frontegg/oauth-service
     prefix: *imagePrefix
