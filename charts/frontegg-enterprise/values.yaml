@@ -3562,9 +3562,9 @@ oauth-service:
       LOG_LEVEL: "verbose"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       SENTRY_ENABLED: "false"
-      FRONTEGG_CDN_URL: "http://localhost:3001"
+      FRONTEGG_CDN_URL: "https://frontegg-prod.onprem.backegg.io/oauth"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
-      FRONTEGG_USE_FRONTEND_STATIC_FILES: "../frontend/dist/index.html"
+      FRONTEGG_USE_FRONTEND_STATIC_FILES: "true"
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
