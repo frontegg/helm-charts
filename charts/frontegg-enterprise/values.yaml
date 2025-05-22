@@ -4147,6 +4147,7 @@ dashboard:
       # Based on entitlements.plans-migration
       FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
       FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
       #FRONTEGG_CDN_URL: "https://portal.onprem.backegg.io"
 
   configuration:
