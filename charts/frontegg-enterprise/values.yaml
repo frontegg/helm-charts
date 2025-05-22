@@ -202,6 +202,8 @@ team-management-service:
         port: http
       initialDelaySeconds: 40
       periodSeconds: 20
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -244,7 +246,8 @@ team-management-service:
         port: http
       initialDelaySeconds: 60
       periodSeconds: 60
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes 
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -386,7 +389,8 @@ webhooks:
       initialDelaySeconds: 10
       periodSeconds: 10
       failureThreshold: 15
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -435,6 +439,8 @@ webhooks:
         port: http
       periodSeconds: 10
       failureThreshold: 30
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
 
   configmap:
     data:
@@ -453,6 +459,7 @@ webhooks:
       FRONTEGG_WEBHOOK_GUARD_FEATURE_FLAG_NAME: "webhooks_blacklist"
       FRONTEGG_HTTP_CLIENT_PROXY_AUTH_ENABLED: "false"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
       NODE_NO_WARNINGS: "1"
 
   jobs:
@@ -576,6 +583,8 @@ vendors-service:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     service:
@@ -599,6 +608,8 @@ vendors-service:
       requests:
         cpu: 500m
         memory: 1Gi
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -612,6 +623,7 @@ vendors-service:
       NODE_NO_WARNINGS: "1"
       SENTRY_ENABLED: "false"
       LOG_LEVEL: verbose
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -766,14 +778,9 @@ tenants-service:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
-    additionalVolumes: |
-      - name: vol-settings
-        configMap:
-          name: 'settings'
-    additionalVolumeMounts: |
-      - name: vol-settings
-        mountPath: /etc/config/settings.yaml
-        subPath: settings.yaml
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
+  
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -816,14 +823,8 @@ tenants-service:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
-    additionalVolumes: |
-      - name: vol-settings
-        configMap:
-          name: 'settings'
-    additionalVolumeMounts: |
-      - name: vol-settings
-        mountPath: /etc/config/settings.yaml
-        subPath: settings.yaml
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   jobs:
     migrate:
       enabled: true
@@ -943,7 +944,8 @@ security-engines:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 60
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -977,7 +979,8 @@ security-engines:
         port: http
       initialDelaySeconds: 20
       periodSeconds: 5
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes 
   jobs:
     migrate:
       enabled: true
@@ -1000,7 +1003,7 @@ security-engines:
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       SENTRY_ENABLED: "true"
       SENTRY_DSN: "https://df4e77306fe836ca17283337bab8570a@o362363.ingest.us.sentry.io/4507877559697408"
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -1097,6 +1100,8 @@ security-center-service:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 60
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -1130,7 +1135,8 @@ security-center-service:
         port: http
       initialDelaySeconds: 20
       periodSeconds: 5
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   jobs:
     migrate:
       enabled: true
@@ -1150,7 +1156,7 @@ security-center-service:
       FRONTEGG_SERVICE_NAME: security-center-service
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -1237,7 +1243,8 @@ prehook-service:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -1248,7 +1255,7 @@ prehook-service:
       FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
       FRONTEGG_HTTP_CLIENT_PROXY_ENABLED: "true"
       NODE_NO_WARNINGS: "1"
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -1334,6 +1341,8 @@ metadata-service:
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -1342,6 +1351,7 @@ metadata-service:
       FRONTEGG_SERVICE_NAME: metadata-service
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
       FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -1441,6 +1451,8 @@ logs-service:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 60
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -1477,7 +1489,8 @@ logs-service:
         port: http
       initialDelaySeconds: 20
       periodSeconds: 5
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   cronjobs:
     retention-enforcement:
       resources:
@@ -1511,6 +1524,7 @@ logs-service:
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_FEATURE_RETENTION_FEATURE_FLAG_NAME: "logs-retention"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -1556,20 +1570,6 @@ forward-proxy:
     enabled: true
     command: ["/server"]
     args: []
-    additionalVolumes: |
-      - name: vol-config
-        configMap:
-          name: '{{ include "fullname" $ }}-config'
-      - name: vol-acl
-        configMap:
-          name: '{{ include "fullname" $ }}-acl'
-    additionalVolumeMounts: |
-      - name: vol-acl
-        mountPath: /etc/smokescreen/acl.yaml
-        subPath: acl.yaml
-      - name: vol-config
-        mountPath: /etc/smokescreen/config.yaml
-        subPath: config.yaml
     service:
       scrape: false
       labels:
@@ -1623,11 +1623,11 @@ forward-proxy:
       periodSeconds: 10
       failureThreshold: 5
     terminationGracePeriodSeconds: 60
-  #  configmap:
-  #    data:
-  #  configuration:
-  #    map:
-  #      config-center:
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
+  configmap:
+    data:
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   externalSecret:
     enabled: false
   additionalResources: |
@@ -1731,6 +1731,8 @@ event-service:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 20
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -1744,6 +1746,7 @@ event-service:
       FRONTEGG_CHANNEL_AUDIT_TOPIC_PARTITIONS_NUM: "10"
       FRONTEGG_CHANNEL_WEBHOOK_TOPIC_PARTITIONS_NUM: "40"
       FRONTEGG_EVENTS_SERVICE_EVENTS_CONSUMER_TOPIC_PARTITIONS_NUM: "10"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -1839,14 +1842,8 @@ env-duplicator:
       maxReplicas: 3
       targetCPUUtilizationPercentage: 70
       targetMemoryUtilizationPercentage: 80
-    additionalVolumes: |
-      - name: vol-settings
-        configMap:
-          name: 'settings'
-    additionalVolumeMounts: |
-      - name: vol-settings
-        mountPath: /etc/config/settings.yaml
-        subPath: settings.yaml
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -1961,6 +1958,8 @@ entitlements-service:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 60
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -1994,6 +1993,8 @@ entitlements-service:
         port: http
       initialDelaySeconds: 20
       periodSeconds: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   jobs:
     migrate:
       enabled: true
@@ -2022,6 +2023,7 @@ entitlements-service:
       LOG_LEVEL: verbose
       MIGRATION_DIR_PATH: dist/migrations
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -2130,7 +2132,8 @@ entitlements-agent:
       initialDelaySeconds: 5
       failureThreshold: 10
       periodSeconds: 10
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -2141,7 +2144,7 @@ entitlements-agent:
       DECISION_LOG_CONSOLE_ENABLED: "false"
       POLLING_MIN_DELAY: "30"
       POLLING_MAX_DELAY: "60"
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -2230,7 +2233,8 @@ directory-service:
       periodSeconds: 60
     tolerations: []
     affinity: {}
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -2267,7 +2271,8 @@ directory-service:
         port: http
       initialDelaySeconds: 20
       periodSeconds: 5
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   jobs:
     migrate:
       enabled: true
@@ -2287,7 +2292,7 @@ directory-service:
       FRONTEGG_SERVICE_NAME: directory-service
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -2368,6 +2373,8 @@ dashboard-env-builder:
         port: http
       initialDelaySeconds: 10
       periodSeconds: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: production
@@ -2376,7 +2383,7 @@ dashboard-env-builder:
       FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -2474,6 +2481,8 @@ backoffice-service:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -2513,6 +2522,8 @@ backoffice-service:
         port: http
       initialDelaySeconds: 60
       periodSeconds: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -2524,6 +2535,7 @@ backoffice-service:
       FRONTEGG_JAEGER_ENABLED: "true"
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -2643,6 +2655,8 @@ audits-service:
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes 
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -2652,6 +2666,7 @@ audits-service:
       FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
       FRONTEGG_PORT: "3002"
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
       LOG_LEVEL: verbose
   configuration:
     map:
@@ -2743,6 +2758,8 @@ authentication-service:
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   service:
     type: ClusterIP
     port: 80
@@ -2754,6 +2771,7 @@ authentication-service:
       CLOUD_ENVIRONMENT: dev
       NODE_ENV: production
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -2828,7 +2846,8 @@ applications-service:
         port: http
       initialDelaySeconds: 40
       periodSeconds: 60
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -2869,7 +2888,8 @@ applications-service:
         port: http
       initialDelaySeconds: 60
       periodSeconds: 60
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -2880,7 +2900,7 @@ applications-service:
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       NODE_NO_WARNINGS: "1"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -3016,7 +3036,8 @@ api-gateway:
       initialDelaySeconds: 10
       periodSeconds: 10
       failureThreshold: 5
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["node"]
@@ -3047,7 +3068,8 @@ api-gateway:
     readinessProbe: {}
     livenessProbe: {}
     startupProbe: {}
-
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: "production"
@@ -3059,7 +3081,7 @@ api-gateway:
       #SENTRY_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
-
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -3273,6 +3295,8 @@ identity-service:
       initialDelaySeconds: 10
       periodSeconds: 10
       failureThreshold: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   hp:
     enabled: true
     command: ["node"]
@@ -3321,6 +3345,8 @@ identity-service:
       initialDelaySeconds: 10
       periodSeconds: 10
       failureThreshold: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   worker:
     enabled: true
     command: ["node"]
@@ -3348,6 +3374,8 @@ identity-service:
       requests:
         cpu: 1000m
         memory: 2Gi
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -3362,6 +3390,7 @@ identity-service:
       MIGRATION_DIR_PATH: /service/dist/migrations,/service/dist/seeders
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       SENTRY_ENABLED: "false"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -3544,14 +3573,8 @@ oauth-service:
       initialDelaySeconds: 40
       periodSeconds: 20
     terminationGracePeriodSeconds: 60
-    additionalVolumes: |
-      - name: vol-settings
-        configMap:
-          name: 'settings'
-    additionalVolumeMounts: |
-      - name: vol-settings
-        mountPath: /etc/config/settings.yaml
-        subPath: settings.yaml
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes 
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -3900,6 +3923,8 @@ task-master:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 5
+    additionalVolumeMounts: *additionalVolumeMounts
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -3918,6 +3943,7 @@ task-master:
       FRONTEGG_TEAM_MANAGEMENT_DB_NAME: frontegg_team_management
       FRONTEGG_SUBSCRIPTIONS_DB_NAME: frontegg_subscriptions
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
