@@ -1623,11 +1623,6 @@ forward-proxy:
       periodSeconds: 10
       failureThreshold: 5
     terminationGracePeriodSeconds: 60
-    additionalVolumeMounts: *additionalVolumeMounts
-    additionalVolumes: *additionalVolumes
-  configmap:
-    data:
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   externalSecret:
     enabled: false
   additionalResources: |
