@@ -1625,6 +1625,21 @@ forward-proxy:
     terminationGracePeriodSeconds: 60
   externalSecret:
     enabled: false
+  additionalVolumes: |
+    - name: vol-config
+      configMap:
+        name: '{{ include "fullname" $ }}-config'
+    - name: vol-acl
+      configMap:
+        name: '{{ include "fullname" $ }}-acl'
+  additionalVolumeMounts: |
+    - name: vol-acl
+      mountPath: /etc/smokescreen/acl.yaml
+      subPath: acl.yaml
+    - name: vol-config
+      mountPath: /etc/smokescreen/config.yaml
+      subPath: config.yaml
+
   additionalResources: |
     ---
     kind: ConfigMap
