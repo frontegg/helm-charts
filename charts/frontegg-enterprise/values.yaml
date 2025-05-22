@@ -1754,6 +1754,18 @@ event-service:
           requests:
             cpu: 500m
             memory: 500Mi
+    seeder:
+      enabled: true
+      spec:
+        command: ["/bin/bash"]
+        args:
+          - "npm"
+          - "run"
+          - "seed"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
   configuration:
     map:
       config-center:
