@@ -1752,6 +1752,22 @@ event-service:
           requests:
             cpu: 500m
             memory: 500Mi
+    seeder:
+      enabled: true
+      annotations:
+        "helm.sh/hook": pre-install, pre-upgrade
+        "helm.sh/hook-weight": "-4"
+        "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+      spec:
+        command: [ "/bin/bash" ]
+        args:
+          - "npm"
+          - "run"
+          - "seed"
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
   configuration:
     map:
       config-center:
@@ -3876,7 +3892,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: adf5284
+  appVersion: 1894efd
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix
