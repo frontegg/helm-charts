@@ -1754,10 +1754,11 @@ event-service:
             memory: 500Mi
     seeder:
       enabled: true
-      annotations:
-        "helm.sh/hook": pre-install, pre-upgrade
-        "helm.sh/hook-weight": "-4"
-        "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+      metadata:
+        annotations:
+          "helm.sh/hook": pre-install, pre-upgrade
+          "helm.sh/hook-weight": "-4"
+          "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
       spec:
         command: ["npm"]
         args:
