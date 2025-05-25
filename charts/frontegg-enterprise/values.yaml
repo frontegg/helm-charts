@@ -1623,23 +1623,22 @@ forward-proxy:
       periodSeconds: 10
       failureThreshold: 5
     terminationGracePeriodSeconds: 60
+    additionalVolumes: |
+      - name: vol-config
+        configMap:
+          name: '{{ include "fullname" $ }}-config'
+      - name: vol-acl
+        configMap:
+          name: '{{ include "fullname" $ }}-acl'
+    additionalVolumeMounts: |
+      - name: vol-acl
+        mountPath: /etc/smokescreen/acl.yaml
+        subPath: acl.yaml
+      - name: vol-config
+        mountPath: /etc/smokescreen/config.yaml
+        subPath: config.yaml
   externalSecret:
     enabled: false
-  additionalVolumes: |
-    - name: vol-config
-      configMap:
-        name: '{{ include "fullname" $ }}-config'
-    - name: vol-acl
-      configMap:
-        name: '{{ include "fullname" $ }}-acl'
-  additionalVolumeMounts: |
-    - name: vol-acl
-      mountPath: /etc/smokescreen/acl.yaml
-      subPath: acl.yaml
-    - name: vol-config
-      mountPath: /etc/smokescreen/config.yaml
-      subPath: config.yaml
-
   additionalResources: |
     ---
     kind: ConfigMap
@@ -3264,7 +3263,7 @@ identity-service:
   name: identity
   team: frontegg
   envID: *envId
-  appVersion: f7acfe4
+  appVersion: "5886576"
   image:
     repository: frontegg/identity-service
     prefix: *imagePrefix
@@ -3458,10 +3457,6 @@ identity-service:
       apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
       splitIO:
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
       cryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
       cryptoKeyV2: {{ $secret.frontegg.applications.identity.cryptoKeyV2 | toYaml }}
@@ -3852,7 +3847,7 @@ configCenter:
         opaPolicyBucket: "prod-policy20250505093256548900000004" # TODO DYNAMICALLY SET
       forwardProxy:
         isAuthRequired: "false"
-        host: "frontegg-forward-proxy"
+        host: "forward-proxy-v2-web"
         port: "8080"
         protocol: "http"
 
