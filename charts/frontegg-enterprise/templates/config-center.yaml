@@ -62,6 +62,7 @@ data:
   anomaly-detection-url: "{{ .anomalyDetectionUrl }}"
   idgw-backend-url: "{{ .idgwBackendUrl }}"
   mcp-server-url: "{{ .mcpServerUrl }}"
+  app-integrations-url: "{{ .appIntegrationsUrl }}"
   {{- end }}
 
   {{- with $values.configCenter.externalServices.aws }}

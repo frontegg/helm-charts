@@ -4118,7 +4118,7 @@ dashboard:
   name: dashboard
   team: adoption
   envID: *envId
-  appVersion: venv-2ee577a
+  appVersion: venv-7a88cfb
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
