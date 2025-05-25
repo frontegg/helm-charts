@@ -2984,7 +2984,7 @@ api-gateway:
   image:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
-  appVersion: 84c8fe4
+  appVersion: 03cc932
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -3148,6 +3148,7 @@ api-gateway:
         FRONTEGG_AUTH_HUB_URL: auth-hub-service-url
         FRONTEGG_NLP_EXECUTION_ASSISTANT_URL: nlp-execution-assistant-url
         FRONTEGG_ENTITLEMENTS_AGENT_URL: entitlements-agent-url
+        FRONTEGG_APP_INTEGRATIONS_SERVICE_URL: app-integrations-url
         CORS_ORIGINS: cors-origin
         FRONTEGG_JAEGER_ENDPOINT: tracing-collector-endpoint
         FRONTEGG_USAGE_REPORTING_ENABLED: api-gateway-usage-reporting-enabled
@@ -3178,10 +3179,6 @@ api-gateway:
       identityPublicKey: {{ $secret.frontegg.applications.identity.publicKey | toYaml }}
       splitIO:
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       kafka:
         brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
         saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
@@ -3257,6 +3254,8 @@ api-gateway:
           apiKey: {{ $secret.frontegg.apiKeys.authHubServiceApiKey | toYaml }}
         nlpExecutionAssistant:
           apiKey: {{ $secret.frontegg.apiKeys.nlpExecutionAssistantApiKey | toYaml }}
+        appIntegrationsService:
+          apiKey: {{ $secret.frontegg.apiKeys.appIntegrationsApiKey | toYaml }}
     additionalSecrets: ""
 
 identity-service:
