@@ -17,497 +17,449 @@ metadata:
 
 data:
   settings.yaml: |
-    - testingalex:
+    - dashboard-custom-code-prehook-activation-enabled:
         treatment: off
-    - skip_rate_limit:
+    - new-pricing-enforcement-premium-features:
         treatment: on
-    - entitlements-fetch-permission-when-not-in-jwt:
-        treatment: on
-    - builder-login-box-signup-methods:
-        treatment: on
-    - env-duplicator-login-box-signup-methods:
-        treatment: on
-    - dashboard-new-app-integration-dev-mode:
-        treatment: off
-    - dashboard-new-app-integration-page:
-        treatment: off
-    - application-client-ip-forwarding:
-        treatment: on
-    - identity-sign-up-without-email:
-        treatment: on
-    - backoffice-hide-invalid-emails-and-domains:
-        treatment: on
-    - print_headers:
-        treatment: off
-    - audit-trail-retention:
-        treatment: off
-    - send-db-updates-events:
-        treatment: off
-    - strip_saml_from_comments:
-        treatment: on
-    - use_cache_for_tenant_descendants:
-        treatment: off
-    - allow-backoffice-users-full-text-search:
-        treatment: off
-    - proxy-to-auth-hub:
-        treatment: off
-    - vendor-config-repository-use-cache:
-        treatment: off
-    - use-sso-configuration-from-cache:
-        treatment: off
-    - dashboard-enable-coralogix:
-        treatment: on
-    - security-engines-skip-on-successful-challenge:
-        treatment: on
-    - oauth-disabled-user-loading:
-        treatment: on
-    - login-box-use-pre-step:
+    - allow-sso-config-id-on-authorize:
         treatment: on
     - ip-provider:
         treatment: ipdata
-    - identity-delete-scim-resource-on-user-tenant-cascade:
+    - generate-user-session-endpoint:
+        treatment: off
+    - editTenantForRole:
         treatment: on
-    - dashboard-use-pre-step:
+    - sendgrid-domain-validation-flag-on-edit:
         treatment: on
-    - oauth-vendor-cache:
+    - validate_sender_domain:
         treatment: on
-    - count-webhook-invocations:
+    - use-tenant-cache-for-me-tenants:
+        treatment: off
+    - use-dashboard-environment-authorization:
+        treatment: off
+    - cache-options-requests:
+        treatment: "0"
+    - dashboard-new-app-integration-page:
         treatment: on
-    - oauth-tenant-cache:
+    - dashboard-ai-agents:
+        treatment: on
+    - identity-scim-delete-all-on-connection-delete:
+        treatment: on
+    - login-with-unverified-phone-number:
+        treatment: off
+    - builder-login-box-signup-methods:
+        treatment: off
+    - env-duplicator-login-box-signup-methods:
+        treatment: off
+    - identity-sign-up-without-email:
+        treatment: off
+    - backoffice-hide-invalid-emails-and-domains:
+        treatment: off
+    - application-client-ip-forwarding:
+        treatment: off
+    - identity_use_default_roles_for_invitation_tokens:
+        treatment: off
+    - rate_limit_mfa_flag:
+        treatment: on
+    - use-aws-custom-domains:
+        treatment: on
+    - identity-skip-check-sso-user:
         treatment: on
     - dashboard-single-user-page:
         treatment: on
-    - new-pricing-enforcement-dashboard:
+    - remove_tenant_ids_from_jwt:
         treatment: off
-    - new-pricing-enforcement-usage:
-        treatment: off
-    - domain-events:
-        treatment: off
-    - user-change-consumer-etag-update:
-        treatment: off
-    - roles-change-consumer-etag-update:
-        treatment: off
-    - use_user_cache:
-        treatment: off
-    - user-tenants-change-consumer-etag-update:
-        treatment: off
-    - identity-sso-force-pkce:
+    - entitlements-fetch-permission-when-not-in-jwt:
+        treatment: on
+    - security-engines-skip-on-successful-challenge:
+        treatment: on
+    - strip_saml_from_comments:
+        treatment: on
+    - limit-custom-domains:
+        treatment: on
+    - oauth-vendor-cache:
         treatment: on
     - new-pricing-enforcement-lock-envs:
         treatment: on
-    - allow-event-retry-triggering:
-        treatment: off
+    - dashboard-use-pre-step:
+        treatment: on
+    - login-box-use-pre-step:
+        treatment: on
     - password-rotation:
         treatment: on
-    - dashboard-account-security:
+    - skip_rate_limit:
+        treatment: off
+    - domain-events:
+        treatment: off
+    - dashboard-enable-coralogix:
+        treatment: on
+    - override_user_roles_on_sso:
+        treatment: off
+    - oauth-tenant-cache:
+        treatment: on
+    - oauth-disabled-user-loading:
+        treatment: on
+    - count-webhook-invocations:
+        treatment: on
+    - oauth-use-session-storage:
+        treatment: off
+    - allow-event-retry-triggering:
+        treatment: off
+    - legacy-event-result:
         treatment: on
     - saml-oidc-sso-auto-application-assign:
         treatment: on
-    - should-check-allow-verified-users-to-add-domains:
+    - handle-event-result:
         treatment: on
     - include-activation-token-on-user-signup:
         treatment: on
     - identity-check-domain-restrictions:
         treatment: on
-    - enable-internal-ui-events-tracking:
+    - should-check-allow-verified-users-to-add-domains:
         treatment: on
-    - legacy-event-result:
-        treatment: on
-    - backoffice-consume-mysql-cdc-kafka-messages:
-        treatment: on
-    - allow-dashboard-api-security:
-        treatment: on
-    - show-speedy-login:
+    - panic-mode:
         treatment: off
-    - enable-devrev:
+    - allow-backoffice-users-full-text-search:
+        treatment: on
+    - dashboard-account-security:
         treatment: on
     - show-sms-integrations:
         treatment: on
-    - save-configs-to-cache:
+    - enable-internal-ui-events-tracking:
         treatment: on
-    - enable-universal-search:
+    - backoffice-consume-mysql-cdc-kafka-messages:
+        treatment: on
+    - logs-retention:
+        treatment: 7d
+    - print_headers:
         treatment: off
-    - allow-no-local-auth-with-no-socials:
-        treatment: off
-    - identity-enable-anomaly-detection:
-        treatment: on
-    - dashboard-application-shared-secret:
-        treatment: on
-    - sms-enhancements:
-        treatment: on
-    - identity-scim-delete-all-on-connection-delete:
-        treatment: on
-    - oauth-use-session-storage:
-        treatment: on
-    - backoffice-aggrergate-users-accounts-visits:
-        treatment: on
-    - remove-deleted-users-from-group-updated:
-        treatment: on
-    - api_gw_allow_missing_alias:
-        treatment: on
-    - sso-guides:
-        treatment: on
     - api-gw-allowed_origins_cache:
         treatment: on
-    - cache-options-requests:
-        treatment: "0"
-    - oauth-session-ttl-override:
+    - oauth-use-document-cookie-storage:
+        treatment: off
+    - sms-enhancements:
         treatment: on
-    - new-pricing-enforcement:
+    - oauth-debug-logs-before-post_login:
         treatment: off
-    - oauth-csp-config:
+    - enable-universal-search:
+        treatment: off
+    - enable-devrev:
         treatment: on
-    - identity-with-email-mfa:
-        treatment: on
-    - email-templates-limit-and-bypass:
-        treatment: on
-    - backoffice-high-scale-flag:
-        treatment: off
-    - entitlements-legacy-vendor-owner:
-        treatment: off
-    - adminportal-capabilities-show-subscriptions:
-        treatment: off
-    - rate_limit_send_sms_flag:
-        treatment: off
-    - assign-application-on-user-creation:
-        treatment: on
-    - log-scim-groups-request:
-        treatment: off
-    - user-tenants-events:
+    - identity-get-user-in-tenant-scope:
         treatment: on
     - identity-delete-fields-on-user-save:
         treatment: on
-    - use-localizations-on-tenant-metadata:
+    - backoffice-aggrergate-users-accounts-visits:
+        treatment: off
+    - new-pricing-enforcement:
         treatment: on
-    - scim-api-verbose-logs:
+    - identity-sso-force-pkce:
+        treatment: off
+    - api_gw_allow_missing_alias:
+        treatment: off
+    - backoffice-use-mysql-active-users-analytics:
         treatment: on
-    - force-application-on-api-token:
+    - identity-with-email-mfa:
+        treatment: on
+    - remove-deleted-users-from-group-updated:
+        treatment: off
+    - oauth-session-ttl-override:
+        treatment: on
+    - assign-application-on-user-creation:
         treatment: on
     - dashboard-custom-code-left-panel:
         treatment: on
-    - identity-pkce-fix-flag:
+    - admin-portal-sso-redirect-in-component:
         treatment: on
-    - allow-sso-config-id-on-authorize:
-        treatment: on
-    - admin-portal-new-security-center-page:
-        treatment: on
-    - skip-groups-replace-operation:
+    - log-scim-groups-request:
         treatment: off
-    - identity-code-emails:
-        treatment: on
-    - webhook-proxy-override:
-        treatment: on
-    - skip-validate-user-session:
-        treatment: off
-    - sendgrid-domain-validation-flag-on-edit:
-        treatment: on
-    - validate_sender_domain:
+    - use-localizations-on-tenant-metadata:
         treatment: on
     - dashboard-user-activation-page:
         treatment: on
-    - allow-dashboard-permission-assign-features:
-        treatment: off
-    - builder-profile-tab:
+    - identity-code-emails:
         treatment: on
-    - api-gateway-report-usage-legacy:
+    - email-templates-limit-and-bypass:
+        treatment: on
+    - dashboard-new-email-integrations:
+        treatment: on
+    - force-application-on-api-token:
+        treatment: on
+    - otc-use-cache:
+        treatment: on
+    - paginated-tenant-fetch:
+        treatment: on
+    - builder-allow-impersonation:
+        treatment: on
+    - identity-pkce-fix-flag:
+        treatment: on
+    - tenants-service-delete-my-tenant:
+        treatment: on
+    - dashboard-delete-workspace:
         treatment: on
     - identity_migrate_roles:
         treatment: on
-    - api-gateway-report-usage-domain-event:
-        treatment: on
-    - validate-custom-domain-txt-record:
-        treatment: on
-    - log-user-subscriber:
+    - api-gateway-report-usage-legacy:
         treatment: off
     - security-center-login-flows:
-        treatment: on
+        treatment: off
     - backoffice-log-users-tenants-roles-kafka-messages:
-        treatment: off
-    - vanilla-js-integration:
-        treatment: on
-    - dashboard-prehooks-page-custom-code:
-        treatment: on
-    - dashboard-workflows-page:
-        treatment: on
-    - identity-social-login-application-id:
-        treatment: off
-    - twilio-demo:
         treatment: off
     - identity-validate-no-unicode-in-email:
         treatment: on
-    - api-gateway-enforce-entitlements:
+    - use-application-urls:
+        treatment: on
+    - rate_limit_send_emails_flag:
+        treatment: on
+    - FUNCTION_RATE_LIMIT:
+        treatment: off
+    - dashboard-use-hosted-login:
         treatment: on
     - email-reputation-engine:
         treatment: on
-    - identity-sms-control:
-        treatment: on
     - scim-remove-undefined-from-update-cmnd:
-        treatment: on
-    - allow-deployments:
         treatment: on
     - prehook-proxy-override:
         treatment: on
-    - saml-slo-direct-post:
+    - dashboard-workflows-page:
+        treatment: on
+    - no-default-application-id:
+        treatment: on
+    - no-default-application:
+        treatment: on
+    - send-db-updates-events:
         treatment: off
+    - email-reputation-provider:
+        treatment: zerobounce
     - magic-link-use-cache:
-        treatment: on
-    - use-auth-hub-service:
-        treatment: off
-    - GET_TENANTS_WITH_STREAM:
-        treatment: on
-    - identity-mfa-user-distributed-lock:
-        treatment: on
-    - oauth-populate-context-from-token:
         treatment: on
     - authn-statement-session-index:
         treatment: on
-    - use-dashboard-environment-authorization:
+    - oauth-populate-context-from-token:
+        treatment: on
+    - oauth-skip-db-refresh-tokens:
+        treatment: on
+    - GET_TENANTS_WITH_STREAM:
+        treatment: on
+    - user-password-hash:
         treatment: off
-    - add-cross-origin-opener-policy:
+    - oauth-use-get-del:
         treatment: on
-    - identity-use-activation-for-resend-invite:
+    - identity-mfa-user-distributed-lock:
         treatment: on
-    - email-reputation-provider:
-        treatment: zerobounce
+    - skip-groups-replace-operation:
+        treatment: off
+    - identity-sms-control:
+        treatment: on
     - portal-backoffice-tenant-plans:
         treatment: on
     - vendor-service-s3-assets-storage:
         treatment: on
-    - identity-users-search-consumer:
+    - identity-use-activation-for-resend-invite:
         treatment: on
-    - admin-portal-rfc-email-validation:
+    - identity-prehook-enhancement-signup:
+        treatment: on
+    - identity-prehook-enhancement-saml:
+        treatment: on
+    - identity-prehook-enhancement-invite:
+        treatment: on
+    - identity-prehook-enhancement-social:
+        treatment: on
+    - identity-entitlements-enabled:
+        treatment: on
+    - add-cross-origin-opener-policy:
         treatment: off
-    - dashboard-new-email-integrations:
+    - modular-get-users:
         treatment: on
     - GET_SSO_CONFIG_NO_JOINS:
         treatment: on
     - use-multiple-verify-users-invite-for-sub-tenant:
         treatment: on
-    - identity-prehook-enhancement-saml:
-        treatment: on
-    - modular-get-users:
-        treatment: on
-    - identity-prehook-enhancement-invite:
-        treatment: on
     - identity-send-unlock-user-email:
         treatment: on
     - dashboard-show-send-unlock-email:
         treatment: on
-    - identity-get-user-in-tenant-scope:
-        treatment: on
-    - no-default-application-id:
-        treatment: on
-    - use-bulk-add-users-to-groups:
-        treatment: on
-    - portal-provisioning:
-        treatment: on
-    - no-default-application:
-        treatment: on
-    - identity-prehook-enhancement-signup:
-        treatment: on
-    - backoffice-use-mysql-active-users-analytics:
+    - validate_relay_state_email:
         treatment: on
     - custom-login-tenant-id-post-login-flow:
         treatment: on
-    - group-dashboard:
+    - portal-provisioning:
         treatment: on
-    - use-application-urls:
+    - portal-groups:
         treatment: on
-    - identity-prehook-enhancement-social:
+    - use-bulk-add-users-to-groups:
         treatment: on
-    - panic-mode:
-        treatment: off
     - identity-prehook-enhancement-oidc:
         treatment: off
     - security-engines-kill-switch:
         treatment: off
-    - portal-groups:
+    - group-dashboard:
         treatment: on
-    - admin-box-enable-disable-users:
-        treatment: on
-    - admin-portal-sso-redirect-in-component:
-        treatment: on
-    - identity-entitlements-enabled:
+    - allow-dashboard-api-security:
         treatment: on
     - entitlements-bundle-policy:
         treatment: on
-    - dashboard-use-hosted-login:
+    - signals-dashboard:
+        treatment: on
+    - identity-get-active-tenant-from-apps:
         treatment: on
     - identity-domain-validation-pre-auth:
         treatment: on
-    - identity-force-ipv4-for-security-engine:
-        treatment: off
     - show-sub-account-hierarchy-settings-msp:
         treatment: on
     - identity-sub-account-hierarchy-settings:
         treatment: on
     - use-vendor-service-for-vendor-auth:
         treatment: on
-    - dashboard-custom-code-prehook-activation-enabled:
-        treatment: off
-    - api_gw_use_applications:
-        treatment: on
-    - identity-get-active-tenant-from-apps:
-        treatment: on
-    - custom-code-embedded-execution:
-        treatment: on
-    - add-slash-to-vendor-host:
-        treatment: off
-    - oauth-federation-static-tenant-id:
-        treatment: off
-    - vendor-deleted-handler:
-        treatment: on
-    - dashboard-multi-apps-impersonation:
-        treatment: on
-    - oauth-validate-allowed-redirect-uris:
-        treatment: on
-    - oidc-post-login-flag:
-        treatment: on
-    - custom-code-usage:
-        treatment: on
-    - rate_limit_send_emails_flag:
-        treatment: on
-    - multi-apps-set-active-account-per-app:
-        treatment: on
-    - identity-fetch-assigned-tenants-for-superuser:
-        treatment: off
-    - disable_restore_oauth_state:
-        treatment: off
-    - bot-detection-wildcard-emails:
-        treatment: on
-    - user-pools-portal-custom-code:
-        treatment: on
-    - identity_enforce_ip_restrictions:
-        treatment: on
-    - block-routes:
-        treatment: on
-    - oauth-skip-db-refresh-tokens:
-        treatment: on
-    - identity-user-sources:
-        treatment: on
-    - identity-applications:
-        treatment: on
-    - user-pools-portal:
-        treatment: on
-    - multi-apps:
-        treatment: on
-    - signals_use_tenants_cache_ttl:
-        treatment: on
-    - scim-guides:
-        treatment: on
-    - oauth-use-get-del:
-        treatment: on
-    - user-password-hash:
-        treatment: off
-    - profile_picture_validation:
-        treatment: on
-    - show-sub-account-management-msp:
-        treatment: on
-    - rotate-api-tokens-refresh-tokens-from-db:
-        treatment: on
     - multi-app-home-page:
-        treatment: on
-    - custom-domain-deletion-job:
-        treatment: on
-    - identity-service-tenant-descendant-access:
-        treatment: on
-    - revoke-user-sessions-modal:
         treatment: on
     - multi-apps-admin-portal:
         treatment: on
-    - use-redis-for-refresh:
+    - identity-applications:
+        treatment: on
+    - dashboard-prehooks-page-custom-code:
+        treatment: on
+    - user-pools-portal-custom-code:
+        treatment: on
+    - custom-code-usage:
+        treatment: on
+    - custom-code-embedded-execution:
+        treatment: on
+    - api_gw_use_applications:
+        treatment: on
+    - oauth-validate-allowed-redirect-uris:
+        treatment: on
+    - dashboard-multi-apps-impersonation:
+        treatment: on
+    - vendor-deleted-handler:
+        treatment: on
+    - show-custom-password-complexity:
+        treatment: on
+    - oidc-post-login-flag:
+        treatment: on
+    - multi-apps-set-active-account-per-app:
+        treatment: on
+    - bot-detection-wildcard-emails:
+        treatment: on
+    - user-pools-portal:
+        treatment: on
+    - identity-user-sources:
+        treatment: on
+    - custom-domain-deletion-job:
+        treatment: on
+    - block-routes:
+        treatment: on
+    - profile_picture_validation:
+        treatment: on
+    - admin-portal-use-is-entitled:
+        treatment: on
+    - multi-apps:
         treatment: on
     - multi-apps-admin-role:
         treatment: on
-    - oauth-multi-apps:
+    - oauth-support-implicit-mode:
+        treatment: off
+    - scim-guides:
         treatment: on
+    - show-sub-account-management-msp:
+        treatment: on
+    - oauth-support-form-post:
+        treatment: off
     - applications-vendor-data-sync:
         treatment: on
-    - identity_service_save_mfa_tokens_in_redis:
+    - oauth-multi-apps:
         treatment: on
-    - otc-use-cache:
+    - provisioning-toggle:
         treatment: on
-    - use-replica-db:
+    - admin_portal_provisioning:
         treatment: on
-    - show-premium-chip-scim:
+    - signals_use_tenants_cache_ttl:
+        treatment: on
+    - saml_skip_domain_verification:
+        treatment: off
+    - rotate-api-tokens-refresh-tokens-from-db:
+        treatment: on
+    - identity-service-tenant-descendant-access:
+        treatment: on
+    - use-redis-for-refresh:
         treatment: on
     - use-new-geo-ip-resolver:
         treatment: off
+    - show-premium-chip-scim:
+        treatment: on
+    - log_transactions:
+        treatment: off
+    - refresh-token-use-redis-get-del:
+        treatment: on
     - identity-service-permission-assignment:
         treatment: on
     - users-migrations-fe:
         treatment: on
-    - FUNCTION_RATE_LIMIT:
-        treatment: off
     - show-roles-page:
         treatment: on
-    - fe-roles-page:
-        treatment: on
     - signals_send_signal_events:
+        treatment: on
+    - adminportal-capabilities-show-subscriptions:
+        treatment: off
+    - subscriptions-module-toggle:
         treatment: off
     - improve_saml_sso_without_relay_state:
         treatment: on
-    - identity-phone-update-webhook:
-        treatment: on
     - rotate-api-tokens-refresh-tokens:
-        treatment: on
-    - plans-targeting:
-        treatment: on
-    - use-aws-custom-domains:
         treatment: on
     - use-custom-domain-migration:
         treatment: on
-    - dashboard-log-streaming:
+    - oauth-redirect-without-protocol:
         treatment: on
-    - force_sso_authentication:
-        treatment: on
-    - refresh-token-use-redis-get-del:
+    - plans-targeting:
         treatment: on
     - team-management-use-s3-storage:
         treatment: on
-    - temporary-users:
+    - force_sso_authentication:
         treatment: on
-    - groups-admin-box-new:
-        treatment: on
-    - dashboard-step-up-regenerate-key:
-        treatment: on
-    - rate-limit-dynamic:
+    - webhook-proxy-override:
         treatment: on
     - oauth-skip-refresh-on-authorize-for-acr-values:
         treatment: on
+    - temporary-users:
+        treatment: on
     - allow_temporary_users:
         treatment: on
-    - tenants-service-uri-save-id:
+    - rate-limit-dynamic:
         treatment: on
-    - log_transactions:
-        treatment: off
-    - logs-streaming-fluentd-image:
-        treatment: off
-    - oauth-allow-invalid-client-id:
+    - dashboard-step-up-regenerate-key:
         treatment: on
+    - backoffice-high-scale-flag:
+        treatment: off
+    - identity_allow_post_login_with_access_token:
+        treatment: off
     - onboarding-s2-2023:
-        treatment: on
-    - oauth-skip-refresh-on-authorize-for-prompt-login:
-        treatment: on
-    - admin-portal-tenant-token-expiration:
-        treatment: on
-    - api-tokens-expiration:
         treatment: on
     - show-social-logins-scopes:
         treatment: on
-    - identity_social_login_validate_app_id_and_access_token:
+    - admin-portal-tenant-token-expiration:
+        treatment: on
+    - log-user-subscriber:
         treatment: off
+    - application-level-cascade:
+        treatment: off
+    - oauth-allow-invalid-client-id:
+        treatment: on
+    - oauth-skip-refresh-on-authorize-for-prompt-login:
+        treatment: on
+    - api-tokens-expiration:
+        treatment: on
     - identity_otc_limiting:
+        treatment: on
+    - allow-dashboard-feature-flags:
         treatment: on
     - admin_portal_use_entitlements_v2_endpoint:
         treatment: on
-    - application-level-cascade:
-        treatment: on
-    - identity_allow_post_login_with_access_token:
+    - identity_social_login_validate_app_id_and_access_token:
         treatment: off
-    - webhooks_blacklist:
-        treatment: on
     - admin_portal_ip_restrictions:
+        treatment: on
+    - force_email_format:
         treatment: on
     - security-engines-use-bot-detection-internal:
         treatment: on
@@ -524,6 +476,8 @@ data:
     - allow-monetization-early-access-calendly-signup:
         treatment: on
     - builder_split_mode:
+        treatment: on
+    - allow-monetization-early-access-signup:
         treatment: on
     - use-new-integration-flow:
         treatment: on
@@ -569,7 +523,11 @@ data:
         treatment: on
     - identity_groups:
         treatment: on
+    - identity_enforce_ip_restrictions:
+        treatment: on
     - groups-dashboard:
+        treatment: on
+    - groups-admin-box-new:
         treatment: on
     - full-screen-preview-mode:
         treatment: on
@@ -651,6 +609,8 @@ data:
         treatment: on
     - add_mfa_amr_values_to_jwt:
         treatment: on
+    - disable_user_created_prehook:
+        treatment: off
     - getting-started-in-app-report-early-access:
         treatment: on
     - dashboard-pwned-password:
@@ -658,7 +618,7 @@ data:
     - dashboard-oidc:
         treatment: on
     - dashboard-oauth:
-        treatment: off
+        treatment: on
     - dashboard-mql-three-steps:
         treatment: on
     - dashboard-mfa-devices:
@@ -671,14 +631,14 @@ data:
         treatment: on
     - administration-with-adminbox:
         treatment: on
+    - login-with-sms-release:
+        treatment: on
+    - webhooks_blacklist:
+        treatment: on
     - allow_route_existence_validation:
         treatment: on
     - enforce-frontegg-admin-permissions:
         treatment: on
-    - dashboard-onboarding-show-mql-form:
-        treatment: on
-    - yoss-test-ff:
-        treatment: off
     - dashboard-new-hooks-page:
         treatment: on
     - enable_prehooks:
@@ -696,6 +656,8 @@ data:
     - use_app_url:
         treatment: on
     - tenants_service_publish_events:
+        treatment: on
+    - tenants-service-uri-save-id:
         treatment: on
     - team-mgmt-call-add-user-v2:
         treatment: on
@@ -845,6 +807,8 @@ data:
         treatment: on
     - dashboard-magic-link-email:
         treatment: on
+    - dashboard-log-streaming:
+        treatment: on
     - dashboard-gtm:
         treatment: on
     - dashboard-email-templates-v2:
@@ -915,229 +879,109 @@ data:
         treatment: on
     - admin-portal-themes:
         treatment: on
-    - use-new-sso-flow-on-old-api:
-        treatment: off
     - hide-email-template:
         treatment: off
     - remove_ttl_from_cache:
         treatment: on
-    - custom-domain-txt-challenge:
-        treatment: on
-    - disable-event-handling:
-        treatment: off
-    - login-with-sms-release:
-        treatment: on
-    - signals-dashboard:
-        treatment: on
     - user-created-filter-dto:
-        treatment: on
-    - dashboard-send-invite-tooltip:
-        treatment: off
-    - login-with-sms-feature:
-        treatment: on
-    - override_user_roles_on_sso:
-        treatment: off
-    - show-login-with-sms:
-        treatment: on
-    - saml_bypass_domain_cross_validation:
-        treatment: off
-    - admin-portal-use-is-entitled:
-        treatment: on
-    - admin-portal-show-security-center-phase-2:
-        treatment: off
-    - admin-portal-show-security-center-v2:
-        treatment: on
-    - force_email_format:
-        treatment: on
-    - paginated-tenant-fetch:
-        treatment: on
-    - security-center-admin-portal:
-        treatment: on
-    - allow-dashboard-feature-flags:
-        treatment: on
-    - admin_portal_should_load_authorization:
-        treatment: on
-    - verify_sso_user:
-        treatment: off
-    - user-tenant-delete-events:
-        treatment: off
-    - msp-entitlement:
-        treatment: off
-    - allow_url_in_name:
-        treatment: off
-    - oauth-support-implicit-mode:
-        treatment: on
-    - oauth-support-form-post:
-        treatment: on
-    - enable-subscriptions:
-        treatment: on
-    - remove-hubspot-retries:
-        treatment: on
-    - limit-custom-domains:
-        treatment: on
-    - login-box-change-loader-style-hosted-login:
-        treatment: on
-    - oauth-redirect-without-protocol:
-        treatment: on
-    - skip-webhook-trigger:
         treatment: on
     - skip-email-job:
         treatment: off
-    - backoffice-log-kafka-messages:
+    - custom-domain-txt-challenge:
+        treatment: on
+    - validate-custom-domain-txt-record:
+        treatment: on
+    - security-center-admin-portal:
         treatment: off
-    - on-boarding-allowed-skip:
+    - admin_portal_should_load_authorization:
+        treatment: on
+    - user-tenant-delete-events:
         treatment: off
-    - users-page-show-sub-tenants-users-if-reseller:
+    - allow_url_in_name:
         treatment: off
+    - oauth-inline-access-token:
+        treatment: off
+    - user-tenants-events:
+        treatment: on
+    - skip-webhook-trigger:
+        treatment: off
+    - rate_limit_send_sms_flag:
+        treatment: on
+    - sso-guides:
+        treatment: on
     - cloudflare-custom-domain:
         treatment: off
-    - throw-error-on-policy-update:
+    - use_new_sso_flow:
         treatment: on
-    - update_metadata_on_saml_response:
-        treatment: on
-    - provisioning-toggle:
-        treatment: on
-    - admin_portal_provisioning:
-        treatment: on
+    - verify_sso_user:
+        treatment: off
     - use-webauthn-rp-id:
         treatment: on
-    - new-show-passkeys:
+    - show-speedy-login:
         treatment: off
-    - show-passkeys:
+    - create-stripe-customer-on-tenant-created:
         treatment: on
-    - remove-x-frame-options-header:
-        treatment: on
-    - validate_relay_state_email:
-        treatment: on
-    - team_update_user:
+    - audits-download-v2:
         treatment: on
     - identity_impersonation:
         treatment: on
     - allowed_email_senders:
         treatment: off
-    - logs-retention:
-        treatment: 7d
-    - remove_tenant_ids_from_jwt:
+    - backoffice-log-kafka-messages:
         treatment: off
-    - show-region-selection:
+    - vanilla-js-integration:
         treatment: on
-    - dashboard-backoffice-allow-account-image:
-        treatment: off
-    - backoffice-sync-production-only:
-        treatment: off
-    - dashboard-backoffice-edit-parent-avatar-design:
-        treatment: on
-    - dashboard_env_builder_use_environment_permissions:
-        treatment: off
-    - dashboard-backoffice-parent-account:
-        treatment: on
-    - audits-download-v2:
-        treatment: on
-    - show-custom-password-complexity:
-        treatment: on
-    - api_gw_use_environment_permissions:
+    - hide-production-test-env:
         treatment: off
     - saml_include_login_hint_in_url:
         treatment: on
-    - dashboard-split-sender-email:
-        treatment: off
-    - hiding-design-bar-on-empty-preview:
-        treatment: on
     - dashboard-builder-speedy-login:
-        treatment: off
-    - handle-event-result:
         treatment: on
     - dashboard_new_home_page:
+        treatment: on
+    - dashboard-split-sender-email:
         treatment: off
-    - backoffice-reset-visits-aggregations:
+    - new-sizebar-location:
         treatment: off
     - phone-input-user-country-code-by-ip:
-        treatment: on
-    - new-sizebar-location:
-        treatment: on
-    - dashboard-show-reports:
-        treatment: on
-    - settings-switch-to-embedded:
         treatment: off
+    - builder-profile-tab:
+        treatment: on
     - new-buyer-journey:
         treatment: on
-    - allow-monetization-early-access-signup:
+    - vendor_environments:
         treatment: on
-    - team_edit_user_use_context_user:
-        treatment: on
-    - subscriptions-module-toggle:
-        treatment: on
-    - dashboard-v2:
-        treatment: on
-    - create-stripe-customer-on-tenant-created:
-        treatment: off
-    - trigger-report-async:
-        treatment: off
     - social_login_default_provider:
         treatment: off
-    - vendors_host_use_email:
-        treatment: off
-    - vendor_environments:
-        treatment: off
-    - dashboard-subscriptions:
-        treatment: on
     - vendors_double_write:
         treatment: off
-    - dashboard-show-connectivity:
-        treatment: on
     - vendor_updated_handler:
-        treatment: off
-    - saml_check_inner_domains:
-        treatment: off
-    - jwt-signature:
-        treatment: off
-    - allow-report-usage:
         treatment: off
     - portal_new-onboarding:
         treatment: off
     - update_saml_redirect_url:
         treatment: off
-    - use_new_sso_flow:
-        treatment: on
-    - identity_prehooks:
-        treatment: off
     - vendor_deleted_handler:
         treatment: off
-    - dashboard-delete-workspace:
+    - identity_new_jwt_claims:
         treatment: on
-    - aws-redirector:
+    - dashboard-show-reports:
         treatment: off
-    - identity_delete_vendor_data:
-        treatment: on
-    - oauth_vendor_deleted_handler:
-        treatment: on
-    - oauth_service_vendor_deleted_handler:
-        treatment: on
-    - tenants-service-delete-my-tenant:
+    - dashboard-v2:
+        treatment: off
+    - team_management_vendor_deleted_handler:
         treatment: on
     - tenants_service_vendor_deleted_handler:
         treatment: on
-    - identity_service_vendor_deleted_handler:
-        treatment: on
-    - team_management_vendor_deleted_handler:
-        treatment: on
-    - forbid_picture_upload:
-        treatment: off
-    - dashboard-passwordles:
+    - dashboard-show-connectivity:
         treatment: off
     - adminportal-capabilities-show-webhooks:
-        treatment: on
-    - dashboard-tenants-submenu-subscriptions:
-        treatment: on
-    - dashboard-tenants-submenu-subcriptions:
-        treatment: on
-    - identity_new_jwt_claims:
-        treatment: on
-    - dashboard-show-events-slack-config:
-        treatment: off
-    - dashboard-show-notifications-overview:
         treatment: off
     - dashboard-show-audits-overview:
+        treatment: off
+    - dashboard-show-events-slack-config:
+        treatment: on
+    - dashboard-show-notifications-overview:
         treatment: off
     - dashboard-show-overview:
         treatment: off

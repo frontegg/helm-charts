@@ -1295,7 +1295,7 @@ metadata-service:
   name: metadata
   team: frontegg
   envID: *envId
-  appVersion: f477244
+  appVersion: 082a0cb
   image:
     repository: "frontegg/metadata-service"
     prefix: *imagePrefix
@@ -4118,7 +4118,7 @@ dashboard:
   name: dashboard
   team: adoption
   envID: *envId
-  appVersion: venv-7a88cfb
+  appVersion: venv-96798d7
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
@@ -4217,12 +4217,13 @@ dashboard:
         FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
         FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
 
+        #SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
+
   externalSecret:
     enabled: true
     mountPath: /etc/config/config.env
     text: |
       {{- $secret := .contents | fromYaml}}
-      SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
       FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
       FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
       FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
