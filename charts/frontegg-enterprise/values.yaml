@@ -44,7 +44,7 @@ admins:
   name: admins
   team: frontegg
   envID: &envId "prod-frontegg-private-deployment-main-secret"
-  appVersion: 0b5b99d
+  appVersion: a647314
   image:
     repository: frontegg/admins-service
     prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
@@ -154,7 +154,7 @@ team-management-service:
   name: team-management
   team: frontegg
   envID: *envId
-  appVersion: 1ffd24c
+  appVersion: 3d55319
   image:
     repository: frontegg/team-management-service
     prefix: *imagePrefix
@@ -330,7 +330,7 @@ webhooks:
   name: webhooks
   team: frontegg
   envID: *envId
-  appVersion: 27605dd
+  appVersion: 7afbe83
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -523,7 +523,7 @@ vendors-service:
   name: vendors
   team: frontegg
   envID: *envId
-  appVersion: 148e2c5
+  appVersion: a66329f
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -898,7 +898,7 @@ security-engines:
   name: security-engines
   team: frontegg
   envID: *envId
-  appVersion: c171b83
+  appVersion: 283f4d9
   image:
     repository: "frontegg/security-engines"
     prefix: *imagePrefix
@@ -1054,7 +1054,7 @@ security-center-service:
   name: security-center
   team: frontegg
   envID: *envId
-  appVersion: 8a3e136
+  appVersion: 88d3de0
   image:
     repository: "frontegg/security-center-service"
     prefix: *imagePrefix
@@ -1197,7 +1197,7 @@ prehook-service:
   name: prehooks
   team: frontegg
   envID: *envId
-  appVersion: 339e2ef
+  appVersion: b325627
   image:
     repository: frontegg/prehook-service
     prefix: *imagePrefix
@@ -1402,7 +1402,7 @@ logs-service:
   name: logs
   team: frontegg
   envID: *envId
-  appVersion: 6a2201d
+  appVersion: e5323d3
   image:
     repository: "frontegg/logs-service"
     prefix: *imagePrefix
@@ -1694,7 +1694,7 @@ event-service:
   name: events
   team: frontegg
   envID: *envId
-  appVersion: 6866feb
+  appVersion: 2569e6b
   image:
     repository: "frontegg/event-service"
     prefix: *imagePrefix
@@ -1820,7 +1820,7 @@ env-duplicator:
   name: env-duplicator
   team: frontegg
   envID: *envId
-  appVersion: venv-c31ef6c
+  appVersion: 44cc5b3
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -1937,7 +1937,7 @@ entitlements-service:
   name: entitlements
   team: frontegg
   envID: *envId
-  appVersion: 6d1d320
+  appVersion: 4ce7957
   image:
     repository: "frontegg/entitlements-service"
     prefix: *imagePrefix
@@ -2205,12 +2205,12 @@ entitlements-agent:
             min_delay_seconds: ${POLLING_MIN_DELAY}
             max_delay_seconds: ${POLLING_MAX_DELAY}
     additionalSecrets: ""
-    
+
 directory-service:
   name: directory
   team: frontegg
   envID: *envId
-  appVersion: e140beb
+  appVersion: 44ca6ef
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -2354,7 +2354,7 @@ dashboard-env-builder:
   name: dashboard-env-builder
   team: frontegg
   envID: *envId
-  appVersion: 7029a23
+  appVersion: fee7feb
   image:
     repository: frontegg/dashboard-env-builder
     prefix: *imagePrefix
@@ -2823,7 +2823,7 @@ applications-service:
   name: applications
   team: frontegg
   envID: *envId
-  appVersion: 4d3e7d0
+  appVersion: 3c3f79f
   argoRollouts:
     enabled: false
   image:
@@ -2984,7 +2984,7 @@ api-gateway:
   image:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
-  appVersion: 03cc932
+  appVersion: b940af5
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -3262,7 +3262,7 @@ identity-service:
   name: identity
   team: frontegg
   envID: *envId
-  appVersion: "5886576"
+  appVersion: "9f141eb"
   image:
     repository: frontegg/identity-service
     prefix: *imagePrefix
@@ -3545,7 +3545,7 @@ oauth-service:
   name: oauth
   team: frontegg
   envID: *envId
-  appVersion: venv-9be8508
+  appVersion: venv-6b82216
   image:
     repository: frontegg/oauth-service
     prefix: *imagePrefix
@@ -3901,7 +3901,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: 1894efd
+  appVersion: 324adec
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix
