@@ -90,7 +90,7 @@ data:
     - skip_rate_limit:
         treatment: off
     - domain-events:
-        treatment: off
+        treatment: on
     - dashboard-enable-coralogix:
         treatment: on
     - override_user_roles_on_sso:

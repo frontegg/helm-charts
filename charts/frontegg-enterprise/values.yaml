@@ -2460,7 +2460,7 @@ backoffice-service:
   name: backoffice
   team: frontegg
   envID: *envId
-  appVersion: 0f2cfec
+  appVersion: venv-bf05e47
   image:
     repository: frontegg/backoffice-service
     prefix: *imagePrefix
