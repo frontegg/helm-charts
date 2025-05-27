@@ -42,7 +42,7 @@ data:
     - dashboard-new-app-integration-page:
         treatment: on
     - dashboard-ai-agents:
-        treatment: on
+        treatment: off
     - identity-scim-delete-all-on-connection-delete:
         treatment: on
     - login-with-unverified-phone-number:
