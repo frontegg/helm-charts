@@ -318,10 +318,6 @@ team-management-service:
       FRONTEGG_AWS_FIREHOSE_REGION={{ $secret.frontegg.analytics.firehoseRegion | toYaml }}
       FRONTEGG_CLOUDFLARE_PURGE_CACHE_ZONE_ID={{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
       FRONTEGG_CLOUDFLARE_PURGE_CACHE_TOKEN={{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
-      FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
-      FRONTEGG_SPLIT_IO_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
-      FRONTEGG_SPLIT_IO_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
-      FRONTEGG_SPLIT_IO_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
       FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
 
     additionalSecrets: ""
@@ -648,10 +644,6 @@ vendors-service:
         webhooks:
           secret: {{ $secret.externalServices.split.webhooks.secret | toYaml }}
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       webhookSecret: {{ $secret.frontegg.applications.vendors.webhookSecret | toYaml }}
       prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
       adminsService:
@@ -1017,12 +1009,9 @@ security-engines:
     text: |
       {{- $secret := .contents | fromYaml}}
       apiKey: {{ $secret.frontegg.apiKeys.securityEnginesApiKey | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
       splitIO:
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       databases:
         mysql:
           host: {{ $secret.databases.generalMysql.host | toYaml }}
@@ -1170,10 +1159,6 @@ security-center-service:
       apiKey: {{ $secret.frontegg.apiKeys.securityCenterServiceApiKey | toYaml }}
       splitIO:
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       kafka:
         brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
@@ -1380,9 +1365,6 @@ metadata-service:
     text: |
       {{- $secret := .contents | fromYaml}}
       FRONTEGG_SPLIT_IO_KEY={{ $secret.externalServices.split.sdkKey | toYaml }}
-      FRONTEGG_SPLIT_IO_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
-      FRONTEGG_SPLIT_IO_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
-      FRONTEGG_SPLIT_IO_REDIS_PASSWORD={{ $secret.databases.redis.password | toYaml }}
       FRONTEGG_METADATA_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.metadataServiceApiKey | toYaml }}
       FRONTEGG_METADATA_SERVICE_REDIS_HOST={{ $secret.databases.redis.host | toYaml }}
       FRONTEGG_METADATA_SERVICE_REDIS_PORT={{ $secret.databases.redis.port | toYaml }}
@@ -1402,7 +1384,7 @@ logs-service:
   name: logs
   team: frontegg
   envID: *envId
-  appVersion: e5323d3
+  appVersion: b2090a9
   image:
     repository: "frontegg/logs-service"
     prefix: *imagePrefix
@@ -2331,10 +2313,6 @@ directory-service:
       apiKey: {{ $secret.frontegg.apiKeys.directoryServiceApiKey | toYaml }}
       splitIO:
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       redis:
         host: {{ $secret.databases.redis.host | toYaml }}
         password: {{ $secret.databases.redis.password | toYaml }}
@@ -2969,10 +2947,6 @@ applications-service:
         tls: {{ $secret.databases.redis.tls | toYaml }}
       splitIO:
         key: {{ $secret.externalServices.split.sdkKey | toYaml }}
-        redis:
-          host: {{ $secret.databases.redis.host | toYaml }}
-          port: {{ $secret.databases.redis.port | toYaml }}
-          password: {{ $secret.databases.redis.password | toYaml }}
       encryption:
         secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
     additionalSecrets: ""
@@ -3262,7 +3236,7 @@ identity-service:
   name: identity
   team: frontegg
   envID: *envId
-  appVersion: "9f141eb"
+  appVersion: "72fd32f"
   image:
     repository: frontegg/identity-service
     prefix: *imagePrefix
