@@ -34,7 +34,7 @@ data:
     - validate_sender_domain:
         treatment: on
     - use-tenant-cache-for-me-tenants:
-        treatment: off
+        treatment: on
     - use-dashboard-environment-authorization:
         treatment: off
     - cache-options-requests:
@@ -48,9 +48,9 @@ data:
     - login-with-unverified-phone-number:
         treatment: off
     - builder-login-box-signup-methods:
-        treatment: off
+        treatment: on
     - env-duplicator-login-box-signup-methods:
-        treatment: off
+        treatment: on
     - identity-sign-up-without-email:
         treatment: off
     - backoffice-hide-invalid-emails-and-domains:
@@ -228,7 +228,7 @@ data:
     - no-default-application:
         treatment: on
     - send-db-updates-events:
-        treatment: off
+        treatment: on
     - email-reputation-provider:
         treatment: zerobounce
     - magic-link-use-cache:
@@ -358,13 +358,13 @@ data:
     - multi-apps-admin-role:
         treatment: on
     - oauth-support-implicit-mode:
-        treatment: off
+        treatment: on
     - scim-guides:
         treatment: on
     - show-sub-account-management-msp:
         treatment: on
     - oauth-support-form-post:
-        treatment: off
+        treatment: on
     - applications-vendor-data-sync:
         treatment: on
     - oauth-multi-apps:
@@ -892,11 +892,11 @@ data:
     - validate-custom-domain-txt-record:
         treatment: on
     - security-center-admin-portal:
-        treatment: off
+        treatment: on
     - admin_portal_should_load_authorization:
         treatment: on
     - user-tenant-delete-events:
-        treatment: off
+        treatment: on
     - allow_url_in_name:
         treatment: off
     - oauth-inline-access-token:
