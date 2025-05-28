@@ -2030,7 +2030,8 @@ entitlements-service:
       LOG_LEVEL: verbose
       MIGRATION_DIR_PATH: dist/migrations
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_IO_FEATURES_FILE: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
   configuration:
     map:
       config-center:
