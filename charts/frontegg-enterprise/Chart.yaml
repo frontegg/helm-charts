@@ -150,3 +150,8 @@ dependencies:
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
     alias: entitlements-agent
+
+  - name: *chartName
+    version: *chartVersion
+    repository: https://frontegg.github.io/helm-charts
+    alias: email-service
