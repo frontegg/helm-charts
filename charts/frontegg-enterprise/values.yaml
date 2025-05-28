@@ -3843,6 +3843,7 @@ configCenter:
       eventsServiceUrl: "http://events-v2-web"
       integrationsServiceUrl: "http://integrations-v2-web"
       applicationsServiceUrl: "http://applications-v2-web"
+      cdnUrl: "https://us-east-1.console.aws.amazon.com/s3/buckets/dashboard-static-content-zzrhbrsu"
       adminsServiceUrl: "http://admins-v2-web"
       subscriptionsServiceUrl: "http://subscriptions-v2-web"
       teamServiceUrl: "http://team-management-v2-web"
