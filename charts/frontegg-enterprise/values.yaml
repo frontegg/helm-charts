@@ -1506,7 +1506,7 @@ logs-service:
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_FEATURE_RETENTION_FEATURE_FLAG_NAME: "logs-retention"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_IO_LOCAL_CONFIG_FILE: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
