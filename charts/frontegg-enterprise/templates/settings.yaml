@@ -222,7 +222,7 @@ data:
     - prehook-proxy-override:
         treatment: on
     - dashboard-workflows-page:
-        treatment: on
+        treatment: off
     - no-default-application-id:
         treatment: on
     - no-default-application:

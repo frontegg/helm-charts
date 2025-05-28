@@ -4384,8 +4384,6 @@ email-service:
         port: http
       initialDelaySeconds: 30
       periodSeconds: 5
-    nodeSelector:
-      workload: general
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -4417,7 +4415,6 @@ email-service:
         apiKey: {{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
 
     additionalSecrets: ""
-
   configuration:
     map:
       config-center:
