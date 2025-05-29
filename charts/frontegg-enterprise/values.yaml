@@ -1859,7 +1859,7 @@ env-duplicator:
       FRONTEGG_ENV_DUPLICATOR_DB_NAME: frontegg_env_duplicator
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLIT_IO_COMBINED_TOKEN: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_IO_LOCAL_CONFIG_FILE: /etc/config/settings.yaml
 
   jobs:
     migrate:
