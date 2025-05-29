@@ -3514,6 +3514,7 @@ identity-service:
         cdn:
           zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
+          enabled: {{ $secret.externalServices.cloudflare.purgeCache.enabled | default "true" | toYaml }}
     additionalSecrets: ""
 
 oauth-service:
