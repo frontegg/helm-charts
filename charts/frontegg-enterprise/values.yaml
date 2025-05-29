@@ -3390,6 +3390,7 @@ identity-service:
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       SENTRY_ENABLED: "false"
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_CLOUDFLARE_PURGE_CACHE_ENABLED: "false"
   jobs:
     migrate:
       enabled: true
@@ -3514,7 +3515,6 @@ identity-service:
         cdn:
           zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
-          enabled: {{ $secret.externalServices.cloudflare.purgeCache.enabled | default "true" | toYaml }}
     additionalSecrets: ""
 
 oauth-service:
@@ -4095,7 +4095,7 @@ dashboard:
   name: dashboard
   team: adoption
   envID: *envId
-  appVersion: venv-053f285
+  appVersion: ad03a0c
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
