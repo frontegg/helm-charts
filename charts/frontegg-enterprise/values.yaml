@@ -3237,7 +3237,7 @@ identity-service:
   name: identity
   team: frontegg
   envID: *envId
-  appVersion: "72fd32f"
+  appVersion: "dbf5e21"
   image:
     repository: frontegg/identity-service
     prefix: *imagePrefix
