@@ -455,7 +455,7 @@ webhooks:
       FRONTEGG_WEBHOOK_GUARD_FEATURE_FLAG_NAME: "webhooks_blacklist"
       FRONTEGG_HTTP_CLIENT_PROXY_AUTH_ENABLED: "false"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_LOCAL_CONFIG_FILE: /etc/config/settings.yaml
       NODE_NO_WARNINGS: "1"
 
   jobs:
@@ -1240,7 +1240,7 @@ prehook-service:
       FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
       FRONTEGG_HTTP_CLIENT_PROXY_ENABLED: "true"
       NODE_NO_WARNINGS: "1"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_IO_LOCAL_CONFIG_FILE: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -1737,7 +1737,7 @@ event-service:
       FRONTEGG_CHANNEL_AUDIT_TOPIC_PARTITIONS_NUM: "10"
       FRONTEGG_CHANNEL_WEBHOOK_TOPIC_PARTITIONS_NUM: "40"
       FRONTEGG_EVENTS_SERVICE_EVENTS_CONSUMER_TOPIC_PARTITIONS_NUM: "10"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_FEATURES_FILE: /etc/config/settings.yaml
   jobs:
     migrate:
       enabled: true
@@ -2670,7 +2670,7 @@ audits-service:
       FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
       FRONTEGG_PORT: "3002"
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLIT_IO_LOCAL_CONFIG_FILE: /etc/config/settings.yaml
       LOG_LEVEL: verbose
   configuration:
     map:
@@ -2775,7 +2775,6 @@ authentication-service:
       CLOUD_ENVIRONMENT: dev
       NODE_ENV: production
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
@@ -3940,7 +3939,6 @@ task-master:
       FRONTEGG_TEAM_MANAGEMENT_DB_NAME: frontegg_team_management
       FRONTEGG_SUBSCRIPTIONS_DB_NAME: frontegg_subscriptions
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
   configuration:
     map:
       config-center:
