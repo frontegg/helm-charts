@@ -3878,7 +3878,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: 324adec
+  appVersion: 4e622a8
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix
