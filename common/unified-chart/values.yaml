@@ -132,7 +132,7 @@ web:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
 
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 60
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -141,6 +141,7 @@ web:
     # initialDelaySeconds: 40
     # periodSeconds: 60
   readinessProbe:
+    successThreshold: 5
     # failureThreshold: 1
     # httpGet:
     #   path: /health
