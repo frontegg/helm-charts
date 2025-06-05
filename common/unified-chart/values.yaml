@@ -141,7 +141,6 @@ web:
     # initialDelaySeconds: 40
     # periodSeconds: 60
   readinessProbe:
-    successThreshold: 5
     # failureThreshold: 1
     # httpGet:
     #   path: /health
