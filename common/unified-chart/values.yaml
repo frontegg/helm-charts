@@ -195,6 +195,7 @@ worker:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "worker.name" $ }}'
+  terminationGracePeriodSeconds: 60
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -273,6 +274,7 @@ hp:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "hp.name" $ }}'
+  terminationGracePeriodSeconds: 60
 
 jobs:
   mgr:
