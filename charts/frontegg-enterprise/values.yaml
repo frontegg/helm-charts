@@ -94,7 +94,7 @@ admins:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -184,7 +184,7 @@ team-management-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -228,7 +228,7 @@ team-management-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -247,7 +247,7 @@ team-management-service:
       initialDelaySeconds: 60
       periodSeconds: 60
     additionalVolumeMounts: *additionalVolumeMounts
-    additionalVolumes: *additionalVolumes 
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -361,7 +361,7 @@ webhooks:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -409,7 +409,7 @@ webhooks:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -547,7 +547,7 @@ vendors-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -596,7 +596,7 @@ vendors-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -752,7 +752,7 @@ tenants-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -772,7 +772,7 @@ tenants-service:
       periodSeconds: 5
     additionalVolumeMounts: *additionalVolumeMounts
     additionalVolumes: *additionalVolumes
-  
+
   worker:
     enabled: true
     command: ["/bin/bash"]
@@ -793,7 +793,7 @@ tenants-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -920,7 +920,7 @@ security-engines:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -955,7 +955,7 @@ security-engines:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -972,7 +972,7 @@ security-engines:
       initialDelaySeconds: 20
       periodSeconds: 5
     additionalVolumeMounts: *additionalVolumeMounts
-    additionalVolumes: *additionalVolumes 
+    additionalVolumes: *additionalVolumes
   jobs:
     migrate:
       enabled: true
@@ -1073,7 +1073,7 @@ security-center-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -1108,7 +1108,7 @@ security-center-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1212,7 +1212,7 @@ prehook-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -1322,7 +1322,7 @@ metadata-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1417,7 +1417,7 @@ logs-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -1455,7 +1455,7 @@ logs-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1580,7 +1580,7 @@ forward-proxy:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1706,7 +1706,7 @@ event-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -1845,7 +1845,7 @@ env-duplicator:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 70
       targetMemoryUtilizationPercentage: 80
@@ -1949,7 +1949,7 @@ entitlements-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -1984,7 +1984,7 @@ entitlements-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2117,7 +2117,7 @@ entitlements-agent:
         memory: 1Gi
     autoscaling:
       enabled: true
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -2223,7 +2223,7 @@ directory-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -2263,7 +2263,7 @@ directory-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2361,7 +2361,7 @@ dashboard-env-builder:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -2469,7 +2469,7 @@ backoffice-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2504,7 +2504,7 @@ backoffice-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2655,12 +2655,12 @@ audits-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
     additionalVolumeMounts: *additionalVolumeMounts
-    additionalVolumes: *additionalVolumes 
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -2758,7 +2758,7 @@ authentication-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2831,7 +2831,7 @@ applications-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -2873,7 +2873,7 @@ applications-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -3010,7 +3010,7 @@ api-gateway:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -3056,7 +3056,7 @@ api-gateway:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3268,7 +3268,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -3318,7 +3318,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3364,7 +3364,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3395,7 +3395,13 @@ identity-service:
       enabled: true
       spec:
         command: ["node"]
-        args: ["./node_modules/@frontegg/common/dist/utils/text-to-json-output.js", "./node_modules/typeorm/cli.js", "--dataSource=service/dist/data-sources/production.ormconfig.js", "migration:run"]
+        args:
+          [
+            "./node_modules/@frontegg/common/dist/utils/text-to-json-output.js",
+            "./node_modules/typeorm/cli.js",
+            "--dataSource=service/dist/data-sources/production.ormconfig.js",
+            "migration:run",
+          ]
         resources:
           requests:
             cpu: 500m
@@ -3550,7 +3556,7 @@ oauth-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3569,7 +3575,7 @@ oauth-service:
       periodSeconds: 20
     terminationGracePeriodSeconds: 60
     additionalVolumeMounts: *additionalVolumeMounts
-    additionalVolumes: *additionalVolumes 
+    additionalVolumes: *additionalVolumes
   configmap:
     data:
       CLOUD_ENVIRONMENT: dev
@@ -3677,6 +3683,7 @@ configCenter:
 
   frontegg:
     general:
+      envID: *envId # Add this line to reference the existing anchor
       analytics:
         segmentAnalyticsEnabled: "false"
         useFirehoseAnalytics: "false"
@@ -3877,7 +3884,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: 4e622a8
+  appVersion: bb7df29
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix
@@ -3903,7 +3910,7 @@ task-master:
         memory: 1Gi
     autoscaling:
       enabled: false
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3970,6 +3977,7 @@ task-master:
       prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
       splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
       oauthCryptoKey: {{ $secret.frontegg.applications.oauth.oauthServiceCryptoKey | toYaml }}
+      cryptoKeyV2: {{ $secret.frontegg.applications.identity.cryptoKeyV2 | toYaml }}
       redis:
         host: {{ $secret.databases.redis.host | toYaml }}
         port: {{ $secret.databases.redis.port | toYaml }}
@@ -4139,7 +4147,7 @@ dashboard:
         memory: 500Mi
     autoscaling:
       enabled: true
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 5
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -4203,12 +4211,12 @@ dashboard:
       FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
       FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
     additionalSecrets: ""
-#  SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
-#  GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
-#  FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
-#  FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
-#  FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
-#  FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
+  #  SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
+  #  GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
+  #  FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
+  #  FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
+  #  FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
+  #  FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
   cronjobs:
     restart:
       enabled: false
@@ -4331,7 +4339,7 @@ email-service:
         memory: 500Mi
     autoscaling:
       enabled: true
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 5
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 70
@@ -4362,7 +4370,7 @@ email-service:
         containerPort: 3028
     autoscaling:
       enabled: true
-      minReplicas: 1
+      minReplicas: 2
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
