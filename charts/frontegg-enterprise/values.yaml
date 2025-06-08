@@ -3680,7 +3680,6 @@ configCenter:
     aws:
       region: "us-east-1"
       componentsCollectionIdentifier: ""
-
   frontegg:
     general:
       envID: *envId # Add this line to reference the existing anchor
@@ -3977,7 +3976,6 @@ task-master:
       prehookSecret: {{ $secret.frontegg.applications.vendors.prehookSecret | toYaml }}
       splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
       oauthCryptoKey: {{ $secret.frontegg.applications.oauth.oauthServiceCryptoKey | toYaml }}
-      cryptoKeyV2: {{ $secret.frontegg.applications.identity.cryptoKeyV2 | toYaml }}
       redis:
         host: {{ $secret.databases.redis.host | toYaml }}
         port: {{ $secret.databases.redis.port | toYaml }}
