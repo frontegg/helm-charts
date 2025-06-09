@@ -9,7 +9,7 @@ metadata:
     app.kubernetes.io/managed-by: {{ .Release.Service }}
   annotations:
     "helm.sh/hook": post-install,post-upgrade
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": hook-succeeded, before-hook-creation
 spec:
   template:
     spec:
@@ -78,10 +78,10 @@ spec:
                 }
               }"
           volumeMounts:
-            - name: config
-              mountPath: /usr/src/app/config
-              readOnly: true
+            - mountPath: /etc/config/config.yaml
+              name: secret-volume
+              subPath: config
       volumes:
-        - name: config
+        - name: secret-volume
           secret:
             secretName: task-master-v2
