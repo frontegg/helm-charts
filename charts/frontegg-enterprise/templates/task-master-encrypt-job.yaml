@@ -34,12 +34,7 @@ spec:
               }
               
               # Read values from the mounted secret file
-              CONFIG_FILE="/etc/config/config.yaml"
-              
-              # Debug: Check if config file exists and show directory contents
-              echo "Checking config directory:"
-              ls -la /etc/config/
-              echo "Config file exists: $(test -f "$CONFIG_FILE" && echo "YES" || echo "NO")"
+              CONFIG_FILE="/etc/config/config"
               
               IDENTITY_CRYPTO_KEY=$(get_yaml_value "identityCryptoKey" "$CONFIG_FILE")
               PUBLIC_KEY_BASE64=$(get_yaml_value "authPublicKey" "$CONFIG_FILE")
