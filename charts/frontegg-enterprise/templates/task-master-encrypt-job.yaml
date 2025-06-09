@@ -1,0 +1,56 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "frontegg-enterprise.fullname" . }}-encrypt
+  labels:
+    app.kubernetes.io/name: {{ include "frontegg-enterprise.name" . }}
+    helm.sh/chart: {{ include "frontegg-enterprise.chart" . }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    "helm.sh/hook": post-install
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: task-master-cli
+          image: {{ index .Values "task-master" "image" "prefix" }}{{ index .Values "task-master" "image" "repository" }}:{{ index .Values "task-master" "appVersion" }}
+          env:
+            - name: EMAIL
+              value: {{ .Values.taskMasterEncryptJob.email | quote }}
+            - name: PASSWORD
+              value: {{ .Values.taskMasterEncryptJob.password | quote }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              # Read values from the mounted secret file
+              IDENTITY_CRYPTO_KEY=$(yq eval '.identityCryptoKey' /etc/config/config.yaml)
+              PUBLIC_KEY_BASE64=$(yq eval '.authPublicKey' /etc/config/config.yaml)
+              TEMP_PRIVATE_KEY=$(yq eval '.fronteggPrivateKey' /etc/config/config.yaml)
+              
+              # Encrypt the private key using the identity crypto key
+              ENCRYPTED_KEY=$(task-master-cli encrypt "$TEMP_PRIVATE_KEY")
+              
+              # Run the create environment command
+              task-master-cli run create-frontegg-env -d "{
+                \"userData\": {
+                  \"email\": \"$EMAIL\",
+                  \"password\": \"$PASSWORD\"
+                },
+                \"vendorKeys\": {
+                  \"private\": \"$ENCRYPTED_KEY\",
+                  \"publicEncoded\": \"$PUBLIC_KEY_BASE64\"
+                }
+              }"
+          volumeMounts:
+            - name: config
+              mountPath: /etc/config/config.yaml
+              subPath: config.yaml
+              readOnly: true
+      volumes:
+        - name: config
+          secret:
+            secretName: task-master-v2

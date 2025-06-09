@@ -39,6 +39,12 @@ initDbJob:
     name: database-credentials
     remoteRefKey: "prod-frontegg-private-deployment-main-secret"
 
+# Configuration for the task-master encrypt job
+# remember if using ses the email domain should be verified first
+taskMasterEncryptJob:
+  email: "devops@frontegg.com"
+  password: "Fe123456!@"
+
 # Configuration for the admins service
 admins:
   name: admins
@@ -94,7 +100,7 @@ admins:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -184,7 +190,7 @@ team-management-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -228,7 +234,7 @@ team-management-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -361,7 +367,7 @@ webhooks:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -409,7 +415,7 @@ webhooks:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -547,7 +553,7 @@ vendors-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -596,7 +602,7 @@ vendors-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -752,7 +758,7 @@ tenants-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -793,7 +799,7 @@ tenants-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -920,7 +926,7 @@ security-engines:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -955,7 +961,7 @@ security-engines:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1073,7 +1079,7 @@ security-center-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -1108,7 +1114,7 @@ security-center-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1212,7 +1218,7 @@ prehook-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -1322,7 +1328,7 @@ metadata-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1417,7 +1423,7 @@ logs-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -1455,7 +1461,7 @@ logs-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1580,7 +1586,7 @@ forward-proxy:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -1706,7 +1712,7 @@ event-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -1845,7 +1851,7 @@ env-duplicator:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 70
       targetMemoryUtilizationPercentage: 80
@@ -1949,7 +1955,7 @@ entitlements-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -1984,7 +1990,7 @@ entitlements-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2117,7 +2123,7 @@ entitlements-agent:
         memory: 1Gi
     autoscaling:
       enabled: true
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 60
       targetMemoryUtilizationPercentage: 60
@@ -2223,7 +2229,7 @@ directory-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -2263,7 +2269,7 @@ directory-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2361,7 +2367,7 @@ dashboard-env-builder:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -2469,7 +2475,7 @@ backoffice-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2504,7 +2510,7 @@ backoffice-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2655,7 +2661,7 @@ audits-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2758,7 +2764,7 @@ authentication-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -2831,7 +2837,7 @@ applications-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 3
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -2873,7 +2879,7 @@ applications-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -3010,7 +3016,7 @@ api-gateway:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 4
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -3056,7 +3062,7 @@ api-gateway:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3268,7 +3274,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 60
@@ -3318,7 +3324,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3364,7 +3370,7 @@ identity-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3556,7 +3562,7 @@ oauth-service:
       enabled: true
       scaledObject:
         enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3883,7 +3889,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: bb7df29
+  appVersion: 517e48a
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix
@@ -3909,7 +3915,7 @@ task-master:
         memory: 1Gi
     autoscaling:
       enabled: false
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 10
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
@@ -3970,6 +3976,8 @@ task-master:
       {{- $secret := .contents | fromYaml}}
       fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
       fronteggApiKey: {{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+      authPublicKey: {{ $secret.frontegg.xxx.authPublicKey | toYaml }}
+      fronteggPrivateKey: {{ $secret.frontegg.applications.authentication.authenticationPrivateKey | toYaml }}
       identityCryptoKey: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
       logsStreamingCryptoKey: {{ $secret.frontegg.applications.logsStreaming.cryptoKey | toYaml }}
       apiKeyEncryptionSecret: {{ $secret.frontegg.applications.vendors.apiKeySecret | toYaml }}
@@ -4099,7 +4107,7 @@ dashboard:
   name: dashboard
   team: adoption
   envID: *envId
-  appVersion: ad03a0c
+  appVersion: f16bbf7
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
@@ -4145,7 +4153,7 @@ dashboard:
         memory: 500Mi
     autoscaling:
       enabled: true
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 5
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 50
@@ -4337,7 +4345,7 @@ email-service:
         memory: 500Mi
     autoscaling:
       enabled: true
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 5
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 70
@@ -4368,7 +4376,7 @@ email-service:
         containerPort: 3028
     autoscaling:
       enabled: true
-      minReplicas: 2
+      minReplicas: 1
       maxReplicas: 2
       targetCPUUtilizationPercentage: 50
       targetMemoryUtilizationPercentage: 75
