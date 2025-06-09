@@ -22,19 +22,29 @@ spec:
               value: {{ .Values.taskMasterEncryptJob.email | quote }}
             - name: PASSWORD
               value: {{ .Values.taskMasterEncryptJob.password | quote }}
+            - name: FRONTEGG_CONFIG_DIRECTORY
+              value: "/usr/src/app/config"
           command:
             - /bin/sh
             - -c
             - |
               # Read values from the mounted secret file
-              IDENTITY_CRYPTO_KEY=$(yq eval '.identityCryptoKey' /etc/config/config.yaml)
-              PUBLIC_KEY_BASE64=$(yq eval '.authPublicKey' /etc/config/config.yaml)
-              TEMP_PRIVATE_KEY=$(yq eval '.fronteggPrivateKey' /etc/config/config.yaml)
+              IDENTITY_CRYPTO_KEY=$(yq eval '.identityCryptoKey' /usr/src/app/config/config.yaml)
+              PUBLIC_KEY_BASE64=$(yq eval '.authPublicKey' /usr/src/app/config/config.yaml)
+              TEMP_PRIVATE_KEY=$(yq eval '.fronteggPrivateKey' /usr/src/app/config/config.yaml)
+              
+              # Debug: Print values (first 50 chars for security)
+              echo "Identity Crypto Key: ${IDENTITY_CRYPTO_KEY:0:50}..."
+              echo "Public Key (first 50 chars): ${PUBLIC_KEY_BASE64:0:50}..."
+              echo "Private Key (first 50 chars): ${TEMP_PRIVATE_KEY:0:50}..."
               
               # Encrypt the private key using the identity crypto key
+              echo "Encrypting private key..."
               ENCRYPTED_KEY=$(task-master-cli encrypt "$TEMP_PRIVATE_KEY")
+              echo "Encrypted key (first 50 chars): ${ENCRYPTED_KEY:0:50}..."
               
               # Run the create environment command
+              echo "Creating Frontegg environment..."
               task-master-cli run create-frontegg-env -d "{
                 \"userData\": {
                   \"email\": \"$EMAIL\",
@@ -47,7 +57,7 @@ spec:
               }"
           volumeMounts:
             - name: config
-              mountPath: /etc/config/config.yaml
+              mountPath: /usr/src/app/config/config.yaml
               subPath: config.yaml
               readOnly: true
       volumes:
