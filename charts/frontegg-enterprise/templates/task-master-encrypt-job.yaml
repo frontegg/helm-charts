@@ -22,6 +22,8 @@ spec:
               value: {{ .Values.taskMasterEncryptJob.email | quote }}
             - name: PASSWORD
               value: {{ .Values.taskMasterEncryptJob.password | quote }}
+            - name: CONFIG_PATH
+              value: "/etc/config/config"
           command:
             - /bin/sh
             - -c
@@ -32,10 +34,10 @@ spec:
                 local file=$2
                 grep "^$key:" "$file" | awk '{print $2}' | tr -d '"'
               }
-              
+
               # Read values from the mounted secret file
               CONFIG_FILE="/etc/config/config"
-              
+
               IDENTITY_CRYPTO_KEY=$(get_yaml_value "identityCryptoKey" "$CONFIG_FILE")
               PUBLIC_KEY_BASE64=$(get_yaml_value "authPublicKey" "$CONFIG_FILE")
               TEMP_PRIVATE_KEY=$(get_yaml_value "fronteggPrivateKey" "$CONFIG_FILE")
@@ -56,24 +58,23 @@ spec:
               # Encrypt the private key using the identity crypto key
               echo "Encrypting private key..."
               ENCRYPTED_KEY=$(task-master-cli encrypt "$TEMP_PRIVATE_KEY")
+              if [ $? -ne 0 ]; then
+                echo "ERROR: task-master-cli encrypt failed!"
+                exit 1
+              fi
               echo "Encrypted key (first 50 chars): ${ENCRYPTED_KEY:0:50}..."
               
               # Run the create environment command
               echo "Creating Frontegg environment..."
-              task-master-cli run create-frontegg-env -d "{
-                \"userData\": {
-                  \"email\": \"$EMAIL\",
-                  \"password\": \"$PASSWORD\"
-                },
-                \"vendorKeys\": {
-                  \"private\": \"$ENCRYPTED_KEY\",
-                  \"publicEncoded\": \"$PUBLIC_KEY_BASE64\"
-                }
-              }"
+              task-master-cli run create-frontegg-env -d "{\n                \"userData\": {\n                  \"email\": \"$EMAIL\",\n                  \"password\": \"$PASSWORD\"\n                },\n                \"vendorKeys\": {\n                  \"private\": \"$ENCRYPTED_KEY\",\n                  \"publicEncoded\": \"$PUBLIC_KEY_BASE64\"\n                }\n              }"
+              if [ $? -ne 0 ]; then
+                echo "ERROR: task-master-cli run create-frontegg-env failed!"
+                exit 1
+              fi
           volumeMounts:
-            - mountPath: /etc/config/config.yaml
-              name: secret-volume
-              subPath: config
+            - name: secret-volume
+              mountPath: /etc/config
+              readOnly: true
       volumes:
         - name: secret-volume
           secret:
