@@ -44,6 +44,7 @@ initDbJob:
 taskMasterEncryptJob:
   email: "devops@frontegg.com"
   password: "Fe123456!@"
+  senderEmail: "devops@frontegg.com"
 
 # Configuration for the admins service
 admins:
@@ -3893,7 +3894,7 @@ task-master:
   name: task-master
   team: adoption
   envID: *envId
-  appVersion: 517e48a
+  appVersion: 69625db
   image:
     repository: frontegg/task-master
     prefix: *imagePrefix
