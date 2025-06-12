@@ -1,6 +1,6 @@
 apiVersion: v2
-name: frontegg-portal
-description: Frontegg portal Helm Chart
+name: frontegg-dashboard
+description: Frontegg Dashboard Helm Chart
 type: application
 
 version: 0.0.1
