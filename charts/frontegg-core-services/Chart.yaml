@@ -1,6 +1,6 @@
 apiVersion: v2
-name: frontegg-enterprise
-description: Frontegg Enterprise Helm Chart # FILL IN BY MARKETING
+name: frontegg-core-services
+description: Frontegg Core Services Helm Chart
 type: application
 
 version: 0.0.1
