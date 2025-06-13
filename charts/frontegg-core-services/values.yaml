@@ -1,5 +1,23 @@
+
+
+
+
+
+
 #strimzi-kafka-operator:
+
+
+
+
+
+
 #debezium-operator:
+
+
+
+
+
+
 
 debezium:
   enabled: true
@@ -18,7 +36,19 @@ debezium:
     version: "3.1.0.Final"
     image: "quay.io/debezium/server:3.1"
 
+
+
+
+
+
+
 # Configuration for the initial database setup job
+
+
+
+
+
+
 initDbJob:
   enabled: true # Set to true to run this job
   job:
@@ -39,14 +69,44 @@ initDbJob:
     name: database-credentials
     remoteRefKey: "prod-frontegg-private-deployment-main-secret"
 
+
+
+
+
+
+
 # Configuration for the task-master encrypt job
+
+
+
+
+
+
 # remember if using ses the email domain should be verified first
+
+
+
+
+
+
 taskMasterEncryptJob:
   email: "devops@frontegg.com"
   password: "Fe123456!@"
   senderEmail: "devops@frontegg.com"
 
+
+
+
+
+
+
 # Configuration for the admins service
+
+
+
+
+
+
 admins:
   name: admins
   team: frontegg
@@ -157,11 +217,17 @@ admins:
       FRONTEGG_TENANTS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 team-management-service:
   name: team-management
   team: frontegg
   envID: *envId
-  appVersion: 3d55319
+  appVersion: a9019bc
   image:
     repository: frontegg/team-management-service
     prefix: *imagePrefix
@@ -328,6 +394,12 @@ team-management-service:
       FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
 
     additionalSecrets: ""
+
+
+
+
+
+
 
 webhooks:
   name: webhooks
@@ -522,11 +594,17 @@ webhooks:
 
     additionalSecrets: ""
 
+
+
+
+
+
+
 vendors-service:
   name: vendors
   team: frontegg
   envID: *envId
-  appVersion: a66329f
+  appVersion: 26d5456
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -725,11 +803,17 @@ vendors-service:
         FRONTEGG_AWS_REGION: aws-region
         FRONTEGG_CDN_BUCKET: cdn-bucket
 
+
+
+
+
+
+
 tenants-service:
   name: tenants
   team: frontegg
   envID: *envId
-  appVersion: 40a0b38
+  appVersion: 713afe1
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -893,6 +977,12 @@ tenants-service:
 
     additionalSecrets: ""
 
+
+
+
+
+
+
 security-engines:
   name: security-engines
   team: frontegg
@@ -1046,6 +1136,12 @@ security-engines:
 
     additionalSecrets: ""
 
+
+
+
+
+
+
 security-center-service:
   name: security-center
   team: frontegg
@@ -1185,6 +1281,12 @@ security-center-service:
 
     additionalSecrets: ""
 
+
+
+
+
+
+
 prehook-service:
   name: prehooks
   team: frontegg
@@ -1282,6 +1384,12 @@ prehook-service:
       FRONTEGG_KAFKA_SASL_USERNAME={{ $secret.databases.kafka.saslUserName | toYaml }}
       # FRONTEGG_CUSTOM_CODE_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
     additionalSecrets: ""
+
+
+
+
+
+
 
 metadata-service:
   name: metadata
@@ -1387,11 +1495,17 @@ metadata-service:
       FRONTEGG_IP_DATA_API_KEY={{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 logs-service:
   name: logs
   team: frontegg
   envID: *envId
-  appVersion: b2090a9
+  appVersion: e5323d3
   image:
     repository: "frontegg/logs-service"
     prefix: *imagePrefix
@@ -1544,6 +1658,12 @@ logs-service:
         splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 forward-proxy:
   name: forward-proxy
   team: frontegg
@@ -1679,11 +1799,17 @@ forward-proxy:
         allow_missing_role: true # skip mTLS client validation
         unsafe_allow_private_ranges: false
 
+
+
+
+
+
+
 event-service:
   name: events
   team: frontegg
   envID: *envId
-  appVersion: 2569e6b
+  appVersion: 3d739a2
   image:
     repository: "frontegg/event-service"
     prefix: *imagePrefix
@@ -1805,11 +1931,17 @@ event-service:
         splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 env-duplicator:
   name: env-duplicator
   team: frontegg
   envID: *envId
-  appVersion: 44cc5b3
+  appVersion: c462b0e
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -1922,11 +2054,17 @@ env-duplicator:
 
     additionalSecrets: ""
 
+
+
+
+
+
+
 entitlements-service:
   name: entitlements
   team: frontegg
   envID: *envId
-  appVersion: 21ca05b
+  appVersion: 4da795d
   image:
     repository: "frontegg/entitlements-service"
     prefix: *imagePrefix
@@ -2090,6 +2228,12 @@ entitlements-service:
         password: {{ $secret.databases.redis.password | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 entitlements-agent:
   name: entitlements-agent
   team: adoption
@@ -2199,6 +2343,12 @@ entitlements-agent:
             min_delay_seconds: ${POLLING_MIN_DELAY}
             max_delay_seconds: ${POLLING_MAX_DELAY}
     additionalSecrets: ""
+
+
+
+
+
+
 
 directory-service:
   name: directory
@@ -2340,11 +2490,17 @@ directory-service:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 dashboard-env-builder:
   name: dashboard-env-builder
   team: frontegg
   envID: *envId
-  appVersion: fee7feb
+  appVersion: 8eea69b
   image:
     repository: frontegg/dashboard-env-builder
     prefix: *imagePrefix
@@ -2446,11 +2602,17 @@ dashboard-env-builder:
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 backoffice-service:
   name: backoffice
   team: frontegg
   envID: *envId
-  appVersion: venv-bf05e47
+  appVersion: 7f0c6ab
   image:
     repository: frontegg/backoffice-service
     prefix: *imagePrefix
@@ -2624,6 +2786,12 @@ backoffice-service:
       successfulJobsHistoryLimit: 3
       restartPolicy: Never
 
+
+
+
+
+
+
 audits-service:
   name: audits
   team: frontegg
@@ -2733,6 +2901,12 @@ audits-service:
       FRONTEGG_VENDORS_SERVICE_API_KEY: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 authentication-service:
   name: authentication
   team: frontegg
@@ -2808,11 +2982,17 @@ authentication-service:
       FRONTEGG_AUTH_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.authenticationServiceApiKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 applications-service:
   name: applications
   team: frontegg
   envID: *envId
-  appVersion: 3c3f79f
+  appVersion: 237251a
   argoRollouts:
     enabled: false
   image:
@@ -2962,6 +3142,12 @@ applications-service:
         secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 api-gateway:
   name: api-gateway
   team: frontegg
@@ -2969,7 +3155,7 @@ api-gateway:
   image:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
-  appVersion: b940af5
+  appVersion: 711fac7
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
@@ -3243,11 +3429,17 @@ api-gateway:
           apiKey: {{ $secret.frontegg.apiKeys.appIntegrationsApiKey | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 identity-service:
   name: identity
   team: frontegg
   envID: *envId
-  appVersion: "dbf5e21"
+  appVersion: e316894
   image:
     repository: frontegg/identity-service
     prefix: *imagePrefix
@@ -3533,11 +3725,17 @@ identity-service:
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
     additionalSecrets: ""
 
+
+
+
+
+
+
 oauth-service:
   name: oauth
   team: frontegg
   envID: *envId
-  appVersion: venv-6b82216
+  appVersion: a6f7d76
   image:
     repository: frontegg/oauth-service
     prefix: *imagePrefix
@@ -3677,6 +3875,12 @@ oauth-service:
         saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
+
+
+
+
+
+
 
 configCenter:
   annotations:
@@ -3889,6 +4093,12 @@ configCenter:
       authHubServiceUrl: "http://auth-hub-v2-web"
       apiGatewayUrl: "https://api.onprem.backegg.io" #TODO SET THIS ON INSTALL
       fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #should be modified for customer
+
+
+
+
+
+
 
 task-master:
   name: task-master
@@ -4107,6 +4317,12 @@ task-master:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
 
     additionalSecrets: ""
+
+
+
+
+
+
 
 email-service:
   name: email
