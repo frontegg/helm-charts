@@ -5,7 +5,7 @@ kind: Job
 metadata:
   name: create-frontegg-env-job
   annotations:
-    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook": post-install
 spec:
   template:
     spec:

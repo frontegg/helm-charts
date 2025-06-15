@@ -1,24 +1,3 @@
-
-
-
-
-
-
-#strimzi-kafka-operator:
-
-
-
-
-
-
-#debezium-operator:
-
-
-
-
-
-
-
 debezium:
   enabled: true
   bootstrapServers: "b-1.prodmsk360.b35ne2.c1.kafka.us-east-1.amazonaws.com:9092,b-2.prodmsk360.b35ne2.c1.kafka.us-east-1.amazonaws.com:9092,b-3.prodmsk360.b35ne2.c1.kafka.us-east-1.amazonaws.com:9092"
@@ -36,21 +15,10 @@ debezium:
     version: "3.1.0.Final"
     image: "quay.io/debezium/server:3.1"
 
-
-
-
-
-
-
 # Configuration for the initial database setup job
 
-
-
-
-
-
 initDbJob:
-  enabled: true # Set to true to run this job
+  enabled: true
   job:
     image:
       repository: mysql
