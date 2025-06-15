@@ -47,17 +47,10 @@ environmentSetupJob:
 
 # Configuration for the admins service
 
-admins:
-  name: admins
-  team: frontegg
-  envID: &envId "prod-frontegg-private-deployment-main-secret"
-  appVersion: a647314
-  image:
-    repository: frontegg/admins-service
-    prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
-  argoRollouts:
-    enabled: false
-  defaults: &defaultsAnnotations
+general:
+  envId: &envId "prod-frontegg-private-deployment-main-secret"
+  imagePrefix: &imagePrefix "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
+  defaultsAnnotations: &defaultsAnnotations
     migration:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
@@ -77,6 +70,27 @@ admins:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
         "helm.sh/hook-weight": "-100"
+  additionalVolumes: &additionalVolumes |
+    - name: vol-settings
+      configMap:
+        name: 'settings'
+  additionalVolumeMounts: &additionalVolumeMounts |
+    - name: vol-settings
+      mountPath: /etc/config/settings.yaml
+      subPath: settings.yaml
+  settingsConfigPath: &settingConfigPath "/etc/config/settings.yaml"
+
+admins:
+  name: admins
+  team: frontegg
+  envID: *envId
+  appVersion: a647314
+  image:
+    repository: frontegg/admins-service
+    prefix: *imagePrefix
+  argoRollouts:
+    enabled: false
+  defaults: *defaultsAnnotations
   web:
     enabled: true
     command: ["/bin/bash"]
@@ -117,20 +131,14 @@ admins:
         port: http
       initialDelaySeconds: 5
       periodSeconds: 5
-    additionalVolumes: &additionalVolumes |
-      - name: vol-settings
-        configMap:
-          name: 'settings'
-    additionalVolumeMounts: &additionalVolumeMounts |
-      - name: vol-settings
-        mountPath: /etc/config/settings.yaml
-        subPath: settings.yaml
+    additionalVolumes: *additionalVolumes
+    additionalVolumeMounts: *additionalVolumeMounts
   configmap:
     data:
       CLOUD_ENVIRONMENT: production
       NODE_ENV: production
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: &settingConfigPath "/etc/config/settings.yaml"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -138,7 +146,6 @@ admins:
         FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
         FRONTEGG_TENANTS_SERVICE_URL: tenants-service-url
         PORTAL_URL: portal-url
-
   externalSecret:
     enabled: true
     mountPath: /etc/config/config.env
@@ -449,12 +456,6 @@ team-management-service:
       FRONTEGG_ASSET_BLOB_STORAGE_CONNECTION_STRING={{ $secret.databases.storage.azure.connectionString | toYaml }}
 
     additionalSecrets: ""
-
-
-
-
-
-
 
 webhooks:
   name: webhooks
