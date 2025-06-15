@@ -2210,15 +2210,9 @@ entitlements-service:
         password: {{ $secret.databases.redis.password | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 entitlements-agent:
   name: entitlements-agent
-  team: adoption
+  team: frontegg
   envID: *envId
   appVersion: e6ac14f
   defaults: *defaultsAnnotations
@@ -2325,12 +2319,6 @@ entitlements-agent:
             min_delay_seconds: ${POLLING_MIN_DELAY}
             max_delay_seconds: ${POLLING_MAX_DELAY}
     additionalSecrets: ""
-
-
-
-
-
-
 
 directory-service:
   name: directory
@@ -2471,12 +2459,6 @@ directory-service:
       encryption:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
     additionalSecrets: ""
-
-
-
-
-
-
 
 dashboard-env-builder:
   name: dashboard-env-builder
