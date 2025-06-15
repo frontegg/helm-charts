@@ -27,14 +27,14 @@ spec:
           image: {{ index .Values "task-master" "image" "prefix" }}{{ index .Values "task-master" "image" "repository" }}:{{ index .Values "task-master" "appVersion" }}
           env:
             - name: EMAIL
-              value: {{ .Values.taskMasterEncryptJob.email | quote }}
+              value: {{ .Values.environmentSetupJob.email | quote }}
             - name: PASSWORD
-              value: {{ .Values.taskMasterEncryptJob.password | quote }}
+              value: {{ .Values.environmentSetupJob.password | quote }}
             - name: SENDER_EMAIL
-              value: {{ .Values.taskMasterEncryptJob.senderEmail | quote }}
+              value: {{ .Values.environmentSetupJob.senderEmail | quote }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
-            {{- include "container.env" .Values.web | indent 12 -}}
+            {{- include "container.env" .Values.web | indent 12 }}
             {{- range $config_name, $values := (index .Values "task-master").configuration.map }}
             {{- range $key, $value :=  $values}}
             - name: {{ $key }}
