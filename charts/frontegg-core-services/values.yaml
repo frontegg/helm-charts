@@ -1406,12 +1406,6 @@ prehook-service:
       # FRONTEGG_CUSTOM_CODE_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.customCodeServiceApiKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 metadata-service:
   name: metadata
   team: frontegg
@@ -1515,12 +1509,6 @@ metadata-service:
       FRONTEGG_CLOUDFLARE_PURGE_CACHE_TOKEN={{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
       FRONTEGG_IP_DATA_API_KEY={{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
     additionalSecrets: ""
-
-
-
-
-
-
 
 logs-service:
   name: logs
@@ -1679,12 +1667,6 @@ logs-service:
         splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 forward-proxy:
   name: forward-proxy
   team: frontegg
@@ -1791,16 +1773,13 @@ forward-proxy:
             action: report
             allowed_domains:
               - frontegg.com
-
         default:
           project: other
           action: report
           allowed_domains:
             - test.com
-
         global_allow_list:
           - google.com
-
         global_deny_list:
           - 127.0.0.1
     ---
@@ -1819,11 +1798,6 @@ forward-proxy:
         ---
         allow_missing_role: true # skip mTLS client validation
         unsafe_allow_private_ranges: false
-
-
-
-
-
 
 
 event-service:
@@ -1952,12 +1926,6 @@ event-service:
         splitIOKey: {{ $secret.externalServices.split.sdkKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 env-duplicator:
   name: env-duplicator
   team: frontegg
@@ -2072,14 +2040,7 @@ env-duplicator:
         brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
         saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-
     additionalSecrets: ""
-
-
-
-
-
-
 
 entitlements-service:
   name: entitlements
