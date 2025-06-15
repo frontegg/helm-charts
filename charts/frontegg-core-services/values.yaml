@@ -2566,12 +2566,6 @@ dashboard-env-builder:
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 backoffice-service:
   name: backoffice
   team: frontegg
@@ -2652,11 +2646,11 @@ backoffice-service:
       limits:
         memory: 2Gi
     livenessProbe:
-    #    httpGet:
-    #      path: /health
-    #      port: http
-    #    initialDelaySeconds: 60
-    #    periodSeconds: 20
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 60
+      periodSeconds: 20
     readinessProbe:
       httpGet:
         path: /health
@@ -2750,12 +2744,6 @@ backoffice-service:
       successfulJobsHistoryLimit: 3
       restartPolicy: Never
 
-
-
-
-
-
-
 audits-service:
   name: audits
   team: frontegg
@@ -2810,7 +2798,7 @@ audits-service:
       NODE_ENV: production
       FRONTEGG_SERVICE_NAME: audits-service
       FRONTEGG_JAEGER_ENABLED: "true"
-      FRONTEGG_USE_FIREHOSE_ANALYTICS: "true"
+      FRONTEGG_USE_FIREHOSE_ANALYTICS: "false"
       FRONTEGG_PORT: "3002"
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
       FRONTEGG_SPLIT_IO_LOCAL_CONFIG_FILE: /etc/config/settings.yaml
@@ -2864,12 +2852,6 @@ audits-service:
       FRONTEGG_CLIENT_ID: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
       FRONTEGG_VENDORS_SERVICE_API_KEY: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
     additionalSecrets: ""
-
-
-
-
-
-
 
 authentication-service:
   name: authentication
@@ -2946,12 +2928,6 @@ authentication-service:
       FRONTEGG_AUTH_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.authenticationServiceApiKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 applications-service:
   name: applications
   team: frontegg
@@ -2961,7 +2937,7 @@ applications-service:
     enabled: false
   image:
     repository: frontegg/applications-service
-    prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
+    prefix: *imagePrefix
   defaults: *defaultsAnnotations
   web:
     enabled: true
@@ -3106,12 +3082,6 @@ applications-service:
         secret: {{ $secret.frontegg.applications.identity.cryptoKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 api-gateway:
   name: api-gateway
   team: frontegg
@@ -3123,30 +3093,30 @@ api-gateway:
   argoRollouts:
     enabled: false
   defaults: *defaultsAnnotations
-  ingresses:
-    tesla:
-      enabled: true
-      ingressClassName: nginx
-      annotations:
-        nginx.ingress.kubernetes.io/proxy-body-size: 4m
-        nginx.ingress.kubernetes.io/configuration-snippet: |
-          more_clear_input_headers "Host" "X-Forwarded-Host";
-          proxy_set_header Host $http_host;
-          proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
-          proxy_set_header X-Trace-ID $opentelemetry_trace_id;
-        nginx.ingress.kubernetes.io/server-snippet: |
-          add_header Cache-Control "no-transform";
-          location ~* ^/(metrics|healthcheck) {
-            deny all;
-            return 403;
-          }
-        nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
-      rules:
-        - hostname: "*.onprem.backegg.io"
-          paths:
-            - path: /
-              servicePort: 80
-              pathType: ImplementationSpecific
+#  ingresses:
+#    tesla:
+#      enabled: true
+#      ingressClassName: nginx
+#      annotations:
+#        nginx.ingress.kubernetes.io/proxy-body-size: 4m
+#        nginx.ingress.kubernetes.io/configuration-snippet: |
+#          more_clear_input_headers "Host" "X-Forwarded-Host";
+#          proxy_set_header Host $http_host;
+#          proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+#          proxy_set_header X-Trace-ID $opentelemetry_trace_id;
+#        nginx.ingress.kubernetes.io/server-snippet: |
+#          add_header Cache-Control "no-transform";
+#          location ~* ^/(metrics|healthcheck) {
+#            deny all;
+#            return 403;
+#          }
+#        nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+#      rules:
+#        - hostname: "*.onprem.backegg.io"
+#          paths:
+#            - path: /
+#              servicePort: 80
+#              pathType: ImplementationSpecific
   web:
     enabled: true
     command: ["node"]
