@@ -3782,226 +3782,9 @@ oauth-service:
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
 
-configCenter:
-  annotations:
-    "helm.sh/hook": pre-install, pre-upgrade
-    "helm.sh/hook-weight": "-100"
-  externalServices:
-    secrets:
-      url: ""
-    iot:
-      topic: ""
-    aws:
-      region: "us-east-1"
-      componentsCollectionIdentifier: ""
-  frontegg:
-    general:
-      envID: *envId
-      analytics:
-        segmentAnalyticsEnabled: "false"
-        useFirehoseAnalytics: "false"
-      portalUrl: "https://portal.onprem.backegg.io" # TODO FIX
-      corsOrigin: "https://portal.onprem.backegg.io" # TODO FIX
-      portalV1Url: ""
-      customDomainCloudflareEndpoint: ""
-      tracingCollectorEndpoint: ""
-      idgwApplicationId: ""
-      splitioProxyEndpoint: ""
-    applications:
-      audits:
-        auditsTopicName: "audits-v1"
-        auditsDbType: "mysql"
-        auditsDbName: "frontegg_audits"
-        metadataServiceFetchPubsubStrategy: "true"
-        metadataServiceTopicName: "METADATA_UPDATED"
-        auditsServiceRedisDbIndex: "2"
-        auditsKafkaRetryCount: "3"
-      authentication:
-        authenticationCookieDomain: ""
-        authenticationSecuredCookie: ""
-      apiGateway:
-        apiGatewayUsageReportingEnabled: ""
-        apiGatewayMetricsEnabled: ""
-        apiGatewayRedisDbIndex: "9"
-        enableMultiHosts: "true"
-        apiGatewayEnableRateLimiters: ""
-        apiGatewayEnableRedisStore: ""
-        apiGatewayIgnoredHosts: "" # DYANMICALLY SET
-        redirectEnabled: "false"
-        redirectUrl: ""
-      connectorsWorker:
-        connectorsWorkerServiceRedisDbIndex: "5"
-      dashboard:
-        mixpanelId: ""
-        dashboardHubspotEnabled: "false"
-        dashboardDevrevEnabled: "false"
-        devrevApiUrl: ""
-        dashboardDomainSuffix: ""
-        cdnUrl: ""
-        cdnBucket: ""
-        backofficeViewerRoleId: ""
-        backofficeEditorRoleId: ""
-        fronteggUiEventsUrl: ""
-      events:
-        eventsServiceRedisDbIndex: "7"
-      identity:
-        identityServiceDbName: "frontegg_identity"
-        identityServiceAuditTriggeredTopicName: "AUDIT_TRIGGERED"
-        identityServiceMaxConcurrentSessions: "100"
-      metadata:
-        metadataServiceDbConnectionTimeoutMs: "30000"
-        metadataServiceDbConnectionRetryAttempts: "3"
-        metadataServiceDbConnectionRetryDelay: "1000"
-        metadataServiceRedisDbIndex: "0"
-        metadataServiceIpStackUrl: "http://api.ipstack.com"
-      notifications:
-        eventsPubsubTopic: "events"
-      reportingEngine:
-        assetBlobStorageContainerName: "vendor-assets"
-        reportingEngineApproversNotificationEmailTemplateId:
-        iotRedisDbIndex: "4"
-        iotRedisRecordTtlSeconds: "600"
-        iotRedisMaxPollTimeoutMs: "60000"
-        iotRedisPollIntervalMs: "1000"
-        bucketUrl: ""
-      reportsScheduler:
-        reportingServiceFetchPubsubStrategy: "true"
-        reportingServiceTopicName: "reporting-changes"
-      subscription:
-        stripeRegion: "eu"
-        defaultStripeRegion: "eu"
-      teamManagement:
-        teamManagementServiceDbName: "frontegg_team_management"
-        teamManagementServiceRedisDbIndex: "1"
-        teamManagementServiceAuthorizationTopicName: "authorization-v1"
-      tenants:
-        tenantsUsageReportingTopicName: "usage-reporting-v1"
-        tenantsRedisDbIndex: "8"
-        tenantsServiceMysqlDbName: "frontegg_tenants"
-        tenantAssetsS3Bucket: ""
-        tenantAssetsS3Url: "https://{{ $.Values.configCenter.externalServices.aws.componentsCollectionIdentifier }}-tenants-assets.s3.{{ $.Values.configCenter.externalServices.aws.region }}.amazonaws.com"
-        s3:
-          tenantsServiceAwsEndpoint: ""
-          tenantsServiceTenantAssetsS3Endpoint: ""
-      customCode:
-        lambda:
-          management:
-            roleArn: ""
-          execution:
-            roleArn: ""
-            defaultPolicies: ""
-          environment:
-            variables:
-              cxDomain: ""
-          layers: ""
-      vendors:
-        vendorsServiceMysqlDbName: "frontegg_vendors"
-        vendorsAssetBlobStorageContainerName: "public-vendor-assets"
-        vendorsServiceVendorsDomain: "onprem.backegg.io" #TODO: DYAMICALLY SET
-        customDomainClusterIngressClass: "nginx"
-        customDomainClusterIssuerName: "letsencrypt"
-        customDomainClusterDefaultPort: "443"
-        customDomainClusteNamespace: "custom-domains"
-        customDomainSslEndpoint: ""
-        customDomainCloudflareTransformRuleSetId: "xxxx"
-        customDomainCloudflareOriginRuleSetId: "xxxx"
-        kafkaVendorsTopic: "vendors-v1"
-      webhooks:
-        webhookServiceMongodbConnectionRetryAttempts: "3"
-        webhookServiceMongodbConnectionRetryDelay: "1000"
-        webhookMysqlDbName: "frontegg_webhooks"
-        proxyEnabled: "true"
-      webpush:
-        webpushMongodbConnectionRetryAttempts: "3"
-        webpushMongodbConnectionRetryDelay: "1000"
-      sidekick:
-        sidekickAllowedOrigin: "*"
-        sidekickTenantId: ""
-      dataIngest:
-        dataIngestDbSchema: "frontegg_ingest"
-        dataIngestKafkaTopic: "usage-reporting-v1"
-        dataIngestKafkaVendorsTopic: "vendors-v1"
-      pqlProcess:
-        pqlProcessHubspotEnableCompaniesSync: ""
-        pqlProcessHubspotEnableReporting: ""
-      oauth:
-        oauthServiceDbName: "frontegg_oauth"
-        oauthServiceRedisDbIndex: "10"
-      envDuplicator:
-        configCopyResultTopicName: "configuration-copy-result-v1"
-        configCopyTopicName: "configuration-copy-v1"
-        dbName: "frontegg_env_duplicator"
-      backoffice:
-        redis:
-          redisDbIndex: "12"
-      entitlements:
-        redisDBIndex: "12"
-        vendorSnapshotJobDelayMS: "10000"
-        vendorSnapshotJobAttempts: "3"
-        opaPolicyBucket: "prod-policy20250505093256548900000004" # TODO DYNAMICALLY SET
-      forwardProxy:
-        isAuthRequired: "false"
-        host: "forward-proxy-v2-web"
-        port: "8080"
-        protocol: "http"
-
-    services:
-      nlpExecutionAssistantUrl: "http://nlp-execution-assistant-v2-web"
-      anomalyDetectionUrl: "http://anomaly-detection-v2-web"
-      idgwBackendUrl: "http://idgw-backend-web"
-      mcpServerUrl: "http://mcp-server-web"
-      appIntegrationsUrl: "http://app-integrations-web"
-      authenticationServiceUrl: "http://frontegg-authentication-service" # TODO this should be deleted from services like api gateway
-      notificationServiceUrl: "http://frontegg-notification-service" # TODO this should be deleted from services like api gateway
-      identityServiceUrl: "http://identity-v2-web"
-      identityP1ServiceUrl: "http://identity-v2-hp"
-      apiGatewayInternalUrl: "http://api-gateway-v2-web"
-      oauthServiceUrl: "http://oauth-v2-web"
-      vendorsServiceUrl: "http://vendors-v2-web"
-      signalsServiceUrl: "http://signals-v2-web"
-      auditsServiceUrl: "http://audits-v2-web"
-      eventsServiceUrl: "http://events-v2-web"
-      integrationsServiceUrl: "http://integrations-v2-web"
-      applicationsServiceUrl: "http://applications-v2-web"
-      cdnUrl: "https://us-east-1.console.aws.amazon.com/s3/buckets/dashboard-static-content-zzrhbrsu"
-      adminsServiceUrl: "http://admins-v2-web"
-      subscriptionsServiceUrl: "http://subscriptions-v2-web"
-      teamServiceUrl: "http://team-management-v2-web"
-      tenantsServiceUrl: "http://tenants-v2-web"
-      webhookServiceUrl: "http://webhooks-v2-web"
-      metadataServiceUrl: "http://metadata-v2-web"
-      prehookServiceUrl: "http://prehooks-v2-web"
-      backofficeUrl: "http://backoffice-v2-web"
-      emailServiceUrl: "http://email-v2-web"
-      dashboardEnvBuilderUrl: "http://dashboard-env-builder-v2-web"
-      envDuplicatorUrl: "http://env-duplicator-v2-web"
-      entitlementsServiceUrl: "http://entitlements-v2-web"
-      securityEnginesUrl: "http://security-engines-v2-web"
-      entitlementsAgentUrl: "http://entitlements-agent-v2-web"
-      securityCenterServiceUrl: "http://security-center-v2-web"
-      webpushServiceUrl: "http://frontegg-webpush-service"
-      directoryServiceUrl: "http://directory-v2-web"
-      logsServiceUrl: "http://logs-v2-web"
-      policyServiceUrl: "http://policy-v2-web"
-      reportsEngineUrl: "http://reporting-engine-v2-web"
-      reportsServiceUrl: "http://reporting-v2-web"
-      usageTrackingUrl: "http://usage-tracking-v2-web"
-      customCodeServiceUrl: "http://custom-code-v2-web"
-      logsStreamingServiceUrl: "http://log-stream-v2-web"
-      pricingViewsUrl: "http://pricing-views-v2-web"
-      authHubServiceUrl: "http://auth-hub-v2-web"
-      apiGatewayUrl: "https://api.onprem.backegg.io" #TODO SET THIS ON INSTALL
-      fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #should be modified for customer
-
-
-
-
-
-
-
 task-master:
   name: task-master
-  team: adoption
+  team: frontegg
   envID: *envId
   appVersion: aac5184
   image:
@@ -4215,3 +3998,204 @@ task-master:
       encryption:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
     additionalSecrets: ""
+
+configCenter:
+  annotations:
+    "helm.sh/hook": pre-install, pre-upgrade
+    "helm.sh/hook-weight": "-100"
+  externalServices:
+    secrets:
+      url: ""
+    iot:
+      topic: ""
+    aws:
+      region: "us-east-1"
+      componentsCollectionIdentifier: ""
+  frontegg:
+    general:
+      envID: *envId
+      analytics:
+        segmentAnalyticsEnabled: "false"
+        useFirehoseAnalytics: "false"
+      portalUrl: "https://portal.onprem.backegg.io" # TODO FIX
+      corsOrigin: "https://portal.onprem.backegg.io" # TODO FIX
+      portalV1Url: ""
+      customDomainCloudflareEndpoint: ""
+      tracingCollectorEndpoint: ""
+      idgwApplicationId: ""
+      splitioProxyEndpoint: ""
+    applications:
+      audits:
+        auditsTopicName: "audits-v1"
+        auditsDbType: "mysql"
+        auditsDbName: "frontegg_audits"
+        metadataServiceFetchPubsubStrategy: "true"
+        metadataServiceTopicName: "METADATA_UPDATED"
+        auditsServiceRedisDbIndex: "2"
+        auditsKafkaRetryCount: "3"
+      authentication:
+        authenticationCookieDomain: ""
+        authenticationSecuredCookie: ""
+      apiGateway:
+        apiGatewayUsageReportingEnabled: ""
+        apiGatewayMetricsEnabled: ""
+        apiGatewayRedisDbIndex: "9"
+        enableMultiHosts: "true"
+        apiGatewayEnableRateLimiters: ""
+        apiGatewayEnableRedisStore: ""
+        apiGatewayIgnoredHosts: "" # DYANMICALLY SET
+        redirectEnabled: "false"
+        redirectUrl: ""
+      connectorsWorker:
+        connectorsWorkerServiceRedisDbIndex: "5"
+      dashboard:
+        mixpanelId: ""
+        dashboardHubspotEnabled: "false"
+        dashboardDevrevEnabled: "false"
+        devrevApiUrl: ""
+        dashboardDomainSuffix: ""
+        cdnUrl: ""
+        cdnBucket: ""
+        backofficeViewerRoleId: ""
+        backofficeEditorRoleId: ""
+        fronteggUiEventsUrl: ""
+      events:
+        eventsServiceRedisDbIndex: "7"
+      identity:
+        identityServiceDbName: "frontegg_identity"
+        identityServiceAuditTriggeredTopicName: "AUDIT_TRIGGERED"
+        identityServiceMaxConcurrentSessions: "100"
+      metadata:
+        metadataServiceDbConnectionTimeoutMs: "30000"
+        metadataServiceDbConnectionRetryAttempts: "3"
+        metadataServiceDbConnectionRetryDelay: "1000"
+        metadataServiceRedisDbIndex: "0"
+        metadataServiceIpStackUrl: "http://api.ipstack.com"
+      notifications:
+        eventsPubsubTopic: "events"
+      reportingEngine:
+        assetBlobStorageContainerName: "vendor-assets"
+        reportingEngineApproversNotificationEmailTemplateId:
+        iotRedisDbIndex: "4"
+        iotRedisRecordTtlSeconds: "600"
+        iotRedisMaxPollTimeoutMs: "60000"
+        iotRedisPollIntervalMs: "1000"
+        bucketUrl: ""
+      reportsScheduler:
+        reportingServiceFetchPubsubStrategy: "true"
+        reportingServiceTopicName: "reporting-changes"
+      subscription:
+        stripeRegion: "eu"
+        defaultStripeRegion: "eu"
+      teamManagement:
+        teamManagementServiceDbName: "frontegg_team_management"
+        teamManagementServiceRedisDbIndex: "1"
+        teamManagementServiceAuthorizationTopicName: "authorization-v1"
+      tenants:
+        tenantsUsageReportingTopicName: "usage-reporting-v1"
+        tenantsRedisDbIndex: "8"
+        tenantsServiceMysqlDbName: "frontegg_tenants"
+        tenantAssetsS3Bucket: ""
+        tenantAssetsS3Url: "https://{{ $.Values.configCenter.externalServices.aws.componentsCollectionIdentifier }}-tenants-assets.s3.{{ $.Values.configCenter.externalServices.aws.region }}.amazonaws.com"
+        s3:
+          tenantsServiceAwsEndpoint: ""
+          tenantsServiceTenantAssetsS3Endpoint: ""
+      customCode:
+        lambda:
+          management:
+            roleArn: ""
+          execution:
+            roleArn: ""
+            defaultPolicies: ""
+          environment:
+            variables:
+              cxDomain: ""
+          layers: ""
+      vendors:
+        vendorsServiceMysqlDbName: "frontegg_vendors"
+        vendorsAssetBlobStorageContainerName: "public-vendor-assets"
+        vendorsServiceVendorsDomain: "onprem.backegg.io" #TODO: DYAMICALLY SET
+        customDomainClusterIngressClass: ""
+        customDomainClusterIssuerName: ""
+        customDomainClusterDefaultPort: "443"
+        customDomainClusteNamespace: ""
+        customDomainSslEndpoint: ""
+        customDomainCloudflareTransformRuleSetId: ""
+        customDomainCloudflareOriginRuleSetId: ""
+        kafkaVendorsTopic: "vendors-v1"
+      webhooks:
+        webhookServiceMongodbConnectionRetryAttempts: "3"
+        webhookServiceMongodbConnectionRetryDelay: "1000"
+        webhookMysqlDbName: "frontegg_webhooks"
+        proxyEnabled: "true"
+      webpush:
+        webpushMongodbConnectionRetryAttempts: "3"
+        webpushMongodbConnectionRetryDelay: "1000"
+      oauth:
+        oauthServiceDbName: "frontegg_oauth"
+        oauthServiceRedisDbIndex: "10"
+      envDuplicator:
+        configCopyResultTopicName: "configuration-copy-result-v1"
+        configCopyTopicName: "configuration-copy-v1"
+        dbName: "frontegg_env_duplicator"
+      backoffice:
+        redis:
+          redisDbIndex: "12"
+      entitlements:
+        redisDBIndex: "12"
+        vendorSnapshotJobDelayMS: "10000"
+        vendorSnapshotJobAttempts: "3"
+        opaPolicyBucket: "prod-policy20250505093256548900000004" # TODO DYNAMICALLY SET
+      forwardProxy:
+        isAuthRequired: "false"
+        host: "forward-proxy-v2-web"
+        port: "8080"
+        protocol: "http"
+
+    services:
+      nlpExecutionAssistantUrl: "http://nlp-execution-assistant-v2-web"
+      anomalyDetectionUrl: "http://anomaly-detection-v2-web"
+      idgwBackendUrl: "http://idgw-backend-web"
+      mcpServerUrl: "http://mcp-server-web"
+      appIntegrationsUrl: "http://app-integrations-web"
+      authenticationServiceUrl: "http://frontegg-authentication-service"
+      notificationServiceUrl: "http://frontegg-notification-service"
+      identityServiceUrl: "http://identity-v2-web"
+      identityP1ServiceUrl: "http://identity-v2-hp"
+      apiGatewayInternalUrl: "http://api-gateway-v2-web"
+      oauthServiceUrl: "http://oauth-v2-web"
+      vendorsServiceUrl: "http://vendors-v2-web"
+      signalsServiceUrl: "http://signals-v2-web"
+      auditsServiceUrl: "http://audits-v2-web"
+      eventsServiceUrl: "http://events-v2-web"
+      integrationsServiceUrl: "http://integrations-v2-web"
+      applicationsServiceUrl: "http://applications-v2-web"
+      cdnUrl: "https://us-east-1.console.aws.amazon.com/s3/buckets/dashboard-static-content-zzrhbrsu"
+      adminsServiceUrl: "http://admins-v2-web"
+      subscriptionsServiceUrl: "http://subscriptions-v2-web"
+      teamServiceUrl: "http://team-management-v2-web"
+      tenantsServiceUrl: "http://tenants-v2-web"
+      webhookServiceUrl: "http://webhooks-v2-web"
+      metadataServiceUrl: "http://metadata-v2-web"
+      prehookServiceUrl: "http://prehooks-v2-web"
+      backofficeUrl: "http://backoffice-v2-web"
+      emailServiceUrl: "http://email-v2-web"
+      dashboardEnvBuilderUrl: "http://dashboard-env-builder-v2-web"
+      envDuplicatorUrl: "http://env-duplicator-v2-web"
+      entitlementsServiceUrl: "http://entitlements-v2-web"
+      securityEnginesUrl: "http://security-engines-v2-web"
+      entitlementsAgentUrl: "http://entitlements-agent-v2-web"
+      securityCenterServiceUrl: "http://security-center-v2-web"
+      webpushServiceUrl: "http://frontegg-webpush-service"
+      directoryServiceUrl: "http://directory-v2-web"
+      logsServiceUrl: "http://logs-v2-web"
+      policyServiceUrl: "http://policy-v2-web"
+      reportsEngineUrl: "http://reporting-engine-v2-web"
+      reportsServiceUrl: "http://reporting-v2-web"
+      usageTrackingUrl: "http://usage-tracking-v2-web"
+      customCodeServiceUrl: "http://custom-code-v2-web"
+      logsStreamingServiceUrl: "http://log-stream-v2-web"
+      pricingViewsUrl: "http://pricing-views-v2-web"
+      authHubServiceUrl: "http://auth-hub-v2-web"
+      apiGatewayUrl: "https://api.onprem.backegg.io" #TODO SET THIS ON INSTALL
+      fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #should be modified for customer
