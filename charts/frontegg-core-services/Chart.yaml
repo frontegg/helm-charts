@@ -3,8 +3,8 @@ name: frontegg-core-services
 description: Frontegg Core Services Helm Chart
 type: application
 
-version: 0.0.1
-appVersion: 2025.04.01
+version: 0.0.1-alpha.1
+appVersion: 2025.06
 
 maintainers:
   - name: "Frontegg"
@@ -126,16 +126,6 @@ dependencies:
     repository: https://frontegg.github.io/helm-charts
     alias: webhooks
 
-  - name: strimzi-kafka-operator
-    version: 0.45.*
-    repository: oci://quay.io/strimzi-helm
-    condition: debezium.kafkaConnect.install
-
-  - name: debezium-operator
-    version: "3.1.0-final"
-    repository: https://charts.debezium.io
-    condition: debezium.debeziumOperator.install
-
   - name: *chartName
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
@@ -150,3 +140,13 @@ dependencies:
     version: *chartVersion
     repository: https://frontegg.github.io/helm-charts
     alias: email-service
+
+  - name: strimzi-kafka-operator
+    version: 0.45.*
+    repository: oci://quay.io/strimzi-helm
+    condition: debezium.kafkaConnect.install
+
+  - name: debezium-operator
+    version: "3.1.0-final"
+    repository: https://charts.debezium.io
+    condition: debezium.debeziumOperator.install
