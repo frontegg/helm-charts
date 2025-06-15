@@ -3508,6 +3508,8 @@ identity-service:
       FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
       FRONTEGG_USE_FIREHOSE_ANALYTICS: "false"
       FRONTEGG_JAEGER_ENABLED: "true"
+      FRONTEGG_TWILIO_SENDER: ""
+      FRONTEGG_TWILIO_MESSAGING_SID: ""
       LOG_LEVEL: verbose
       MIGRATION_DIR_PATH: /service/dist/migrations,/service/dist/seeders
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
