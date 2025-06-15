@@ -41,22 +41,11 @@ initDbJob:
 # remember if using ses the email domain should be verified first
 
 environmentSetupJob:
-  email: "devops@frontegg.com"
-  password: "Fe123456!@"
-  senderEmail: "devops@frontegg.com"
-
-
-
-
-
-
+  email: ""
+  password: ""
+  senderEmail: ""
 
 # Configuration for the admins service
-
-
-
-
-
 
 admins:
   name: admins
@@ -88,7 +77,6 @@ admins:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
         "helm.sh/hook-weight": "-100"
-
   web:
     enabled: true
     command: ["/bin/bash"]
@@ -168,11 +156,127 @@ admins:
       FRONTEGG_TENANTS_SERVICE_API_KEY={{ $secret.frontegg.apiKeys.tenantsServiceApiKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
+email-service:
+  name: email
+  team: core
+  envID: *envId
+  appVersion: dbaac1e
+  defaults: *defaultsAnnotations
+  image:
+    repository: frontegg/email-service
+    prefix: *imagePrefix
+  imagePullSecrets:
+    - name: regcred
+  argoRollouts:
+    enabled: false
+  web:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "service"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3028
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3028
+    resources:
+      requests:
+        cpu: 250m
+        memory: 400Mi
+      limits:
+        memory: 500Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 70
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 20
+  worker:
+    enabled: true
+    command: ["/bin/bash"]
+    args: ["entrypoint.sh", "worker"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 3028
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 3028
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 2
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 75
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+    livenessProbe:
+      failureThreshold: 3
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 30
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 5
+  configmap:
+    data:
+      CLOUD_ENVIRONMENT: dev
+      FRONTEGG_SERVICE_NAME: email-service
+      NODE_ENV: production
+      FRONTEGG_CONFIG_DIRECTORY: /etc/config
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.yaml
+    text: |
+      {{- $secret := .contents | fromYaml }}
+      apiKey: {{ $secret.frontegg.apiKeys.emailServiceApiKey | toYaml }}
+      kafka:
+        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
+        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
+        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
+      redis:
+        host: {{ $secret.databases.redis.host | toYaml }}
+        port: {{ $secret.databases.redis.port | toYaml }}
+        password: {{ $secret.databases.redis.password | toYaml }}
+        tls: {{ $secret.databases.redis.tls | toYaml }}
+      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      internalServices:
+        vendors:
+          apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
+        identity:
+          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
+      sendGrid:
+        apiKey: {{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
+    additionalSecrets: ""
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
+        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url
 
 team-management-service:
   name: team-management
@@ -280,7 +384,7 @@ team-management-service:
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_ANALYTICS_TYPE: firehose
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.yaml"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: "/etc/config/settings.yaml"
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
       LOG_LEVEL: verbose
 
   jobs:
@@ -655,7 +759,7 @@ vendors-service:
       NODE_NO_WARNINGS: "1"
       SENTRY_ENABLED: "false"
       LOG_LEVEL: verbose
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   jobs:
     migrate:
       enabled: true
@@ -878,7 +982,7 @@ tenants-service:
       FRONTEGG_ANALYTICS_TYPE: firehose
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
 
   configuration:
     map:
@@ -1043,7 +1147,7 @@ security-engines:
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       SENTRY_ENABLED: "true"
       SENTRY_DSN: "https://df4e77306fe836ca17283337bab8570a@o362363.ingest.us.sentry.io/4507877559697408"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -1199,7 +1303,7 @@ security-center-service:
       FRONTEGG_SERVICE_NAME: security-center-service
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -1402,7 +1506,7 @@ metadata-service:
       FRONTEGG_SERVICE_NAME: metadata-service
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
       FRONTEGG_JAEGER_ENABLED: "true"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   jobs:
     migrate:
       enabled: true
@@ -2258,7 +2362,7 @@ entitlements-agent:
       DECISION_LOG_CONSOLE_ENABLED: "false"
       POLLING_MIN_DELAY: "30"
       POLLING_MAX_DELAY: "60"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -2412,7 +2516,7 @@ directory-service:
       FRONTEGG_SERVICE_NAME: directory-service
       FRONTEGG_JAEGER_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -2505,7 +2609,7 @@ dashboard-env-builder:
       FRONTEGG_DASHBOARD_ENV_BUILDER_DB_NAME: frontegg_dashboard_env_builder
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -2663,7 +2767,7 @@ backoffice-service:
       FRONTEGG_JAEGER_ENABLED: "true"
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_FILE_PATH: /etc/config/config.env
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   jobs:
     migrate:
       enabled: true
@@ -3045,7 +3149,7 @@ applications-service:
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       NODE_NO_WARNINGS: "1"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   jobs:
     migrate:
       enabled: true
@@ -3228,7 +3332,7 @@ api-gateway:
       #SENTRY_ENABLED: "true"
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
       config-center:
@@ -3542,7 +3646,7 @@ identity-service:
       MIGRATION_DIR_PATH: /service/dist/migrations,/service/dist/seeders
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       SENTRY_ENABLED: "false"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
       FRONTEGG_CLOUDFLARE_PURGE_CACHE_ENABLED: "false"
   jobs:
     migrate:
@@ -3749,7 +3853,7 @@ oauth-service:
       FRONTEGG_CDN_URL: "https://frontegg-prod.onprem.backegg.io/oauth"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
       FRONTEGG_USE_FRONTEND_STATIC_FILES: "true"
-      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   jobs:
     migrate:
       enabled: true
@@ -3760,15 +3864,6 @@ oauth-service:
           requests:
             cpu: 500m
             memory: 500Mi
-  #    upload-assets:
-  #      enabled: true
-  #      spec:
-  #        command: [ "/bin/sh" ]
-  #        args: [ "./s3-assets-upload.sh" ]
-  #        resources:
-  #          requests:
-  #            cpu: 500m
-  #            memory: 500Mi
   configuration:
     map:
       config-center:
@@ -3827,17 +3922,10 @@ oauth-service:
         saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 configCenter:
   annotations:
     "helm.sh/hook": pre-install, pre-upgrade
     "helm.sh/hook-weight": "-100"
-
   externalServices:
     secrets:
       url: ""
@@ -3848,7 +3936,7 @@ configCenter:
       componentsCollectionIdentifier: ""
   frontegg:
     general:
-      envID: *envId # Add this line to reference the existing anchor
+      envID: *envId
       analytics:
         segmentAnalyticsEnabled: "false"
         useFirehoseAnalytics: "false"
@@ -4266,134 +4354,4 @@ task-master:
           clusterContextString: {{ $secret.frontegg.applications.vendors.customDomains.clusterContext | toYaml }}
       encryption:
         secret: {{ $secret.frontegg.applications.directory.directoryServiceEncryptionKey | toYaml }}
-
     additionalSecrets: ""
-
-
-
-
-
-
-
-email-service:
-  name: email
-  team: core
-  envID: *envId
-  appVersion: dbaac1e
-  defaults: *defaultsAnnotations
-  image:
-    repository: frontegg/email-service
-    prefix: *imagePrefix
-  imagePullSecrets:
-    - name: regcred
-  argoRollouts:
-    enabled: false
-  web:
-    enabled: true
-    command: ["/bin/bash"]
-    args: ["entrypoint.sh", "service"]
-    service:
-      ports:
-        - port: 80
-          targetPort: 3028
-          protocol: TCP
-          name: http
-    ports:
-      - name: http
-        containerPort: 3028
-    resources:
-      requests:
-        cpu: 250m
-        memory: 400Mi
-      limits:
-        memory: 500Mi
-    autoscaling:
-      enabled: true
-      minReplicas: 1
-      maxReplicas: 5
-      targetCPUUtilizationPercentage: 50
-      targetMemoryUtilizationPercentage: 70
-    readinessProbe:
-      httpGet:
-        path: /health
-        port: http
-      initialDelaySeconds: 20
-      periodSeconds: 5
-    livenessProbe:
-      httpGet:
-        path: /health
-        port: http
-      initialDelaySeconds: 30
-      periodSeconds: 20
-  worker:
-    enabled: true
-    command: ["/bin/bash"]
-    args: ["entrypoint.sh", "worker"]
-    service:
-      ports:
-        - port: 80
-          targetPort: 3028
-          protocol: TCP
-          name: http
-    ports:
-      - name: http
-        containerPort: 3028
-    autoscaling:
-      enabled: true
-      minReplicas: 1
-      maxReplicas: 2
-      targetCPUUtilizationPercentage: 50
-      targetMemoryUtilizationPercentage: 75
-    resources:
-      requests:
-        cpu: 500m
-        memory: 1Gi
-    livenessProbe:
-      failureThreshold: 3
-      httpGet:
-        path: /health
-        port: http
-      initialDelaySeconds: 30
-      periodSeconds: 30
-    readinessProbe:
-      httpGet:
-        path: /health
-        port: http
-      initialDelaySeconds: 30
-      periodSeconds: 5
-  configmap:
-    data:
-      CLOUD_ENVIRONMENT: dev
-      FRONTEGG_SERVICE_NAME: email-service
-      NODE_ENV: production
-      FRONTEGG_CONFIG_DIRECTORY: /etc/config
-  externalSecret:
-    enabled: true
-    mountPath: /etc/config/config.yaml
-    text: |
-      {{- $secret := .contents | fromYaml }}
-      apiKey: {{ $secret.frontegg.apiKeys.emailServiceApiKey | toYaml }}
-      kafka:
-        brokerList: {{ $secret.databases.kafka.brokerList | toYaml }}
-        saslPassword: {{ $secret.databases.kafka.saslPassword | toYaml }}
-        saslUsername: {{ $secret.databases.kafka.saslUserName | toYaml }}
-      redis:
-        host: {{ $secret.databases.redis.host | toYaml }}
-        port: {{ $secret.databases.redis.port | toYaml }}
-        password: {{ $secret.databases.redis.password | toYaml }}
-        tls: {{ $secret.databases.redis.tls | toYaml }}
-      fronteggClientId: {{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
-      internalServices:
-        vendors:
-          apiKey: {{ $secret.frontegg.apiKeys.vendorsServiceApiKey | toYaml }}
-        identity:
-          apiKey: {{ $secret.frontegg.apiKeys.identityServiceApiKey | toYaml }}
-      sendGrid:
-        apiKey: {{ $secret.externalServices.sendgrid.ApiKey | toYaml }}
-
-    additionalSecrets: ""
-  configuration:
-    map:
-      config-center:
-        FRONTEGG_IDENTITY_SERVICE_URL: identity-service-url
-        FRONTEGG_VENDORS_SERVICE_URL: vendors-service-url

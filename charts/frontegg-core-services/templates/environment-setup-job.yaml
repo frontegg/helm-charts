@@ -24,18 +24,18 @@ spec:
               value: /opt/bitnami/kubectl/.kube/config
       containers:
         - name: task-master-cli
-          image: {{ index .Values "task-master" "image" "prefix" }}{{ index .Values "task-master" "image" "repository" }}:{{ index .Values "task-master" "appVersion" }}
+          image: {{ index $values "task-master" "image" "prefix" }}{{ index $values "task-master" "image" "repository" }}:{{ index $values "task-master" "appVersion" }}
           env:
             - name: EMAIL
-              value: {{ .Values.environmentSetupJob.email | quote }}
+              value: {{ required ".Values.environmentSetupJob.email is required" $values.environmentSetupJob.email | quote }}
             - name: PASSWORD
-              value: {{ .Values.environmentSetupJob.password | quote }}
+              value: {{ required ".Values.environmentSetupJob.password is required" $values.environmentSetupJob.password | quote }}
             - name: SENDER_EMAIL
-              value: {{ .Values.environmentSetupJob.senderEmail | quote }}
+              value: {{ required ".Values.environmentSetupJob.senderEmail is required" $values.environmentSetupJob.senderEmail | quote }}
             - name: FRONTEGG_CONFIG_DIRECTORY
               value: "/etc/config"
-            {{- include "container.env" .Values.web | indent 12 }}
-            {{- range $config_name, $values := (index .Values "task-master").configuration.map }}
+            {{- include "container.env" $values.web | indent 12 }}
+            {{- range $config_name, $values := (index $values "task-master").configuration.map }}
             {{- range $key, $value :=  $values}}
             - name: {{ $key }}
               valueFrom:
@@ -44,11 +44,11 @@ spec:
                   key: {{ $value }}
             {{- end }}
             {{- end }}
-          {{- if (index .Values "task-master").configmap.data }}
+          {{- if (index $values "task-master").configmap.data }}
           envFrom:
             - configMapRef:
                 name: task-master-v2
-            {{- with (index .Values "task-master").web.additionalEnvFrom }}
+            {{- with (index $values "task-master").web.additionalEnvFrom }}
             {{- tpl . $top | nindent 12 }}
             {{- end }}
           {{- end }}
