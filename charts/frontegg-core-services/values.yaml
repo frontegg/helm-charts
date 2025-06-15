@@ -650,12 +650,6 @@ webhooks:
 
     additionalSecrets: ""
 
-
-
-
-
-
-
 vendors-service:
   name: vendors
   team: frontegg
@@ -859,12 +853,6 @@ vendors-service:
         FRONTEGG_AWS_REGION: aws-region
         FRONTEGG_CDN_BUCKET: cdn-bucket
 
-
-
-
-
-
-
 tenants-service:
   name: tenants
   team: frontegg
@@ -980,7 +968,6 @@ tenants-service:
       CLOUD_ENVIRONMENT: dev
       NODE_ENV: production
       FRONTEGG_JAEGER_ENABLED: "true"
-      FRONTEGG_ANALYTICS_TYPE: firehose
       LOG_LEVEL: verbose
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
@@ -1030,14 +1017,7 @@ tenants-service:
         cdn:
           zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
-
     additionalSecrets: ""
-
-
-
-
-
-
 
 security-engines:
   name: security-engines
@@ -1146,8 +1126,7 @@ security-engines:
       LOG_LEVEL: verbose
       MIGRATION_DIR_PATH: ./dist/migrations
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
-      SENTRY_ENABLED: "true"
-      SENTRY_DSN: "https://df4e77306fe836ca17283337bab8570a@o362363.ingest.us.sentry.io/4507877559697408"
+      SENTRY_ENABLED: "false"
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
   configuration:
     map:
@@ -1189,14 +1168,7 @@ security-engines:
         cdn:
           zoneId: {{ $secret.externalServices.cloudflare.purgeCache.zone | toYaml }}
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
-
     additionalSecrets: ""
-
-
-
-
-
-
 
 security-center-service:
   name: security-center
@@ -1334,14 +1306,7 @@ security-center-service:
         accessKey: {{ $secret.frontegg.xxx.ipStackApiKey | toYaml }}
       ipData:
         apiKey: {{ $secret.frontegg.xxx.ipDataApiKey | toYaml }}
-
     additionalSecrets: ""
-
-
-
-
-
-
 
 prehook-service:
   name: prehooks
@@ -3328,9 +3293,7 @@ api-gateway:
       FRONTEGG_METRICS_ENABLED: "false"
       FRONTEGG_JAEGER_ENABLED: "true"
       NODE_ENV: "production"
-      #LOG_LEVEL: "verbose"
-      LOG_LEVEL: "debug"
-      #SENTRY_ENABLED: "true"
+      LOG_LEVEL: "verbose"
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
