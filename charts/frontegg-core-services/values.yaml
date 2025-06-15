@@ -1800,6 +1800,7 @@ forward-proxy:
         unsafe_allow_private_ranges: false
 
 
+
 event-service:
   name: events
   team: frontegg
@@ -3361,12 +3362,6 @@ api-gateway:
           apiKey: {{ $secret.frontegg.apiKeys.appIntegrationsApiKey | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 identity-service:
   name: identity
   team: frontegg
@@ -3378,10 +3373,6 @@ identity-service:
   defaults: *defaultsAnnotations
   argoRollouts:
     enabled: false
-  #  serviceAccount:
-  #    enabled: true
-  #    annotations:
-  #    nameOverride: identity-sa
   web:
     enabled: true
     command: ["node"]
@@ -3517,8 +3508,6 @@ identity-service:
       FRONTEGG_IDENTITY_SERVICE_DB_NAME: frontegg_identity
       FRONTEGG_USE_FIREHOSE_ANALYTICS: "false"
       FRONTEGG_JAEGER_ENABLED: "true"
-      FRONTEGG_TWILIO_SENDER: "+12055578527"
-      FRONTEGG_TWILIO_MESSAGING_SID: "MGf49702aad25a6a99b4acf68ad148af03"
       LOG_LEVEL: verbose
       MIGRATION_DIR_PATH: /service/dist/migrations,/service/dist/seeders
       FRONTEGG_CONFIG_DIRECTORY: "/etc/config"
@@ -3657,12 +3646,6 @@ identity-service:
           apiKey: {{ $secret.externalServices.cloudflare.purgeCache.token | toYaml }}
     additionalSecrets: ""
 
-
-
-
-
-
-
 oauth-service:
   name: oauth
   team: frontegg
@@ -3727,7 +3710,7 @@ oauth-service:
       LOG_LEVEL: "verbose"
       FRONTEGG_CONFIG_DIRECTORY: /etc/config
       SENTRY_ENABLED: "false"
-      FRONTEGG_CDN_URL: "https://frontegg-prod.onprem.backegg.io/oauth"
+      FRONTEGG_CDN_URL: ""
       FRONTEGG_SPLIT_IO_USE_SYNCHRONIZER: "false"
       FRONTEGG_USE_FRONTEND_STATIC_FILES: "true"
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: *settingConfigPath
@@ -3817,13 +3800,13 @@ configCenter:
       analytics:
         segmentAnalyticsEnabled: "false"
         useFirehoseAnalytics: "false"
-      portalUrl: "https://portal.onprem.backegg.io"
-      corsOrigin: "https://portal.onprem.backegg.io"
+      portalUrl: "https://portal.onprem.backegg.io" # TODO FIX
+      corsOrigin: "https://portal.onprem.backegg.io" # TODO FIX
       portalV1Url: ""
       customDomainCloudflareEndpoint: ""
-      tracingCollectorEndpoint: "http://logzio-otel-traces.observability.svc.cluster.local:14268/api/traces"
+      tracingCollectorEndpoint: ""
       idgwApplicationId: ""
-      splitioProxyEndpoint: "http://split-proxy-v2-web.feature-management.svc.cluster.local"
+      splitioProxyEndpoint: ""
     applications:
       audits:
         auditsTopicName: "audits-v1"
@@ -3840,10 +3823,10 @@ configCenter:
         apiGatewayUsageReportingEnabled: ""
         apiGatewayMetricsEnabled: ""
         apiGatewayRedisDbIndex: "9"
-        enableMultiHosts: "true" # TODO WHAT IS THIS PURPOSE
+        enableMultiHosts: "true"
         apiGatewayEnableRateLimiters: ""
         apiGatewayEnableRedisStore: ""
-        apiGatewayIgnoredHosts: "api.onprem.backegg.io" # DYANMICALLY SET
+        apiGatewayIgnoredHosts: "" # DYANMICALLY SET
         redirectEnabled: "false"
         redirectUrl: ""
       connectorsWorker:
@@ -3852,13 +3835,13 @@ configCenter:
         mixpanelId: ""
         dashboardHubspotEnabled: "false"
         dashboardDevrevEnabled: "false"
-        devrevApiUrl: "https://api.devrev.ai"
+        devrevApiUrl: ""
         dashboardDomainSuffix: ""
-        cdnUrl: "https://frontegg-prod.onprem.backegg.io/oauth"
-        cdnBucket: "dashboard-static-content-ebdiwxwk"
+        cdnUrl: ""
+        cdnBucket: ""
         backofficeViewerRoleId: ""
         backofficeEditorRoleId: ""
-        fronteggUiEventsUrl: "https://ui-events.frontegg.com"
+        fronteggUiEventsUrl: ""
       events:
         eventsServiceRedisDbIndex: "7"
       identity:
