@@ -62,7 +62,7 @@ defaults:
     annotations:
       argocd.argoproj.io/sync-wave: "-100"
       argocd.argoproj.io/sync-options: Force=true,Replace=true
-  sereviceAccount:
+  serviceAccount:
     annotations:
       argocd.argoproj.io/sync-wave: "-100"
 
