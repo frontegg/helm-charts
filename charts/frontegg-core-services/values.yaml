@@ -4011,7 +4011,7 @@ configCenter:
     iot:
       topic: ""
     aws:
-      region: "us-east-1"
+      region: ""
       componentsCollectionIdentifier: ""
   frontegg:
     general:
@@ -4019,8 +4019,8 @@ configCenter:
       analytics:
         segmentAnalyticsEnabled: "false"
         useFirehoseAnalytics: "false"
-      portalUrl: "https://portal.onprem.backegg.io" # TODO FIX
-      corsOrigin: "https://portal.onprem.backegg.io" # TODO FIX
+      portalUrl: "" # TODO Dynamically set
+      corsOrigin: "" # TODO Dynamically set
       portalV1Url: ""
       customDomainCloudflareEndpoint: ""
       tracingCollectorEndpoint: ""
@@ -4045,7 +4045,7 @@ configCenter:
         enableMultiHosts: "true"
         apiGatewayEnableRateLimiters: ""
         apiGatewayEnableRedisStore: ""
-        apiGatewayIgnoredHosts: "api.onprem.backegg.io" # TODO: DYNAMICALLY SET
+        apiGatewayIgnoredHosts: "" # TODO: DYNAMICALLY SET
         redirectEnabled: "false"
         redirectUrl: ""
       connectorsWorker:
@@ -4116,7 +4116,7 @@ configCenter:
       vendors:
         vendorsServiceMysqlDbName: "frontegg_vendors"
         vendorsAssetBlobStorageContainerName: "public-vendor-assets"
-        vendorsServiceVendorsDomain: "onprem.backegg.io" #TODO: DYAMICALLY SET
+        vendorsServiceVendorsDomain: "" #TODO: DYAMICALLY SET
         customDomainClusterIngressClass: ""
         customDomainClusterIssuerName: ""
         customDomainClusterDefaultPort: "443"
@@ -4147,7 +4147,7 @@ configCenter:
         redisDBIndex: "12"
         vendorSnapshotJobDelayMS: "10000"
         vendorSnapshotJobAttempts: "3"
-        opaPolicyBucket: "prod-policy20250505093256548900000004" # TODO DYNAMICALLY SET
+        opaPolicyBucket: "" # TODO DYNAMICALLY SET
       forwardProxy:
         isAuthRequired: "false"
         host: "forward-proxy-v2-web"
@@ -4172,7 +4172,7 @@ configCenter:
       eventsServiceUrl: "http://events-v2-web"
       integrationsServiceUrl: "http://integrations-v2-web"
       applicationsServiceUrl: "http://applications-v2-web"
-      cdnUrl: "https://us-east-1.console.aws.amazon.com/s3/buckets/dashboard-static-content-zzrhbrsu"
+      cdnUrl: ""
       adminsServiceUrl: "http://admins-v2-web"
       subscriptionsServiceUrl: "http://subscriptions-v2-web"
       teamServiceUrl: "http://team-management-v2-web"
@@ -4199,5 +4199,5 @@ configCenter:
       logsStreamingServiceUrl: "http://log-stream-v2-web"
       pricingViewsUrl: "http://pricing-views-v2-web"
       authHubServiceUrl: "http://auth-hub-v2-web"
-      apiGatewayUrl: "https://api.onprem.backegg.io" #TODO SET THIS ON INSTALL
-      fronteggVendorHost: "frontegg-prod.onprem.backegg.io" #should be modified for customer
+      apiGatewayUrl: "" #TODO SET THIS ON INSTALL
+      fronteggVendorHost: "" #TODO SET THIS ON INSTALL
