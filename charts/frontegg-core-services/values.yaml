@@ -47,8 +47,8 @@ environmentSetupJob:
 
 # Configuration for the admins service
 
-general:
-  envId: &envId "prod-frontegg-private-deployment-main-secret"
+global:
+  envId: ""
   imagePrefix: &imagePrefix "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
   defaultsAnnotations: &defaultsAnnotations
     migration:
@@ -83,7 +83,7 @@ general:
 admins:
   name: admins
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: a647314
   image:
     repository: frontegg/admins-service
@@ -166,7 +166,7 @@ admins:
 email-service:
   name: email
   team: core
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: dbaac1e
   defaults: *defaultsAnnotations
   image:
@@ -288,7 +288,7 @@ email-service:
 team-management-service:
   name: team-management
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: a9019bc
   image:
     repository: frontegg/team-management-service
@@ -460,7 +460,7 @@ team-management-service:
 webhooks:
   name: webhooks
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 7afbe83
   argoRollouts:
     enabled: false
@@ -653,7 +653,7 @@ webhooks:
 vendors-service:
   name: vendors
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 26d5456
   argoRollouts:
     enabled: false
@@ -856,7 +856,7 @@ vendors-service:
 tenants-service:
   name: tenants
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 713afe1
   argoRollouts:
     enabled: false
@@ -1022,7 +1022,7 @@ tenants-service:
 security-engines:
   name: security-engines
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 283f4d9
   image:
     repository: "frontegg/security-engines"
@@ -1173,7 +1173,7 @@ security-engines:
 security-center-service:
   name: security-center
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 88d3de0
   image:
     repository: "frontegg/security-center-service"
@@ -1311,7 +1311,7 @@ security-center-service:
 prehook-service:
   name: prehooks
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: b325627
   image:
     repository: frontegg/prehook-service
@@ -1409,7 +1409,7 @@ prehook-service:
 metadata-service:
   name: metadata
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 082a0cb
   image:
     repository: "frontegg/metadata-service"
@@ -1513,7 +1513,7 @@ metadata-service:
 logs-service:
   name: logs
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: e5323d3
   image:
     repository: "frontegg/logs-service"
@@ -1670,7 +1670,7 @@ logs-service:
 forward-proxy:
   name: forward-proxy
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 43521f0
   image:
     repository: frontegg/forward-proxy
@@ -1804,7 +1804,7 @@ forward-proxy:
 event-service:
   name: events
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 3d739a2
   image:
     repository: "frontegg/event-service"
@@ -1930,7 +1930,7 @@ event-service:
 env-duplicator:
   name: env-duplicator
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: c462b0e
   argoRollouts:
     enabled: false
@@ -2046,7 +2046,7 @@ env-duplicator:
 entitlements-service:
   name: entitlements
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 4da795d
   image:
     repository: "frontegg/entitlements-service"
@@ -2214,7 +2214,7 @@ entitlements-service:
 entitlements-agent:
   name: entitlements-agent
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: e6ac14f
   defaults: *defaultsAnnotations
   argoRollouts:
@@ -2324,7 +2324,7 @@ entitlements-agent:
 directory-service:
   name: directory
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 44ca6ef
   argoRollouts:
     enabled: false
@@ -2464,7 +2464,7 @@ directory-service:
 dashboard-env-builder:
   name: dashboard-env-builder
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 8eea69b
   image:
     repository: frontegg/dashboard-env-builder
@@ -2570,7 +2570,7 @@ dashboard-env-builder:
 backoffice-service:
   name: backoffice
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 7f0c6ab
   image:
     repository: frontegg/backoffice-service
@@ -2748,7 +2748,7 @@ backoffice-service:
 audits-service:
   name: audits
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 20454c7
   image:
     repository: frontegg/audits-service
@@ -2857,7 +2857,7 @@ audits-service:
 authentication-service:
   name: authentication
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 0b7fb5e
   image:
     repository: frontegg/authentication-service
@@ -2932,7 +2932,7 @@ authentication-service:
 applications-service:
   name: applications
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: 237251a
   argoRollouts:
     enabled: false
@@ -3086,7 +3086,7 @@ applications-service:
 api-gateway:
   name: api-gateway
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   image:
     repository: frontegg/api-gateway
     prefix: *imagePrefix
@@ -3365,7 +3365,7 @@ api-gateway:
 identity-service:
   name: identity
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: e316894
   image:
     repository: frontegg/identity-service
@@ -3651,7 +3651,7 @@ identity-service:
 oauth-service:
   name: oauth
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: a6f7d76
   image:
     repository: frontegg/oauth-service
@@ -3787,7 +3787,7 @@ oauth-service:
 task-master:
   name: task-master
   team: frontegg
-  envID: *envId
+  envID: "{{ .Values.global.envId }}"
   appVersion: aac5184
   image:
     repository: frontegg/task-master
@@ -4015,7 +4015,7 @@ configCenter:
       componentsCollectionIdentifier: ""
   frontegg:
     general:
-      envID: *envId
+      envID: "{{ .Values.global.envId }}"
       analytics:
         segmentAnalyticsEnabled: "false"
         useFirehoseAnalytics: "false"
@@ -4045,7 +4045,7 @@ configCenter:
         enableMultiHosts: "true"
         apiGatewayEnableRateLimiters: ""
         apiGatewayEnableRedisStore: ""
-        apiGatewayIgnoredHosts: "" # DYANMICALLY SET
+        apiGatewayIgnoredHosts: "api.onprem.backegg.io" # TODO: DYNAMICALLY SET
         redirectEnabled: "false"
         redirectUrl: ""
       connectorsWorker:

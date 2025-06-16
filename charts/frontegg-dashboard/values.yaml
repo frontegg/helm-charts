@@ -1,10 +1,12 @@
+global:
+  envId: ""
 
 dashboard:
   name: dashboard
-  team: adoption
-  envID: &envId "prod-frontegg-private-deployment-main-secret"
+  team: frontegg
+  envID: "{{ .Values.global.envId }}"
   appVersion: f16bbf7
-  defaults: &defaultsAnnotations
+  defaults:
     migration:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
@@ -20,7 +22,7 @@ dashboard:
         "helm.sh/hook": pre-install, pre-upgrade
         "helm.sh/hook-weight": "-100"
         "helm.sh/hook-delete-policy": "before-hook-creation"
-    sereviceAccount:
+    serviceAccount:
       annotations:
         "helm.sh/hook": pre-install, pre-upgrade
         "helm.sh/hook-weight": "-100"
@@ -28,24 +30,22 @@ dashboard:
     enabled: false
   image:
     repository: frontegg/dashboard
-    prefix: &imagePrefix 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/
-  imagePullSecrets:
-    - name: regcred
+    prefix: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
 
-  ingresses:
-    tesla:
-      enabled: true
-      ingressClassName: nginx
-      hostname: "portal.onprem.backegg.io"
-      service:
-        name: '{{ include "web.name" $ }}'
-        port: 80
-      annotations:
-        nginx.ingress.kubernetes.io/server-snippet: |
-          location ~* ^/(metrics|health) {
-            deny all;
-            return 403;
-          }
+#  ingresses:
+#    tesla:
+#      enabled: true
+#      ingressClassName: nginx
+#      hostname: "portal.onprem.backegg.io"
+#      service:
+#        name: '{{ include "web.name" $ }}'
+#        port: 80
+#      annotations:
+#        nginx.ingress.kubernetes.io/server-snippet: |
+#          location ~* ^/(metrics|health) {
+#            deny all;
+#            return 403;
+#          }
 
   web:
     enabled: true
@@ -100,11 +100,10 @@ dashboard:
       REACT_APP_FRONTEGG_PRICING_URL: dev
       REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: dev
       FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
-      # Based on entitlements.plans-migration
       FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
       FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
       FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
-      #FRONTEGG_CDN_URL: "https://portal.onprem.backegg.io"
+      #FRONTEGG_CDN_URL: ""
 
   configuration:
     map:
@@ -114,20 +113,15 @@ dashboard:
         CORS_ORIGIN: cors-origin
         FRONTEGG_API_GATEWAY_URL: api-gateway-url
         FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
-        #FRONTEGG_CDN_URL: dashboard-cdn-url
         FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
         FRONTEGG_VENDOR_HOST: frontegg-vendor-host
-        FRONTEGG_CDN_BUCKET: cdn-bucket #staging-group-dashboard-static-content
+        FRONTEGG_CDN_BUCKET: cdn-bucket
         FRONTEGG_HUBSPOT_ENABLED: dashboard-hubspot-enabled
         FRONTEGG_DEVREV_ENABLED: dashboard-devrev-enabled
         FRONTEGG_DOMAIN_SUFFIX: dashboard-domain-suffix
-        #REACT_APP_FRONTEGG_PRICING_URL: react-app-frontegg-pricing-url
-        #REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: react-app-frontegg-pricing-template-id
         FRONTEGG_BACKOFFICE_VIEWER_ROLE_ID: backoffice-viewer-role-id
         FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
         FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
-
-        #SPLIT_CLIENT_ID={{ $secret.externalServices.split.clientId | toYaml }}
 
   externalSecret:
     enabled: true
@@ -138,26 +132,6 @@ dashboard:
       FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
       FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
     additionalSecrets: ""
-  #  SENTRY_DSN={{ $secret.externalServices.sentry.dsn | toYaml }}
-  #  GITBOOK_AUTH_TOKEN={{ $secret.externalServices.gitbook.authToken | toYaml }}
-  #  FRONTEGG_HUBSPOT_ACCESS_TOKEN={{ $secret.externalServices.hubspot.accessToken | toYaml }}
-  #  FRONTEGG_DEVREV_AAT={{ $secret.externalServices.devrev.accessToken | toYaml }}
-  #  FRONTEGG_HUBSPOT_FORM_ID={{ $secret.externalServices.hubspot.formId | toYaml }}
-  #  FRONTEGG_HUBSPOT_PORTAL_ID={{ $secret.externalServices.hubspot.portalId | toYaml }}
-  cronjobs:
-    restart:
-      enabled: false
-      name: dashboard-deplopyment-restart
-      role: '{{ include "name" $ }}'
-      roleBinding: '{{ include "name" $ }}'
-      schedule: "0 0 * * *"
-      image: bitnami/kubectl
-      command:
-        - bash
-        - -c
-        - >-
-          kubectl rollout restart deployment/{{ include "web.name" $ }} &&
-          kubectl rollout status deployment/{{ include "web.name" $ }}
 
   jobs:
     upload-assets:
@@ -175,34 +149,6 @@ dashboard:
 
   serviceAccount:
     enabled: true
-
-  additionalTemplates: |
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: Role
-    metadata:
-      name: {{ include "name" $ }}
-      labels:
-        {{- include "labels" . | nindent 4 }}
-    rules:
-      - apiGroups: ["apps", "extensions"]
-        resources: ["deployments"]
-        resourceNames: ["{{ include "web.name" $ }}"]
-        verbs: ["get", "patch", "list", "watch"]
-    ---
-    apiVersion: rbac.authorization.k8s.io/v1
-    kind: RoleBinding
-    metadata:
-      name: {{ include "name" $ }}
-      labels:
-        {{- include "labels" . | nindent 4 }}
-    roleRef:
-      apiGroup: rbac.authorization.k8s.io
-      kind: Role
-      name: {{ include "name" $ }}
-    subjects:
-      - kind: ServiceAccount
-        name: {{ include "name" $ }}
 
   additionalResources: |
     ---

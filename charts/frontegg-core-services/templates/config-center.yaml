@@ -79,7 +79,7 @@ data:
 
 
   {{- with $values.configCenter.frontegg.general }}
-  env-id: {{ .envID  | default "" | quote }}
+  env-id: {{ tpl .envID $top | default "" | quote }}
   portal-url: {{ .portalUrl  | default "" | quote }}
   portal-v1-url: {{ .portalV1Url  | default "" | quote }}
   cors-origin: {{ .corsOrigin  | default "" | quote }}
