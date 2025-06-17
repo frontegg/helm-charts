@@ -74,6 +74,7 @@ spec:
           {{- end }}
           {{- with .Values.web.readinessProbe }}
           readinessProbe:
+            successThreshold: {{ .successThreshold | default 5 }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
           {{- with .Values.web.startupProbe }}

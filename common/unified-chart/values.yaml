@@ -62,7 +62,7 @@ defaults:
     annotations:
       argocd.argoproj.io/sync-wave: "-100"
       argocd.argoproj.io/sync-options: Force=true,Replace=true
-  sereviceAccount:
+  serviceAccount:
     annotations:
       argocd.argoproj.io/sync-wave: "-100"
 
@@ -100,11 +100,11 @@ web:
     labels: {}
     type: ClusterIP
     protocol: TCP
-    ports:
-      - port: 80
-        targetPort: 3000
-        protocol: TCP
-        name: http
+    ports: []
+    # - port: 80
+    #   targetPort: 3000
+    #   protocol: TCP
+    #   name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   replicaCount: 1
@@ -132,7 +132,7 @@ web:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
 
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 60
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -170,11 +170,11 @@ worker:
     labels: {}
     type: ClusterIP
     protocol: TCP
-    ports:
-      - port: 80
-        targetPort: 3000
-        protocol: TCP
-        name: http
+    ports: []
+    # - port: 80
+    #   targetPort: 3000
+    #   protocol: TCP
+    #   name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "worker"]
   podAnnotations: {}
@@ -194,6 +194,7 @@ worker:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "worker.name" $ }}'
+  terminationGracePeriodSeconds: 60
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -240,6 +241,10 @@ hp:
     type: ClusterIP
     protocol: TCP
     ports: []
+    # - port: 80
+    #   targetPort: 3000
+    #   protocol: TCP
+    #   name: http
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "p1-service"]
   labels:
@@ -268,6 +273,7 @@ hp:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "hp.name" $ }}'
+  terminationGracePeriodSeconds: 60
 
 jobs:
   mgr:
@@ -392,7 +398,7 @@ linkerd:
   enabled: false
   annotations:
     linkerd.io/inject: enabled
-    config.alpha.linkerd.io/proxy-wait-before-exit-seconds: "30"
+    config.alpha.linkerd.io/proxy-wait-before-exit-seconds: "90"
 
 # additional helm resources to render resources freely
 additionalResources: |

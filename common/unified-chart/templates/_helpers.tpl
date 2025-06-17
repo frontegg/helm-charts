@@ -169,3 +169,15 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- fail ".Values.role.kind must be Role/ClusterRole" }}
 {{- end }}
 {{- end }}
+
+{{- define "validate.ports" }}
+{{- if not .ports }}
+{{- fail "ports are required" }}
+{{- end }}
+{{- end }}
+
+{{- define "fail.if.empty" }}
+{{- if not . -}}
+{{- fail "nil value provided - check your values" }}
+{{- end }}
+{{- end }}
