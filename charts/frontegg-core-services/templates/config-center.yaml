@@ -35,7 +35,7 @@ data:
   nlp-execution-assistant-url: "{{ .nlpExecutionAssistantUrl }}"
   identity-p1-service-url: "{{ .identityP1ServiceUrl }}"
   integrations-service-url: "{{ .integrationsServiceUrl }}"
-  api-gateway-url: "{{ .apiGatewayUrl }}"
+  api-gateway-url: "{{ required "configCenter.frontegg.services.apiGatewayUrl is required" .apiGatewayUrl }}"
   api-gateway-internal-url: "{{ .apiGatewayInternalUrl }}"
   oauth-service-url: "{{ .oauthServiceUrl }}"
   subscriptions-service-url: "{{ .subscriptionsServiceUrl }}"
@@ -43,7 +43,7 @@ data:
   env-duplicator-service-url: "{{ .envDuplicatorUrl }}"
   policy-service-url: "{{ .policyServiceUrl }}"
   dashboard-env-builder-url: "{{ .dashboardEnvBuilderUrl }}"
-  frontegg-vendor-host: "{{ .fronteggVendorHost }}"
+  frontegg-vendor-host: "{{ required "configCenter.frontegg.services.fronteggVendorHost is required" .fronteggVendorHost }}"
   cdn-url: {{ .cdnUrl | default "" | quote }}
   backoffice-service-url: "{{ .backofficeUrl }}"
   pricing-views-url: "{{ .pricingViewsUrl }}"
@@ -68,8 +68,7 @@ data:
   {{- with $values.configCenter.externalServices.aws }}
   aws-region: {{ required ".Values.configCenter.externalServices.aws must be set" .region | tpl .region | quote }}
   policy-service-aws-region: {{ tpl .region $top  | default "" | quote }}
-{{/*  policy-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.policy.opaPolicyBucket | default "" | quote }}*/}}
-  entitlements-service-s3-opa-policy-bucket: {{ $values.configCenter.frontegg.applications.entitlements.opaPolicyBucket | default "" | quote }}
+  entitlements-service-s3-opa-policy-bucket: {{ required "configCenter.frontegg.applications.entitlements.opaPolicyBucket is required" $values.configCenter.frontegg.applications.entitlements.opaPolicyBucket | default "" | quote }}
   custom-code-service-lambda-management-role-arn: {{ $values.configCenter.frontegg.applications.customCode.lambda.management.roleArn | default "" | quote }}
   custom-code-service-lambda-execution-role-arn: {{ $values.configCenter.frontegg.applications.customCode.lambda.execution.roleArn | default "" | quote }}
   custom-code-service-lambda-execution-default-policies: {{ $values.configCenter.frontegg.applications.customCode.lambda.execution.defaultPolicies | default "" | quote }}
@@ -80,9 +79,9 @@ data:
 
   {{- with $values.configCenter.frontegg.general }}
   env-id: {{ tpl .envID $top | default "" | quote }}
-  portal-url: {{ .portalUrl  | default "" | quote }}
+  portal-url: {{ required "configCenter.frontegg.general.portalUrl is required" .portalUrl  | default "" | quote }}
   portal-v1-url: {{ .portalV1Url  | default "" | quote }}
-  cors-origin: {{ .corsOrigin  | default "" | quote }}
+  cors-origin: {{ required "configCenter.frontegg.general.corsOrigin is required" .corsOrigin  | default "" | quote }}
   custom-domain-cloudflare-ssl-endpoint: {{ .customDomainCloudflareEndpoint | default "" | quote }}
   tracing-collector-endpoint: {{ .tracingCollectorEndpoint | default "" | default ("" | quote)}}
   idgw-application-id: {{ .idgwApplicationId | default "" | default ("" | quote)}}
@@ -110,7 +109,7 @@ data:
   api-gateway-metrics-enabled: {{ .apiGatewayMetricsEnabled  | default "" | quote }}
   api-gateway-redis-db-index: {{ .apiGatewayRedisDbIndex  | default "" | quote }}
   enable-multi-hosts: {{ .enableMultiHosts  | default "" | quote }}
-  api-gateway-ignore-hosts: {{ .apiGatewayIgnoredHosts  | default "" | quote }}
+  api-gateway-ignore-hosts: {{ required "configCenter.applications.apiGateway.apiGatewayIgnoredHosts is required" .apiGatewayIgnoredHosts  | default "" | quote }}
   api-gateway-redirect-enabled: {{ .redirectEnabled | quote }}
   api-gateway-redirect-url: {{ .redirectUrl | default "" | quote }}
   {{- end }}
@@ -198,7 +197,7 @@ data:
   {{- with $apps.vendors }}
   vendors-mysql-db-name: {{ tpl .vendorsServiceMysqlDbName $top  | default "" | quote }}
   vendors-asset-blob-storage-container-name: {{ .vendorsAssetBlobStorageContainerName  | default "" | quote }}
-  vendors-service-vendors-domain: {{ .vendorsServiceVendorsDomain  | default "" | quote }}
+  vendors-service-vendors-domain: {{ required "configCenter.applications.vendors.vendorsServiceVendorsDomain is required" .vendorsServiceVendorsDomain  | default "" | quote }}
   custom-domain-cluster-ingress-class: {{ .customDomainClusterIngressClass  | default "" | quote }}
   custom-domain-cluster-issuer-name: {{ .customDomainClusterIssuerName  | default "" | quote }}
   custom-domain-cluster-default-port: {{ .customDomainClusterDefaultPort  | default "" | quote }}
