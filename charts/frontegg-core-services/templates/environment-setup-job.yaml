@@ -1,0 +1,69 @@
+{{- $top := . -}}
+{{- $values := .Values -}}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-frontegg-env-job
+  annotations:
+    "helm.sh/hook": post-install
+spec:
+  template:
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: wait-for-pods
+          image: bitnami/kubectl:latest
+          command:
+            - /bin/sh
+            - -c
+            - |
+              echo "Waiting for all pods to be ready except the job pod..."
+              kubectl wait --for=condition=Ready pods --all --timeout=300s -n {{ .Release.Namespace }} -l 'job-name!=create-frontegg-env-job'
+          env:
+            - name: KUBECONFIG
+              value: /opt/bitnami/kubectl/.kube/config
+      containers:
+        - name: task-master-cli
+          image: {{ index $values "task-master" "image" "prefix" }}{{ index $values "task-master" "image" "repository" }}:{{ index $values "task-master" "appVersion" }}
+          env:
+            - name: EMAIL
+              value: {{ required ".Values.environmentSetupJob.email is required" $values.environmentSetupJob.email | quote }}
+            - name: PASSWORD
+              value: {{ required ".Values.environmentSetupJob.password is required" $values.environmentSetupJob.password | quote }}
+            - name: SENDER_EMAIL
+              value: {{ required ".Values.environmentSetupJob.senderEmail is required" $values.environmentSetupJob.senderEmail | quote }}
+            - name: FRONTEGG_CONFIG_DIRECTORY
+              value: "/etc/config"
+            {{- include "container.env" $values.web | indent 12 }}
+            {{- range $config_name, $values := (index $values "task-master").configuration.map }}
+            {{- range $key, $value :=  $values}}
+            - name: {{ $key }}
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ $config_name }}
+                  key: {{ $value }}
+            {{- end }}
+            {{- end }}
+          {{- if (index $values "task-master").configmap.data }}
+          envFrom:
+            - configMapRef:
+                name: task-master-v2
+            {{- with (index $values "task-master").web.additionalEnvFrom }}
+            {{- tpl . $top | nindent 12 }}
+            {{- end }}
+          {{- end }}
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              task-master-cli create-frontegg-env
+
+          volumeMounts:
+            - mountPath: /etc/config/config.yaml
+              subPath: config
+              name: secret-volume
+      volumes:
+        - name: secret-volume
+          secret:
+            secretName: task-master-v2

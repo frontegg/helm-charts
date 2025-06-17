@@ -1,0 +1,179 @@
+global:
+  envId: ""
+
+dashboard:
+  name: dashboard
+  team: frontegg
+  envID: "{{ .Values.global.envId }}"
+  appVersion: f16bbf7
+  defaults:
+    migration:
+      annotations:
+        "helm.sh/hook": pre-install, pre-upgrade
+        "helm.sh/hook-weight": "-5"
+        "helm.sh/hook-delete-policy": "hook-succeeded,before-hook-creation"
+    configmap:
+      annotations:
+        "helm.sh/hook": pre-install, pre-upgrade
+        "helm.sh/hook-weight": "-100"
+        "helm.sh/hook-delete-policy": "before-hook-creation"
+    secret:
+      annotations:
+        "helm.sh/hook": pre-install, pre-upgrade
+        "helm.sh/hook-weight": "-100"
+        "helm.sh/hook-delete-policy": "before-hook-creation"
+    serviceAccount:
+      annotations:
+        "helm.sh/hook": pre-install, pre-upgrade
+        "helm.sh/hook-weight": "-100"
+  argoRollouts:
+    enabled: false
+  image:
+    repository: frontegg/dashboard
+    prefix: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
+
+#  ingresses:
+#    tesla:
+#      enabled: true
+#      ingressClassName: nginx
+#      hostname: "portal.onprem.backegg.io"
+#      service:
+#        name: '{{ include "web.name" $ }}'
+#        port: 80
+#      annotations:
+#        nginx.ingress.kubernetes.io/server-snippet: |
+#          location ~* ^/(metrics|health) {
+#            deny all;
+#            return 403;
+#          }
+
+  web:
+    enabled: true
+    command: ["/bin/sh"]
+    args: ["./entrypoint.sh"]
+    service:
+      ports:
+        - port: 80
+          targetPort: 8080
+          protocol: TCP
+          name: http
+    ports:
+      - name: http
+        containerPort: 8080
+    resources:
+      requests:
+        cpu: 500m
+        memory: 300Mi
+      limits:
+        memory: 500Mi
+    autoscaling:
+      enabled: true
+      minReplicas: 1
+      maxReplicas: 5
+      targetCPUUtilizationPercentage: 50
+      targetMemoryUtilizationPercentage: 50
+    readinessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 20
+      periodSeconds: 5
+    livenessProbe:
+      httpGet:
+        path: /health
+        port: http
+      initialDelaySeconds: 30
+      periodSeconds: 20
+    additionalVolumes: &additionalVolumes |
+      - name: vol-settings
+        configMap:
+          name: 'settings'
+    additionalVolumeMounts: &additionalVolumeMounts |
+      - name: vol-settings
+        mountPath: /etc/config/settings.yaml
+        subPath: settings.yaml
+  configmap:
+    data:
+      ALLOWED_IPS: "*"
+      NODE_ENV: production
+      CLOUD_ENVIRONMENT: dev
+      REACT_APP_FRONTEGG_PRICING_URL: dev
+      REACT_APP_FRONTEGG_PRICING_TEMPLATE_ID: dev
+      FRONTEGG_CONFIG_FILE_PATH: "/etc/config/config.env"
+      FRONTEGG_FREEMIUM_PLAN_ID: 6d239555-9565-4203-8df6-93fbf8646acf
+      FRONTEGG_TRIAL_PLAN_ID: 45c572c1-15ed-4ffd-ab28-c9a6449ecebc
+      FRONTEGG_SPLITIO_FILE_CONFIG_PATH: /etc/config/settings.yaml
+      #FRONTEGG_CDN_URL: ""
+
+  configuration:
+    map:
+      config-center:
+        FRONTEGG_ENV_ID: env-id
+        PUBLIC_URL: portal-url
+        CORS_ORIGIN: cors-origin
+        FRONTEGG_API_GATEWAY_URL: api-gateway-url
+        FRONTEGG_LEGACY_DASHBOARD_URL: portal-v1-url
+        FRONTEGG_DEVREV_API_BASE_URL: devrev-api-url
+        FRONTEGG_VENDOR_HOST: frontegg-vendor-host
+        FRONTEGG_CDN_BUCKET: cdn-bucket
+        FRONTEGG_HUBSPOT_ENABLED: dashboard-hubspot-enabled
+        FRONTEGG_DEVREV_ENABLED: dashboard-devrev-enabled
+        FRONTEGG_DOMAIN_SUFFIX: dashboard-domain-suffix
+        FRONTEGG_BACKOFFICE_VIEWER_ROLE_ID: backoffice-viewer-role-id
+        FRONTEGG_BACKOFFICE_EDITOR_ROLE_ID: backoffice-editor-role-id
+        FRONTEGG_UI_EVENTS_URL: frontegg-ui-events-url
+
+  externalSecret:
+    enabled: true
+    mountPath: /etc/config/config.env
+    text: |
+      {{- $secret := .contents | fromYaml}}
+      FRONTEGG_CLIENT_ID={{ $secret.frontegg.xxx.fronteggClientId | toYaml }}
+      FRONTEGG_API_KEY={{ $secret.frontegg.xxx.fronteggApiKey | toYaml }}
+      FRONTEGG_AUTH_PUBLIC_KEY={{ $secret.frontegg.applications.identity.publicKey | toYaml }}
+    additionalSecrets: ""
+
+  jobs:
+    upload-assets:
+      enabled: false
+      spec:
+        command: ["/bin/sh"]
+        args: ["./s3-assets-upload.sh"]
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+
+  prometheusRule:
+    enabled: false
+
+  serviceAccount:
+    enabled: true
+
+  additionalResources: |
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: Role
+    metadata:
+      name: {{ include "name" $ }}
+      labels:
+        {{- include "labels" . | nindent 4 }}
+    rules:
+      - apiGroups: ["apps", "extensions"]
+        resources: ["deployments"]
+        resourceNames: ["{{ include "web.name" $ }}"]
+        verbs: ["get", "patch", "list", "watch"]
+    ---
+    apiVersion: rbac.authorization.k8s.io/v1
+    kind: RoleBinding
+    metadata:
+      name: {{ include "name" $ }}
+      labels:
+        {{- include "labels" . | nindent 4 }}
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: Role
+      name: {{ include "name" $ }}
+    subjects:
+      - kind: ServiceAccount
+        name: {{ include "name" $ }}

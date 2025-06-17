@@ -2,3 +2,7 @@
 charts/secure-access/charts
 Chart.lock
 charts/connectivity/charts
+.DS_Store
+charts/frontegg-enterprise/charts
+charts/frontegg-enterprise_1/charts
+charts/**/charts
