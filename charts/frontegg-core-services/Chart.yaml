@@ -12,7 +12,7 @@ maintainers:
 
 dependencies:
   - name: &chartName unified-chart-staging
-    version: &chartVersion 4.0.*
+    version: &chartVersion 4.0.108
     repository: https://frontegg.github.io/helm-charts
     alias: admins
 
