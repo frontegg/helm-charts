@@ -56,7 +56,7 @@
 {{- define "externalsecret.volumemount" -}}
 - name: secret-volume
   mountPath: {{ .Values.externalSecret.mountPath }}
-  subPath: {{ .Values.externalSecret.subPath }} 
+  subPath: {{ .Values.externalSecret.subPath }}
 {{- end -}}
 
 {{/* general labels for resources not related to web/hp/worker */}}
@@ -149,7 +149,12 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 
 {{- define "calculate.pod.annotations" -}}
 {{- if .linkerd.enabled }}
-{{- mergeOverwrite .podAnnotations .linkerd.annotations | toYaml }}
+{{- $merged := mergeOverwrite .podAnnotations .linkerd.annotations }}
+{{- if (index .podAnnotations "config.alpha.linkerd.io/proxy-wait-before-exit-seconds") }}
+{{- fail "config.alpha.linkerd.io/proxy-wait-before-exit-seconds annotation is populated automatically and is equal to terminationGracePeriodSeconds, remove the linkerd annotation from your values" }}
+{{- end }}
+{{- $merged | toYaml }}
+config.alpha.linkerd.io/proxy-wait-before-exit-seconds: {{ .terminationGracePeriodSeconds }}
 {{- else }}
 {{- with .podAnnotations }}
 {{- toYaml . }}

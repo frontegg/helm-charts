@@ -398,7 +398,6 @@ linkerd:
   enabled: false
   annotations:
     linkerd.io/inject: enabled
-    config.alpha.linkerd.io/proxy-wait-before-exit-seconds: "90"
 
 # additional helm resources to render resources freely
 additionalResources: |
