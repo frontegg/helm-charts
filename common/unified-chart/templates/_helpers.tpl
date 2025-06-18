@@ -154,7 +154,7 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- fail "config.alpha.linkerd.io/proxy-wait-before-exit-seconds annotation is populated automatically and is equal to terminationGracePeriodSeconds, remove the linkerd annotation from your values" }}
 {{- end }}
 {{- $merged | toYaml }}
-config.alpha.linkerd.io/proxy-wait-before-exit-seconds: {{ .terminationGracePeriodSeconds }}
+config.alpha.linkerd.io/proxy-wait-before-exit-seconds: {{ .terminationGracePeriodSeconds | quote }}
 {{- else }}
 {{- with .podAnnotations }}
 {{- toYaml . }}
