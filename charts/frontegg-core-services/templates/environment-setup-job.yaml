@@ -6,6 +6,7 @@ metadata:
   name: create-frontegg-env-job
   annotations:
     "helm.sh/hook": post-install
+    "helm.sh/hook-weight": "10"
 spec:
   template:
     spec:
