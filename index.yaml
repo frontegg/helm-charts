@@ -2540,6 +2540,132 @@ entries:
   frontegg-core-services:
   - apiVersion: v2
     appVersion: "2025.06"
+    created: "2025-06-25T10:48:18.088962981Z"
+    dependencies:
+    - alias: admins
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: api-gateway
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: applications-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: authentication-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: audits-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: backoffice-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: dashboard-env-builder
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: directory-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: entitlements-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: env-duplicator
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: event-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: identity-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: forward-proxy
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: logs-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: metadata-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: oauth-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: prehook-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: security-center-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: security-engines
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: team-management-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: tenants-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: vendors-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: webhooks
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: task-master
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: entitlements-agent
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: email-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - condition: debezium.kafkaConnect.install
+      name: strimzi-kafka-operator
+      repository: oci://quay.io/strimzi-helm
+      version: 0.45.*
+    - condition: debezium.debeziumOperator.install
+      name: debezium-operator
+      repository: https://charts.debezium.io
+      version: 3.1.0-final
+    description: Frontegg Core Services Helm Chart
+    digest: a1f3e89751a6103743e4ef917e3b19aa8f281015264d2eacc570badf102aac01
+    maintainers:
+    - email: support@frontegg.com
+      name: Frontegg
+    name: frontegg-core-services
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/frontegg-core-services-0.0.1-alpha.2/frontegg-core-services-0.0.1-alpha.2.tgz
+    version: 0.0.1-alpha.2
+  - apiVersion: v2
+    appVersion: "2025.06"
     created: "2025-06-17T08:53:39.034721949Z"
     dependencies:
     - alias: admins
@@ -2665,6 +2791,24 @@ entries:
     - https://github.com/frontegg/helm-charts/releases/download/frontegg-core-services-0.0.1-alpha.1/frontegg-core-services-0.0.1-alpha.1.tgz
     version: 0.0.1-alpha.1
   frontegg-dashboard:
+  - apiVersion: v2
+    appVersion: "2025.06"
+    created: "2025-06-25T10:48:18.239902765Z"
+    dependencies:
+    - alias: dashboard
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    description: Frontegg Dashboard Helm Chart
+    digest: bada821a9cef4c90e64c6299f8eb3e131638fa616b72e04dea447152123be880
+    maintainers:
+    - email: support@frontegg.com
+      name: Frontegg
+    name: frontegg-dashboard
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/frontegg-dashboard-0.0.1-alpha.2/frontegg-dashboard-0.0.1-alpha.2.tgz
+    version: 0.0.1-alpha.2
   - apiVersion: v2
     appVersion: "2025.06"
     created: "2025-06-17T08:53:39.175735244Z"
@@ -8022,4 +8166,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-06-18T15:53:39.187475253Z"
+generated: "2025-06-25T10:48:18.240825926Z"
