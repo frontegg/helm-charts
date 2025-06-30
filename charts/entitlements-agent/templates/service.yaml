@@ -4,7 +4,7 @@ kind: Service
 metadata:
   name: {{ include "fullname" . }}
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "commonLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -25,7 +25,7 @@ kind: Service
 metadata:
   name: {{ include "fullname" . }}-opa-agent
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "commonLabels" . | nindent 4 }}
     app.kubernetes.io/component: opa-agent
 spec:
   type: {{ .Values.service.type }}
@@ -44,7 +44,7 @@ kind: Service
 metadata:
   name: {{ include "fullname" . }}-mcp-server
   labels:
-    {{- include "labels" . | nindent 4 }}
+    {{- include "commonLabels" . | nindent 4 }}
     app.kubernetes.io/component: mcp-server
 spec:
   type: {{ .Values.service.type }}
