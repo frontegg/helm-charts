@@ -13,14 +13,14 @@ replicaCount: 1
 image:
   repository: frontegg/entitlements-agent
   # This sets the pull policy for images.
-  tag: latest
+  tag: 06c96c0
   pullPolicy: IfNotPresent
 
 # MCP Server container/deployment image
 secondaryImage:
   repository: frontegg/entitlements-agent-mcp-server
   pullPolicy: IfNotPresent
-  tag: latest
+  tag: 06c96c0
   # Only used when deploymentMode is "separateDeployments"
   replicaCount: 1
 
@@ -141,19 +141,12 @@ affinity: {}
 env:
   # OPA Agent container environment variables
   opaagent:
-    - name: FRONTEGG_REGION
-      value: "eu"
-    - name: FRONTEGG_CLIENT_ID
-      value: "your frontegg client id"
-    - name: FRONTEGG_CLIENT_CREDENTIALS_OAUTH_CLIENT_ID
-      value: "your oauth client credentials id"
-    - name: FRONTEGG_CLIENT_CREDENTIALS_OAUTH_SECRET
-      value: "your oauth client credentials secret"
-    - name: POLLING_MIN_DELAY
-      value: "30"
-    - name: POLLING_MAX_DELAY
-      value: "60"
+    fronteggRegion: "eu"
+    fronteggClientId: "your frontegg client id"
+    fronteggClientCredentialsOauthClientId: "your oauth client credentials id"
+    fronteggClientCredentialsOauthSecret: "your oauth client credentials secret"
+    pollingMinDelay: "30"
+    pollingMaxDelay: "60"
   # MCP Server container environment variables
   mcpserver:
-    - name: PDP_URL
-      value: "http://localhost:8181"
+    pdpUrl: "http://localhost:8181"

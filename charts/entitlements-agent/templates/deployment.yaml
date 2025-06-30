@@ -39,11 +39,14 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           {{- if .Values.env.opaagent }}
           env:
-            {{- toYaml .Values.env.opaagent | nindent 12 }}
+            {{- range $key, $value := .Values.env.opaagent }}
+            - name: {{ include "entitelment-agent.toEnvVarName" $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           {{- end }}
           ports:
             - name: http
@@ -70,11 +73,14 @@ spec:
             capabilities:
               drop:
               - NET_RAW
-          image: "{{ .Values.secondaryImage.repository }}:{{ .Values.secondaryImage.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.secondaryImage.repository }}:{{ .Values.secondaryImage.tag }}"
           imagePullPolicy: {{ .Values.secondaryImage.pullPolicy }}
           {{- if .Values.env.mcpserver }}
           env:
-            {{- toYaml .Values.env.mcpserver | nindent 12 }}
+            {{- range $key, $value := .Values.env.mcpserver }}
+            - name: {{ include "entitelment-agent.toEnvVarName" $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           {{- end }}
           ports:
             - name: http-mcp-server

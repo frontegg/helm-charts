@@ -60,3 +60,11 @@ Create the name of the service account to use
 {{- default "default" .Values.serviceAccount.name }}
 {{- end }}
 {{- end }}
+
+{{/*
+Convert camelCase to UPPER_SNAKE_CASE
+*/}}
+{{- define "entitelment-agent.toEnvVarName" -}}
+{{- $result := regexReplaceAll "([a-z0-9])([A-Z])" . "${1}_${2}" -}}
+{{- $result | upper -}}
+{{- end }}
