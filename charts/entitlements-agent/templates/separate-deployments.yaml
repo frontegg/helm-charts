@@ -3,9 +3,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "entitelment-agent.fullname" . }}-opa-agent
+  name: {{ include "fullname" . }}-opa-agent
   labels:
-    {{- include "entitelment-agent.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
     app.kubernetes.io/component: opa-agent
 spec:
   {{- if not .Values.autoscaling.enabled }}
@@ -13,7 +13,7 @@ spec:
   {{- end }}
   selector:
     matchLabels:
-      {{- include "entitelment-agent.selectorLabels" . | nindent 6 }}
+      {{- include "selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: opa-agent
   template:
     metadata:
@@ -22,7 +22,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "entitelment-agent.selectorLabels" . | nindent 8 }}
+        {{- include "selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: opa-agent
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
@@ -32,7 +32,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "entitelment-agent.serviceAccountName" . }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -48,7 +48,7 @@ spec:
           {{- if .Values.env.opaagent }}
           env:
             {{- range $key, $value := .Values.env.opaagent }}
-            - name: {{ include "entitelment-agent.toEnvVarName" $key }}
+            - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
           {{- end }}
@@ -93,27 +93,27 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "entitelment-agent.fullname" . }}-mcp-server
+  name: {{ include "fullname" . }}-mcp-server
   labels:
-    {{- include "entitelment-agent.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
     app.kubernetes.io/component: mcp-server
 spec:
   replicas: {{ .Values.mcpserver.replicaCount }}
   selector:
     matchLabels:
-      {{- include "entitelment-agent.selectorLabels" . | nindent 6 }}
+      {{- include "selectorLabels" . | nindent 6 }}
       app.kubernetes.io/component: mcp-server
   template:
     metadata:
       labels:
-        {{- include "entitelment-agent.selectorLabels" . | nindent 8 }}
+        {{- include "selectorLabels" . | nindent 8 }}
         app.kubernetes.io/component: mcp-server
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "entitelment-agent.serviceAccountName" . }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
       containers:
         - name: {{ .Chart.Name }}-mcp-server
           securityContext:
@@ -125,12 +125,12 @@ spec:
           env:
             {{- if .Values.env.mcpserver }}
             {{- range $key, $value := .Values.env.mcpserver }}
-            - name: {{ include "entitelment-agent.toEnvVarName" $key }}
+            - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
             {{- else }}
             - name: PDP_URL
-              value: "http://{{ include "entitelment-agent.fullname" . }}-opa-agent:8181"
+              value: "http://{{ include "fullname" . }}-opa-agent:8181"
             {{- end }}
           ports:
             - name: http

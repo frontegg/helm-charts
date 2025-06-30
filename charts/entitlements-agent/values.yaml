@@ -1,22 +1,18 @@
-# Default values for entitelment-agent.
+# Default values for 
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
 # Deployment mode: "singlePod" for a pod with two containers, "separateDeployments" for two separate deployments
 deploymentMode: "singlePod"
 
-# This will set the replicaset count more information can be found here: https://kubernetes.io/docs/concepts/workloads/controllers/replicaset/
 replicaCount: 1
 
-# This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 # OPA Agent container/deployment image
 opaagent:
   repository: frontegg/entitlements-agent
-  # This sets the pull policy for images.
   tag: 06c96c0
   pullPolicy: IfNotPresent
 
-# MCP Server container/deployment image
 mcpserver:
   repository: frontegg/entitlements-agent-mcp-server
   pullPolicy: IfNotPresent

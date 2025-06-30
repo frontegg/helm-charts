@@ -2,16 +2,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "entitelment-agent.fullname" . }}
+  name: {{ include "fullname" . }}
   labels:
-    {{- include "entitelment-agent.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "entitelment-agent.selectorLabels" . | nindent 6 }}
+      {{- include "selectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "entitelment-agent.labels" . | nindent 8 }}
+        {{- include "labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -28,7 +28,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "entitelment-agent.serviceAccountName" . }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
       {{- with .Values.podSecurityContext }}
       securityContext:
         {{- toYaml . | nindent 8 }}
@@ -44,7 +44,7 @@ spec:
           {{- if .Values.env.opaagent }}
           env:
             {{- range $key, $value := .Values.env.opaagent }}
-            - name: {{ include "entitelment-agent.toEnvVarName" $key }}
+            - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
           {{- end }}
@@ -78,7 +78,7 @@ spec:
           {{- if .Values.env.mcpserver }}
           env:
             {{- range $key, $value := .Values.env.mcpserver }}
-            - name: {{ include "entitelment-agent.toEnvVarName" $key }}
+            - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
           {{- end }}

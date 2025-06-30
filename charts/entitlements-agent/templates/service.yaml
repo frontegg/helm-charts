@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "entitelment-agent.fullname" . }}
+  name: {{ include "fullname" . }}
   labels:
-    {{- include "entitelment-agent.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -17,15 +17,15 @@ spec:
       protocol: TCP
       name: http-mcp-server
   selector:
-    {{- include "entitelment-agent.selectorLabels" . | nindent 4 }}
+    {{- include "selectorLabels" . | nindent 4 }}
 {{- else if eq .Values.deploymentMode "separateDeployments" }}
 # OPA Agent Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "entitelment-agent.fullname" . }}-opa-agent
+  name: {{ include "fullname" . }}-opa-agent
   labels:
-    {{- include "entitelment-agent.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
     app.kubernetes.io/component: opa-agent
 spec:
   type: {{ .Values.service.type }}
@@ -35,16 +35,16 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "entitelment-agent.selectorLabels" . | nindent 4 }}
+    {{- include "selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: opa-agent
 ---
 # MCP Server Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "entitelment-agent.fullname" . }}-mcp-server
+  name: {{ include "fullname" . }}-mcp-server
   labels:
-    {{- include "entitelment-agent.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
     app.kubernetes.io/component: mcp-server
 spec:
   type: {{ .Values.service.type }}
@@ -54,6 +54,6 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "entitelment-agent.selectorLabels" . | nindent 4 }}
+    {{- include "selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: mcp-server
 {{- end }}
