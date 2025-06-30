@@ -1,0 +1,59 @@
+{{- if eq .Values.deploymentMode "singlePod" }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}
+  labels:
+    {{- include "labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 8181
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 8182
+      targetPort: http-mcp-server
+      protocol: TCP
+      name: http-mcp-server
+  selector:
+    {{- include "selectorLabels" . | nindent 4 }}
+{{- else if eq .Values.deploymentMode "separateDeployments" }}
+# OPA Agent Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-opa-agent
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    app.kubernetes.io/component: opa-agent
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 8181
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: opa-agent
+---
+# MCP Server Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fullname" . }}-mcp-server
+  labels:
+    {{- include "labels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-server
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: 8182
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-server
+{{- end }}

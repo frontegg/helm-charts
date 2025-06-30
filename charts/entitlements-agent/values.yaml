@@ -1,0 +1,129 @@
+# Default values for 
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# Deployment mode: "singlePod" for a pod with two containers, "separateDeployments" for two separate deployments
+deploymentMode: "singlePod"
+
+replicaCount: 1
+
+# OPA Agent container/deployment image
+opaagent:
+  repository: frontegg/entitlements-agent
+  tag: 06c96c0
+  pullPolicy: IfNotPresent
+
+mcpserver:
+  repository: frontegg/entitlements-agent-mcp-server
+  pullPolicy: IfNotPresent
+  tag: 06c96c0
+  # Only used when deploymentMode is "separateDeployments"
+  replicaCount: 1
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - NET_RAW
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  ports:
+    - name: agent
+      port: 8181
+      targetPort: 8181
+      protocol: TCP
+    - name: mcp-server
+      port: 8182
+      targetPort: 8182
+      protocol: TCP
+
+resources:
+  opa-agent:
+    requests:
+      cpu: 500m
+      memory: 500Mi
+    limits:
+      memory: 1Gi
+  mcp-server:
+    requests:
+      cpu: 200m
+      memory: 200Mi
+    limits:
+      memory: 500Mi
+
+readinessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 3
+  periodSeconds: 5
+livenessProbe:
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 3
+  periodSeconds: 5
+startupProbe:
+  httpGet:
+    path: /health?bundles
+    port: http
+  initialDelaySeconds: 5
+  failureThreshold: 10
+  periodSeconds: 10
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 100
+  targetCPUUtilizationPercentage: 80
+  # targetMemoryUtilizationPercentage: 80
+
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  # OPA Agent container environment variables
+  opaagent:
+    fronteggRegion: "eu"
+    fronteggClientId: "your frontegg client id"
+    fronteggClientCredentialsOauthClientId: "your oauth client credentials id"
+    fronteggClientCredentialsOauthSecret: "your oauth client credentials secret"
+    pollingMinDelay: "30"
+    pollingMaxDelay: "60"
+  # MCP Server container environment variables
+  mcpserver:
+    pdpUrl: "http://localhost:8181"
