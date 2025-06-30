@@ -10,14 +10,14 @@ replicaCount: 1
 
 # This sets the container image more information can be found here: https://kubernetes.io/docs/concepts/containers/images/
 # OPA Agent container/deployment image
-image:
+opaagent:
   repository: frontegg/entitlements-agent
   # This sets the pull policy for images.
   tag: 06c96c0
   pullPolicy: IfNotPresent
 
 # MCP Server container/deployment image
-secondaryImage:
+mcpserver:
   repository: frontegg/entitlements-agent-mcp-server
   pullPolicy: IfNotPresent
   tag: 06c96c0

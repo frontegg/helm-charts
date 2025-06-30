@@ -43,8 +43,8 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.opaagent.repository }}:{{ .Values.opaagent.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.opaagent.pullPolicy }}
           {{- if .Values.env.opaagent }}
           env:
             {{- range $key, $value := .Values.env.opaagent }}
@@ -98,7 +98,7 @@ metadata:
     {{- include "entitelment-agent.labels" . | nindent 4 }}
     app.kubernetes.io/component: mcp-server
 spec:
-  replicas: {{ .Values.secondaryImage.replicaCount }}
+  replicas: {{ .Values.mcpserver.replicaCount }}
   selector:
     matchLabels:
       {{- include "entitelment-agent.selectorLabels" . | nindent 6 }}
@@ -120,8 +120,8 @@ spec:
             capabilities:
               drop:
               - NET_RAW
-          image: "{{ .Values.secondaryImage.repository }}:{{ .Values.secondaryImage.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.secondaryImage.pullPolicy }}
+          image: "{{ .Values.mcpserver.repository }}:{{ .Values.mcpserver.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.mcpserver.pullPolicy }}
           env:
             {{- if .Values.env.mcpserver }}
             {{- range $key, $value := .Values.env.mcpserver }}

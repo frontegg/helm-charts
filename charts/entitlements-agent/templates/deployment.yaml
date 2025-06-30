@@ -39,8 +39,8 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          image: "{{ .Values.opaagent.repository }}:{{ .Values.opaagent.tag }}"
+          imagePullPolicy: {{ .Values.opaagent.pullPolicy }}
           {{- if .Values.env.opaagent }}
           env:
             {{- range $key, $value := .Values.env.opaagent }}
@@ -73,8 +73,8 @@ spec:
             capabilities:
               drop:
               - NET_RAW
-          image: "{{ .Values.secondaryImage.repository }}:{{ .Values.secondaryImage.tag }}"
-          imagePullPolicy: {{ .Values.secondaryImage.pullPolicy }}
+          image: "{{ .Values.mcpserver.repository }}:{{ .Values.mcpserver.tag }}"
+          imagePullPolicy: {{ .Values.mcpserver.pullPolicy }}
           {{- if .Values.env.mcpserver }}
           env:
             {{- range $key, $value := .Values.env.mcpserver }}
