@@ -1,5 +1,6 @@
 {{- $top := . }}
 {{- $values := .Values }}
+{{- if .Values.linkerd.enabled }}
 {{- with .Values.web.serviceProfile }}
 {{- if .enabled }}
 ---
@@ -15,5 +16,6 @@ metadata:
 spec:
   routes:
     {{- .routes | toYaml | nindent 4 }}
+{{- end }}
 {{- end }}
 {{- end }}
