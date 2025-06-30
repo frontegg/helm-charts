@@ -2283,6 +2283,16 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.7/connectors-worker-0.1.7.tgz
     version: 0.1.7
+  entitlements-agent:
+  - apiVersion: v2
+    created: "2025-06-30T14:53:00.113472558Z"
+    description: A Helm chart for frontegg's entitlements agent (pdp + mcp server)
+    digest: a59a36cb16df190df176752aff923aa7cf141c5a2b8341faafeacecab3e6f2a6
+    name: entitlements-agent
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/entitlements-agent-0.1.0/entitlements-agent-0.1.0.tgz
+    version: 0.1.0
   event-service:
   - apiVersion: v2
     created: "2023-12-12T14:21:59.788402873Z"
@@ -8190,4 +8200,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-06-30T14:47:10.977382589Z"
+generated: "2025-06-30T14:53:00.114473954Z"
