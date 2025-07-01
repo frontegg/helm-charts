@@ -2285,6 +2285,15 @@ entries:
     version: 0.1.7
   entitlements-agent:
   - apiVersion: v2
+    created: "2025-07-01T14:51:54.725997536Z"
+    description: A Helm chart for frontegg's entitlements agent (pdpAgent + mcpServer)
+    digest: 71229d17cf4c2b69787a1bfa48aa50ab2102632010b18e25cbc289036e16ec46
+    name: entitlements-agent
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/entitlements-agent-0.2.0/entitlements-agent-0.2.0.tgz
+    version: 0.2.0
+  - apiVersion: v2
     created: "2025-06-30T15:30:29.137125422Z"
     description: A Helm chart for frontegg's entitlements agent (pdp + mcp server)
     digest: 49112d5c1bb152614b8de65a6a949a05af5f93b6251279ec2cc6ffc7559f9610
@@ -8209,4 +8218,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-06-30T15:30:29.138390031Z"
+generated: "2025-07-01T14:51:54.726922586Z"
