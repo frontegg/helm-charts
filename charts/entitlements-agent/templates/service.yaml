@@ -1,4 +1,3 @@
-{{- if eq .Values.deploymentMode "singlePod" }}
 apiVersion: v1
 kind: Service
 metadata:
@@ -18,38 +17,3 @@ spec:
       name: http-mcp-server
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
-{{- else if eq .Values.deploymentMode "separateDeployments" }}
-# PDPAgent Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "fullname" . }}-pdp-agent
-  labels:
-    {{- include "pdpAgentCommonLabels" . | nindent 4 }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: 8181
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
-    {{- include "pdpAgentSelectorLabels" . | nindent 4 }}
----
-# MCP Server Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: {{ include "fullname" . }}-mcp-server
-  labels:
-    {{- include "mcpServerCommonLabels" . | nindent 4 }}
-spec:
-  type: {{ .Values.service.type }}
-  ports:
-    - port: 8182
-      targetPort: http
-      protocol: TCP
-      name: http
-  selector:
-    {{- include "mcpServerSelectorLabels" . | nindent 4 }}
-{{- end }}

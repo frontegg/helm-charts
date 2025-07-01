@@ -2,9 +2,6 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Deployment mode: "singlePod" for a pod with two containers, "separateDeployments" for two separate deployments
-deploymentMode: "singlePod"
-
 replicaCount: 1
 
 # PDPAgent container/deployment image
@@ -17,7 +14,6 @@ mcpServer:
   repository: frontegg/entitlements-agent-mcp-server
   pullPolicy: IfNotPresent
   tag: 06c96c0
-  # Only used when deploymentMode is "separateDeployments"
   replicaCount: 1
 
 imagePullSecrets: []
