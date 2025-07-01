@@ -19,14 +19,14 @@ spec:
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
 {{- else if eq .Values.deploymentMode "separateDeployments" }}
-# PDP Agent Service
+# PDPAgent Service
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fullname" . }}-pdp-agent
+  name: {{ include "fullname" . }}-pdpAgent
   labels:
     {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: pdp-agent
+    app.kubernetes.io/component: pdpAgent
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -36,7 +36,7 @@ spec:
       name: http
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: pdp-agent
+    app.kubernetes.io/component: pdpAgent
 ---
 # MCP Server Service
 apiVersion: v1
@@ -45,7 +45,7 @@ metadata:
   name: {{ include "fullname" . }}-mcp-server
   labels:
     {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-server
+    app.kubernetes.io/component: mcpServer
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -55,5 +55,5 @@ spec:
       name: http
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-server
+    app.kubernetes.io/component: mcpServer
 {{- end }}

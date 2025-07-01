@@ -7,8 +7,8 @@ deploymentMode: "singlePod"
 
 replicaCount: 1
 
-# PDP Agent container/deployment image
-pdp:
+# PDPAgent container/deployment image
+pdpAgent:
   repository: frontegg/entitlements-agent
   tag: 06c96c0
   pullPolicy: IfNotPresent
@@ -48,23 +48,23 @@ securityContext:
 service:
   type: ClusterIP
   ports:
-    - name: agent
+    - name: pdpAgent
       port: 8181
       targetPort: 8181
       protocol: TCP
-    - name: mcp-server
+    - name: mcpServer
       port: 8182
       targetPort: 8182
       protocol: TCP
 
 resources:
-  pdp-agent:
+  pdpAgent:
     requests:
       cpu: 500m
       memory: 500Mi
     limits:
       memory: 1Gi
-  mcp-server:
+  mcpServer:
     requests:
       cpu: 200m
       memory: 200Mi
@@ -116,8 +116,8 @@ tolerations: []
 affinity: {}
 
 env:
-  # PDP Agent container environment variables
-  pdp:
+  # PDPAgent container environment variables
+  pdpAgent:
     fronteggRegion: "eu"
     fronteggClientId: "your frontegg client id"
     fronteggClientCredentialsOauthClientId: "your oauth client credentials id"

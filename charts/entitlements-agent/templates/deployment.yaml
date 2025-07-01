@@ -39,11 +39,11 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.pdp.repository }}:{{ .Values.pdp.tag }}"
-          imagePullPolicy: {{ .Values.pdp.pullPolicy }}
-          {{- if .Values.env.pdp }}
+          image: "{{ .Values.pdpAgent.repository }}:{{ .Values.pdpAgent.tag }}"
+          imagePullPolicy: {{ .Values.pdpAgent.pullPolicy }}
+          {{- if .Values.env.pdpAgent }}
           env:
-            {{- range $key, $value := .Values.env.pdp }}
+            {{- range $key, $value := .Values.env.pdpAgent }}
             - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
@@ -60,7 +60,7 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources.pdp }}
+          {{- with .Values.resources.pdpAgent }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}

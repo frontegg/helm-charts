@@ -1,6 +1,6 @@
 apiVersion: v2
 name: entitlements-agent
-description: A Helm chart for frontegg's entitlements agent (pdp + mcp server)
+description: A Helm chart for frontegg's entitlements agent (pdpAgent + mcpServer)
 
 # A chart can be either an 'application' or a 'library' chart.
 #

@@ -1,12 +1,12 @@
 {{- if eq .Values.deploymentMode "separateDeployments" }}
-# PDP Agent Deployment
+# PDPAgent Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fullname" . }}-pdp-agent
+  name: {{ include "fullname" . }}-pdpAgent
   labels:
     {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: pdp-agent
+    app.kubernetes.io/component: pdpAgent
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
@@ -14,7 +14,7 @@ spec:
   selector:
     matchLabels:
       {{- include "selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: pdp-agent
+      app.kubernetes.io/component: pdpAgent
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -23,7 +23,7 @@ spec:
       {{- end }}
       labels:
         {{- include "selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: pdp-agent
+        app.kubernetes.io/component: pdpAgent
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -38,16 +38,16 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-pdp-agent
+        - name: {{ .Chart.Name }}-pdpAgent
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.pdp.repository }}:{{ .Values.pdp.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.pdp.pullPolicy }}
-          {{- if .Values.env.pdp }}
+          image: "{{ .Values.pdpAgent.repository }}:{{ .Values.pdpAgent.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.pdpAgent.pullPolicy }}
+          {{- if .Values.env.pdpAgent }}
           env:
-            {{- range $key, $value := .Values.env.pdp }}
+            {{- range $key, $value := .Values.env.pdpAgent }}
             - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
@@ -64,7 +64,7 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources.pdp }}
+          {{- with .Values.resources.pdpAgent }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -96,18 +96,18 @@ metadata:
   name: {{ include "fullname" . }}-mcp-server
   labels:
     {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-server
+    app.kubernetes.io/component: mcpServer
 spec:
   replicas: {{ .Values.mcpServer.replicaCount }}
   selector:
     matchLabels:
       {{- include "selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: mcp-server
+      app.kubernetes.io/component: mcpServer
   template:
     metadata:
       labels:
         {{- include "selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: mcp-server
+        app.kubernetes.io/component: mcpServer
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -120,7 +120,7 @@ spec:
             capabilities:
               drop:
               - NET_RAW
-          image: "{{ .Values.mcpServer.repository }}:{{ .Values.mcpServer.tag | default .Chart.AppVersion }}"
+          image: "{{ .Values.mcpServer.repository }}:{{ .Values.mcpServer.tag }}"
           imagePullPolicy: {{ .Values.mcpServer.pullPolicy }}
           env:
             {{- if .Values.env.mcpServer }}
@@ -130,7 +130,7 @@ spec:
             {{- end }}
             {{- else }}
             - name: PDP_URL
-              value: "http://{{ include "fullname" . }}-pdp-agent:8181"
+              value: "http://{{ include "fullname" . }}-pdpAgent:8181"
             {{- end }}
           ports:
             - name: http
