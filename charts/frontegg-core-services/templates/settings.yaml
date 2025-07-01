@@ -88,7 +88,7 @@ data:
     - password-rotation:
         treatment: on
     - skip_rate_limit:
-        treatment: off
+        treatment: on
     - domain-events:
         treatment: on
     - dashboard-enable-coralogix:
