@@ -34,16 +34,16 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-opa-agent
+        - name: {{ .Chart.Name }}-pdp-agent
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.opaagent.repository }}:{{ .Values.opaagent.tag }}"
-          imagePullPolicy: {{ .Values.opaagent.pullPolicy }}
-          {{- if .Values.env.opaagent }}
+          image: "{{ .Values.pdp.repository }}:{{ .Values.pdp.tag }}"
+          imagePullPolicy: {{ .Values.pdp.pullPolicy }}
+          {{- if .Values.env.pdp }}
           env:
-            {{- range $key, $value := .Values.env.opaagent }}
+            {{- range $key, $value := .Values.env.pdp }}
             - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
@@ -60,7 +60,7 @@ spec:
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.resources.opaagent }}
+          {{- with .Values.resources.pdp }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -73,11 +73,11 @@ spec:
             capabilities:
               drop:
               - NET_RAW
-          image: "{{ .Values.mcpserver.repository }}:{{ .Values.mcpserver.tag }}"
-          imagePullPolicy: {{ .Values.mcpserver.pullPolicy }}
-          {{- if .Values.env.mcpserver }}
+          image: "{{ .Values.mcpServer.repository }}:{{ .Values.mcpServer.tag }}"
+          imagePullPolicy: {{ .Values.mcpServer.pullPolicy }}
+          {{- if .Values.env.mcpServer }}
           env:
-            {{- range $key, $value := .Values.env.mcpserver }}
+            {{- range $key, $value := .Values.env.mcpServer }}
             - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
@@ -86,7 +86,7 @@ spec:
             - name: http-mcp-server
               containerPort: 8182
               protocol: TCP
-          {{- with .Values.resources.mcpserver }}
+          {{- with .Values.resources.mcpServer }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}

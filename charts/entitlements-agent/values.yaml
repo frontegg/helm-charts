@@ -7,13 +7,13 @@ deploymentMode: "singlePod"
 
 replicaCount: 1
 
-# OPA Agent container/deployment image
-opaagent:
+# PDP Agent container/deployment image
+pdp:
   repository: frontegg/entitlements-agent
   tag: 06c96c0
   pullPolicy: IfNotPresent
 
-mcpserver:
+mcpServer:
   repository: frontegg/entitlements-agent-mcp-server
   pullPolicy: IfNotPresent
   tag: 06c96c0
@@ -58,7 +58,7 @@ service:
       protocol: TCP
 
 resources:
-  opa-agent:
+  pdp-agent:
     requests:
       cpu: 500m
       memory: 500Mi
@@ -116,8 +116,8 @@ tolerations: []
 affinity: {}
 
 env:
-  # OPA Agent container environment variables
-  opaagent:
+  # PDP Agent container environment variables
+  pdp:
     fronteggRegion: "eu"
     fronteggClientId: "your frontegg client id"
     fronteggClientCredentialsOauthClientId: "your oauth client credentials id"
@@ -125,5 +125,5 @@ env:
     pollingMinDelay: "30"
     pollingMaxDelay: "60"
   # MCP Server container environment variables
-  mcpserver:
+  mcpServer:
     pdpUrl: "http://localhost:8181"
