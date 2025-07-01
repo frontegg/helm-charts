@@ -2,22 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Deployment mode: "singlePod" for a pod with two containers, "separateDeployments" for two separate deployments
-deploymentMode: "singlePod"
-
 replicaCount: 1
 
-# OPA Agent container/deployment image
-opaagent:
+# PDPAgent container/deployment image
+pdpAgent:
   repository: frontegg/entitlements-agent
   tag: 06c96c0
   pullPolicy: IfNotPresent
 
-mcpserver:
+mcpServer:
   repository: frontegg/entitlements-agent-mcp-server
   pullPolicy: IfNotPresent
   tag: 06c96c0
-  # Only used when deploymentMode is "separateDeployments"
   replicaCount: 1
 
 imagePullSecrets: []
@@ -48,23 +44,23 @@ securityContext:
 service:
   type: ClusterIP
   ports:
-    - name: agent
+    - name: pdpAgent
       port: 8181
       targetPort: 8181
       protocol: TCP
-    - name: mcp-server
+    - name: mcpServer
       port: 8182
       targetPort: 8182
       protocol: TCP
 
 resources:
-  opa-agent:
+  pdpAgent:
     requests:
       cpu: 500m
       memory: 500Mi
     limits:
       memory: 1Gi
-  mcp-server:
+  mcpServer:
     requests:
       cpu: 200m
       memory: 200Mi
@@ -116,8 +112,8 @@ tolerations: []
 affinity: {}
 
 env:
-  # OPA Agent container environment variables
-  opaagent:
+  # PDPAgent container environment variables
+  pdpAgent:
     fronteggRegion: "eu"
     fronteggClientId: "your frontegg client id"
     fronteggClientCredentialsOauthClientId: "your oauth client credentials id"
@@ -125,5 +121,5 @@ env:
     pollingMinDelay: "30"
     pollingMaxDelay: "60"
   # MCP Server container environment variables
-  mcpserver:
+  mcpServer:
     pdpUrl: "http://localhost:8181"
