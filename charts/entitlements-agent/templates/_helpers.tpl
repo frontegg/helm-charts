@@ -50,6 +50,25 @@ app.kubernetes.io/name: {{ include "name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
+{{- define "mcpServerCommonLabels" -}}
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-server
+{{- end }}
+
+{{- define "pdpAgentCommonLabels" -}}
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: pdp-agent
+{{- end }}
+{{- define "mcpServerSelectorLabels" -}}
+    {{- include "selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-server
+{{- end }}
+
+{{- define "pdpAgentSelectorLabels" -}}
+    {{- include "selectorLabels" . | nindent 4 }}
+    app.kubernetes.io/component: pdp-agent
+{{- end }}
+
 {{/*
 Create the name of the service account to use
 */}}
@@ -68,3 +87,5 @@ Convert camelCase to UPPER_SNAKE_CASE
 {{- $result := regexReplaceAll "([a-z0-9])([A-Z])" . "${1}_${2}" -}}
 {{- $result | upper -}}
 {{- end }}
+
+

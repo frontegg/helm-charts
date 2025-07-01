@@ -3,18 +3,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fullname" . }}-pdpAgent
+  name: {{ include "fullname" . }}-pdp-agent
   labels:
-    {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: pdpAgent
+    {{- include "pdpAgentCommonLabels" . | nindent 4 }}
 spec:
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: pdpAgent
+      {{- include "pdpAgentSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -22,8 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: pdpAgent
+        {{- include "pdpAgentSelectorLabels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -38,7 +35,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-pdpAgent
+        - name: {{ .Chart.Name }}-pdp-agent
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
@@ -95,19 +92,16 @@ kind: Deployment
 metadata:
   name: {{ include "fullname" . }}-mcp-server
   labels:
-    {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcpServer
+    {{- include "mcpServerCommonLabels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.mcpServer.replicaCount }}
   selector:
     matchLabels:
-      {{- include "selectorLabels" . | nindent 6 }}
-      app.kubernetes.io/component: mcpServer
+      {{- include "mcpServerSelectorLabels" . | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "selectorLabels" . | nindent 8 }}
-        app.kubernetes.io/component: mcpServer
+        {{- include "mcpServerSelectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -130,7 +124,7 @@ spec:
             {{- end }}
             {{- else }}
             - name: PDP_URL
-              value: "http://{{ include "fullname" . }}-pdpAgent:8181"
+              value: "http://{{ include "fullname" . }}-pdp-agent:8181"
             {{- end }}
           ports:
             - name: http

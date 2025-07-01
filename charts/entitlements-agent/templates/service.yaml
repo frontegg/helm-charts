@@ -23,10 +23,9 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fullname" . }}-pdpAgent
+  name: {{ include "fullname" . }}-pdp-agent
   labels:
-    {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: pdpAgent
+    {{- include "pdpAgentCommonLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -35,8 +34,7 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: pdpAgent
+    {{- include "pdpAgentSelectorLabels" . | nindent 4 }}
 ---
 # MCP Server Service
 apiVersion: v1
@@ -44,8 +42,7 @@ kind: Service
 metadata:
   name: {{ include "fullname" . }}-mcp-server
   labels:
-    {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcpServer
+    {{- include "mcpServerCommonLabels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -54,6 +51,5 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcpServer
+    {{- include "mcpServerSelectorLabels" . | nindent 4 }}
 {{- end }}
