@@ -60,7 +60,7 @@ data:
     - identity_use_default_roles_for_invitation_tokens:
         treatment: off
     - rate_limit_mfa_flag:
-        treatment: on
+        treatment: off
     - use-aws-custom-domains:
         treatment: on
     - identity-skip-check-sso-user:
@@ -76,7 +76,7 @@ data:
     - strip_saml_from_comments:
         treatment: on
     - limit-custom-domains:
-        treatment: on
+        treatment: off
     - oauth-vendor-cache:
         treatment: on
     - new-pricing-enforcement-lock-envs:
@@ -180,7 +180,7 @@ data:
     - identity-code-emails:
         treatment: on
     - email-templates-limit-and-bypass:
-        treatment: on
+        treatment: off
     - dashboard-new-email-integrations:
         treatment: on
     - force-application-on-api-token:
@@ -210,7 +210,7 @@ data:
     - use-application-urls:
         treatment: on
     - rate_limit_send_emails_flag:
-        treatment: on
+        treatment: off
     - FUNCTION_RATE_LIMIT:
         treatment: off
     - dashboard-use-hosted-login:
@@ -426,7 +426,7 @@ data:
     - allow_temporary_users:
         treatment: on
     - rate-limit-dynamic:
-        treatment: on
+        treatment: off
     - dashboard-step-up-regenerate-key:
         treatment: on
     - backoffice-high-scale-flag:
@@ -450,7 +450,7 @@ data:
     - api-tokens-expiration:
         treatment: on
     - identity_otc_limiting:
-        treatment: on
+        treatment: off
     - allow-dashboard-feature-flags:
         treatment: on
     - admin_portal_use_entitlements_v2_endpoint:
@@ -628,7 +628,7 @@ data:
     - dashboard-gated-signup:
         treatment: off
     - api-gateway-rate-limits:
-        treatment: on
+        treatment: off
     - administration-with-adminbox:
         treatment: on
     - login-with-sms-release:
@@ -906,7 +906,7 @@ data:
     - skip-webhook-trigger:
         treatment: off
     - rate_limit_send_sms_flag:
-        treatment: on
+        treatment: off
     - sso-guides:
         treatment: on
     - cloudflare-custom-domain:
