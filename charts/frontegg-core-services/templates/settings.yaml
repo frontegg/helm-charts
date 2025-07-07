@@ -144,7 +144,7 @@ data:
     - enable-universal-search:
         treatment: off
     - enable-devrev:
-        treatment: on
+        treatment: off
     - identity-get-user-in-tenant-scope:
         treatment: on
     - identity-delete-fields-on-user-save:
