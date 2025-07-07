@@ -59,7 +59,7 @@ data:
         treatment: off
     - identity_use_default_roles_for_invitation_tokens:
         treatment: off
-    - rate_limit_mfa_flag:
+    - rate_limit_mfa_flag: 
         treatment: off
     - use-aws-custom-domains:
         treatment: on
@@ -212,7 +212,7 @@ data:
     - rate_limit_send_emails_flag:
         treatment: off
     - FUNCTION_RATE_LIMIT:
-        treatment: off
+        treatment: on
     - dashboard-use-hosted-login:
         treatment: on
     - email-reputation-engine:
@@ -450,7 +450,7 @@ data:
     - api-tokens-expiration:
         treatment: on
     - identity_otc_limiting:
-        treatment: off
+        treatment: on
     - allow-dashboard-feature-flags:
         treatment: on
     - admin_portal_use_entitlements_v2_endpoint:
@@ -906,7 +906,7 @@ data:
     - skip-webhook-trigger:
         treatment: off
     - rate_limit_send_sms_flag:
-        treatment: off
+        treatment: on
     - sso-guides:
         treatment: on
     - cloudflare-custom-domain:
