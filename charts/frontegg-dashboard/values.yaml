@@ -5,7 +5,7 @@ dashboard:
   name: dashboard
   team: frontegg
   envID: "{{ .Values.global.envId }}"
-  appVersion: f16bbf7
+  appVersion: 82ecabb
   defaults:
     migration:
       annotations:
