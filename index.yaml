@@ -3325,6 +3325,24 @@ entries:
   frontegg-dashboard:
   - apiVersion: v2
     appVersion: "2025.06"
+    created: "2025-07-08T07:11:05.140021413Z"
+    dependencies:
+    - alias: dashboard
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    description: Frontegg Dashboard Helm Chart
+    digest: 7a3413ab8af262b75a016730c2856c566df102d8a674eed0a96665233ad31950
+    maintainers:
+    - email: support@frontegg.com
+      name: Frontegg
+    name: frontegg-dashboard
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/frontegg-dashboard-0.0.1-alpha.3/frontegg-dashboard-0.0.1-alpha.3.tgz
+    version: 0.0.1-alpha.3
+  - apiVersion: v2
+    appVersion: "2025.06"
     created: "2025-06-25T10:48:18.239902765Z"
     dependencies:
     - alias: dashboard
@@ -8782,4 +8800,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-07-07T11:37:19.780412542Z"
+generated: "2025-07-08T07:11:05.140989696Z"
