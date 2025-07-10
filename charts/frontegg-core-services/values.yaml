@@ -4172,7 +4172,7 @@ configCenter:
       eventsServiceUrl: "http://events-v2-web"
       integrationsServiceUrl: "http://integrations-v2-web"
       applicationsServiceUrl: "http://applications-v2-web"
-      cdnUrl: ""
+      cdnUrl: "http://dummy.com"
       adminsServiceUrl: "http://admins-v2-web"
       subscriptionsServiceUrl: "http://subscriptions-v2-web"
       teamServiceUrl: "http://team-management-v2-web"
