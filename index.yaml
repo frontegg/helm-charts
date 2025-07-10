@@ -2568,6 +2568,132 @@ entries:
   frontegg-core-services:
   - apiVersion: v2
     appVersion: "2025.06"
+    created: "2025-07-10T09:23:06.840318651Z"
+    dependencies:
+    - alias: admins
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: api-gateway
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: applications-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: authentication-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: audits-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: backoffice-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: dashboard-env-builder
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: directory-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: entitlements-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: env-duplicator
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: event-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: identity-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: forward-proxy
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: logs-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: metadata-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: oauth-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: prehook-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: security-center-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: security-engines
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: team-management-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: tenants-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: vendors-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: webhooks
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: task-master
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: entitlements-agent
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - alias: email-service
+      name: unified-chart-staging
+      repository: https://frontegg.github.io/helm-charts
+      version: 4.0.111
+    - condition: debezium.kafkaConnect.install
+      name: strimzi-kafka-operator
+      repository: oci://quay.io/strimzi-helm
+      version: 0.45.*
+    - condition: debezium.debeziumOperator.install
+      name: debezium-operator
+      repository: https://charts.debezium.io
+      version: 3.1.0-final
+    description: Frontegg Core Services Helm Chart
+    digest: 947653596dc3910faa9f2b40f976204b6725011664d3d9f9ecfa388baeeefedf
+    maintainers:
+    - email: support@frontegg.com
+      name: Frontegg
+    name: frontegg-core-services
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/frontegg-core-services-0.0.1-alpha.8/frontegg-core-services-0.0.1-alpha.8.tgz
+    version: 0.0.1-alpha.8
+  - apiVersion: v2
+    appVersion: "2025.06"
     created: "2025-07-08T10:39:39.83146672Z"
     dependencies:
     - alias: admins
@@ -8926,4 +9052,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-07-08T10:39:39.832567109Z"
+generated: "2025-07-10T09:23:06.841291488Z"
