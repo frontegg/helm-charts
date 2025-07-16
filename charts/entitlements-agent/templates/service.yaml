@@ -17,8 +17,9 @@ spec:
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: spicedb
+{{- if not .Values.cockroachdb.operator.enabled }}
 ---
-# CockroachDB Service
+# CockroachDB Service (only for manual StatefulSet deployment)
 apiVersion: v1
 kind: Service
 metadata:
@@ -41,7 +42,7 @@ spec:
     {{- include "selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: cockroachdb
 ---
-# CockroachDB Headless Service (for StatefulSet)
+# CockroachDB Headless Service (only for manual StatefulSet deployment)
 apiVersion: v1
 kind: Service
 metadata:
@@ -63,6 +64,7 @@ spec:
   selector:
     {{- include "selectorLabels" . | nindent 4 }}
     app.kubernetes.io/component: cockroachdb
+{{- end }}
 ---
 # MCP Server Service
 apiVersion: v1

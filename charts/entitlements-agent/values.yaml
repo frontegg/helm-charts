@@ -27,13 +27,24 @@ cockroachdb:
   repository: cockroachdb/cockroach
   tag: latest
   pullPolicy: IfNotPresent
-  replicaCount: 1
+  replicaCount: 3
 
   # Storage configuration
   persistence:
     enabled: true
     storageClass: ""
     size: 20Gi
+
+  # CockroachDB Operator configuration
+  # When enabled, deploys CockroachDB using the CockroachDB Operator instead of manual StatefulSet
+  operator:
+    enabled: true
+    # Enable TLS for the CockroachDB cluster (recommended for production)
+    tlsEnabled: true
+    # Additional labels to apply to the CrdbCluster resource
+    additionalLabels: {}
+    # Additional annotations to apply to the CrdbCluster resource
+    additionalAnnotations: {}
 
 # SpiceDB Sync container configuration
 spicedbSync:

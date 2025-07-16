@@ -1,0 +1,50 @@
+{{- if .Values.cockroachdb.operator.enabled }}
+apiVersion: crdb.cockroachlabs.com/v1alpha1
+kind: CrdbCluster
+metadata:
+  name: {{ include "fullname" . }}-cockroachdb
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cockroachdb
+spec:
+  dataStore:
+    pvc:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: {{ .Values.cockroachdb.persistence.size }}
+        {{- if .Values.cockroachdb.persistence.storageClass }}
+        storageClassName: {{ .Values.cockroachdb.persistence.storageClass | quote }}
+        {{- end }}
+  resources:
+    {{- with .Values.resources.cockroachdb }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+  tlsEnabled: {{ .Values.cockroachdb.operator.tlsEnabled }}
+  image:
+    name: {{ .Values.cockroachdb.repository }}:{{ .Values.cockroachdb.tag }}
+  nodes: {{ .Values.cockroachdb.replicaCount }}
+  {{- with .Values.cockroachdb.operator.additionalLabels }}
+  additionalLabels:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.cockroachdb.operator.additionalAnnotations }}
+  additionalAnnotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.nodeSelector }}
+  nodeSelector:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.affinity }}
+  affinity:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  {{- with .Values.tolerations }}
+  tolerations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+{{- end }} 

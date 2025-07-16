@@ -1,3 +1,4 @@
+{{- if not .Values.cockroachdb.operator.enabled }}
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
@@ -132,4 +133,5 @@ spec:
       volumes:
         - name: cockroachdb-data
           emptyDir: {}
-  {{- end }} 
+  {{- end }}
+{{- end }} 
