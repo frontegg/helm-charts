@@ -1,0 +1,83 @@
+{{- if .Values.initJobs.enabled }}
+---
+# Job to create the SpiceDB database
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "fullname" . }}-spicedb-create-db
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: init-job
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "1"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.initJobs.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "commonLabels" . | nindent 8 }}
+        app.kubernetes.io/component: init-job
+    spec:
+      restartPolicy: {{ .Values.initJobs.restartPolicy }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: create-db
+          image: "{{ .Values.cockroachdb.repository }}:{{ .Values.cockroachdb.tag }}"
+          imagePullPolicy: {{ .Values.cockroachdb.pullPolicy }}
+          command:
+            - /cockroach/cockroach
+            - sql
+            - --insecure
+            - --host={{ include "fullname" . }}-cockroachdb:{{ .Values.service.cockroachdb.port }}
+            - --execute=CREATE DATABASE IF NOT EXISTS {{ .Values.env.cockroachdb.pgdatabase }};
+          {{- with .Values.initJobs.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+---
+# Job to run SpiceDB migrations
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "fullname" . }}-spicedb-migrate
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: init-job
+  annotations:
+    "helm.sh/hook": post-install,post-upgrade
+    "helm.sh/hook-weight": "2"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: {{ .Values.initJobs.backoffLimit }}
+  template:
+    metadata:
+      labels:
+        {{- include "commonLabels" . | nindent 8 }}
+        app.kubernetes.io/component: init-job
+    spec:
+      restartPolicy: {{ .Values.initJobs.restartPolicy }}
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: migrate
+          image: "{{ .Values.spicedb.repository }}:{{ .Values.spicedb.tag }}"
+          imagePullPolicy: {{ .Values.spicedb.pullPolicy }}
+          command:
+            - spicedb
+            - datastore
+            - migrate
+            - head
+            - --datastore-engine={{ .Values.spicedb.datastore.engine }}
+            - --datastore-conn-uri=postgres://{{ .Values.env.cockroachdb.pguser }}:{{ .Values.env.cockroachdb.pgpassword }}@{{ include "fullname" . }}-cockroachdb:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=disable
+          {{- with .Values.initJobs.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+{{- end }} 

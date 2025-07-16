@@ -1,0 +1,135 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ include "fullname" . }}-cockroachdb
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: cockroachdb
+spec:
+  serviceName: {{ include "fullname" . }}-cockroachdb-headless
+  replicas: {{ .Values.cockroachdb.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: cockroachdb
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "commonLabels" . | nindent 8 }}
+        app.kubernetes.io/component: cockroachdb
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: cockroachdb
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.cockroachdb.repository }}:{{ .Values.cockroachdb.tag }}"
+          imagePullPolicy: {{ .Values.cockroachdb.pullPolicy }}
+          command:
+            - /cockroach/cockroach
+            - start-single-node
+            - --insecure
+            - --store=path=/cockroach/cockroach-data
+          ports:
+            - name: grpc
+              containerPort: 26257
+              protocol: TCP
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          {{- if .Values.env.cockroachdb }}
+          env:
+            {{- range $key, $value := .Values.env.cockroachdb }}
+            - name: {{ include "toEnvVarName" $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.healthChecks.cockroachdb.enabled }}
+          livenessProbe:
+            exec:
+              command:
+                - /cockroach/cockroach
+                - sql
+                - --insecure
+                - --execute
+                - SELECT 1
+            initialDelaySeconds: {{ .Values.healthChecks.cockroachdb.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthChecks.cockroachdb.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.cockroachdb.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthChecks.cockroachdb.failureThreshold }}
+          readinessProbe:
+            exec:
+              command:
+                - /cockroach/cockroach
+                - sql
+                - --insecure
+                - --execute
+                - SELECT 1
+            initialDelaySeconds: {{ .Values.healthChecks.cockroachdb.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthChecks.cockroachdb.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.cockroachdb.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthChecks.cockroachdb.failureThreshold }}
+          {{- end }}
+          {{- with .Values.resources.cockroachdb }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: cockroachdb-data
+              mountPath: /cockroach/cockroach-data
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      {{- with .Values.volumes }}
+      volumes:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+  {{- if .Values.cockroachdb.persistence.enabled }}
+  volumeClaimTemplates:
+    - metadata:
+        name: cockroachdb-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        {{- if .Values.cockroachdb.persistence.storageClass }}
+        storageClassName: {{ .Values.cockroachdb.persistence.storageClass | quote }}
+        {{- end }}
+        resources:
+          requests:
+            storage: {{ .Values.cockroachdb.persistence.size | quote }}
+  {{- else }}
+  # If persistence is disabled, use emptyDir volume
+  template:
+    spec:
+      volumes:
+        - name: cockroachdb-data
+          emptyDir: {}
+  {{- end }} 
