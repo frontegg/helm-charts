@@ -7,7 +7,7 @@ kind: Deployment
 metadata:
   name: {{ include "hp.name" $top }}
   labels:
-  {{- include "hp.labels" . | nindent 4 }}
+  {{- include "hp.labels" $top | nindent 4 }}
   {{- toYaml $values.hp.labels | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
