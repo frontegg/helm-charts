@@ -4,7 +4,7 @@ description: Frontegg Unified Chart
 type: application
 
 #This is a test version do not use
-version: 4.0.112
+version: 4.0.113
 
 maintainers:
   - name: "platform"

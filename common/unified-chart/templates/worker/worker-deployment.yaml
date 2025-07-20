@@ -1,89 +1,89 @@
 {{- $top := . -}}
-{{- if .Values.worker.enabled }}
+{{- $values := $top.Values -}}
+{{- if $values.worker.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "worker.name" . }}
+  name: {{ include "worker.name" $top }}
   labels:
-    {{- include "worker.labels" . | nindent 4 }}
+    {{- include "worker.labels" $top | nindent 4 }}
 spec:
-  {{- if .Values.argoRollouts.enabled }}
+  {{- if $values.argoRollouts.enabled }}
   replicas: 0
-  {{- else if not .Values.web.autoscaling.enabled }}
-  replicas: {{ .Values.worker.replicaCount }}
+  {{- else if not $values.web.autoscaling.enabled }}
+  replicas: {{ $values.worker.replicaCount }}
   {{- end }}
-  revisionHistoryLimit: {{ .Values.revisionHistoryLimit | default 2 }}
+  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
   selector:
     matchLabels:
-      {{- include "worker.selector.labels" . | nindent 6 }}
+      {{- include "worker.selector.labels" $top | nindent 6 }}
   template:
     metadata:
       labels:
-        {{- include "worker.labels" . | nindent 8 }}
+        {{- include "worker.labels" $top | nindent 8 }}
       annotations:
-        checksum/secret: {{ printf "%s%s" (print .Values.externalSecret.text) (print .Values.externalSecret.additionalSecrets) | sha256sum }}
-        {{- $valsworker := .Values.worker -}}
-        {{- $bothworker := merge $valsworker (pick .Values "linkerd") }}
-        {{- include "calculate.pod.annotations" $bothworker | nindent 8 }}
+        checksum/secret: {{ printf "%s%s" (print $values.externalSecret.text) (print $values.externalSecret.additionalSecrets) | sha256sum }}
+        {{- $valsworker := $values.worker -}}
+        {{- include "calculate.pod.annotations" $valsworker | nindent 8 }}
     spec:
-      {{- if .Values.serviceAccount.enabled }}
-      serviceAccountName: {{ include "service.account.name" . }}
+      {{- if $values.serviceAccount.enabled }}
+      serviceAccountName: {{ include "service.account.name" $top}}
       {{- end }}
-      terminationGracePeriodSeconds: {{ .Values.worker.terminationGracePeriodSeconds | default 30 }}
-      {{- with .Values.imagePullSecrets }}
+      terminationGracePeriodSeconds: {{ $values.worker.terminationGracePeriodSeconds | default 30 }}
+      {{- with $values.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if or .Values.externalSecret.enabled .Values.worker.additionalVolumes }}
+      {{- if or $values.externalSecret.enabled $values.worker.additionalVolumes }}
       volumes:
-        {{- if .Values.externalSecret.enabled }}
+        {{- if $values.externalSecret.enabled }}
         - name: secret-volume
           secret:
-            secretName: {{ include "secret.name" . }}
+            secretName: {{ include "secret.name" $top }}
         {{- end }}
-        {{- with .Values.worker.additionalVolumes }}
+        {{- with $values.worker.additionalVolumes }}
         {{- tpl . $top | nindent 8 }}
         {{- end }}
       {{- end }}
       containers:
-        - name: {{ include "container.name" . }}
-          image: "{{ .Values.image.prefix }}{{ required ".Values.image.repository must be set" .Values.image.repository }}:{{ include "appVersion" . }}"
-          imagePullPolicy: {{ .Values.imagePullPolicy }}
-          {{- if or .Values.externalSecret.enabled .Values.web.additionalVolumeMounts }}
+        - name: {{ include "container.name" $top }}
+          image: "{{ $values.image.prefix }}{{ required ".Values.image.repository must be set" $values.image.repository }}:{{ include "appVersion" $top }}"
+          imagePullPolicy: {{ $values.imagePullPolicy }}
+          {{- if or $values.externalSecret.enabled $values.web.additionalVolumeMounts }}
           volumeMounts:
-            {{- if .Values.externalSecret.enabled }}
-            {{- include "externalsecret.volumemount" . | nindent 12 }}
+            {{- if $values.externalSecret.enabled }}
+            {{- include "externalsecret.volumemount" $top | nindent 12 }}
             {{- end }}
-            {{- with .Values.web.additionalVolumeMounts }}
+            {{- with $values.web.additionalVolumeMounts }}
             {{- tpl . $top | nindent 12 }}
             {{- end }}
           {{- end }}
           ports:
-            {{- if .Values.worker.ports }}
-            {{- toYaml .Values.worker.ports | nindent 12 }}
+            {{- if $values.worker.ports }}
+            {{- toYaml $values.worker.ports | nindent 12 }}
             {{- else }}
             - name: http
-              containerPort: {{ .Values.service.targetPort }}
+              containerPort: {{ $values.service.targetPort }}
               protocol: TCP
             {{- end }}
-          {{- with .Values.worker.livenessProbe }}
+          {{- with $values.worker.livenessProbe }}
           livenessProbe:
           {{- . | toYaml | nindent  12 }}
           {{- end }}
-          {{- with .Values.worker.readinessProbe }}
+          {{- with $values.worker.readinessProbe }}
           readinessProbe:
             successThreshold: {{ .successThreshold | default 5 }}
           {{- . | toYaml | nindent  12 }}
           {{- end }}
-          {{- with .Values.worker.startupProbe }}
+          {{- with $values.worker.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           env:
-            {{- include "container.env" .Values.worker | indent 12 -}}
-            {{- range $config_name, $values := .Values.configuration.map }}
-            {{- range $key, $value :=  $values}}
+            {{- include "container.env" $values.worker | indent 12 -}}
+            {{- range $config_name, $keyValues := $values.configuration.map }}
+            {{- range $key, $value :=  $keyValues }}
             - name: {{ $key }}
               valueFrom:
                 configMapKeyRef:
@@ -91,37 +91,37 @@ spec:
                   key: {{ $value }}
             {{- end }}
             {{- end }}
-          {{- if .Values.configmap.data }}
+          {{- if $values.configmap.data }}
           envFrom:
             - configMapRef:
-                name: {{ include "name" . }}
-            {{- with .Values.worker.additionalEnvFrom }}
+                name: {{ include "name" $top }}
+            {{- with $values.worker.additionalEnvFrom }}
             {{- tpl . $top | nindent 12 }}
             {{- end }}
           {{- end }}
           resources:
-            {{- required ".Values.worker.resources is required" .Values.worker.resources | toYaml | nindent 12 }}
-          {{- with .Values.worker.command }}
+            {{- required ".Values.worker.resources is required" $values.worker.resources | toYaml | nindent 12 }}
+          {{- with $values.worker.command }}
           command:
             {{- range . }}
             - {{ . | quote  }}
             {{- end }}
           {{- end }}
-          {{- with .Values.worker.args }}
+          {{- with $values.worker.args }}
           args:
             {{- range . }}
             - {{ . | quote  }}
             {{- end }}
           {{- end }}
-      {{- with .Values.worker.nodeSelector }}
+      {{- with $values.worker.nodeSelector }}
       nodeSelector:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.web.affinity }}
+      {{- with $values.web.affinity }}
       affinity:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.web.tolerations }}
+      {{- with $values.web.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
   {{- end }}
