@@ -394,11 +394,6 @@ rolebinding:
   enabled: false
   namespace: ""
 
-linkerd:
-  enabled: false
-  annotations:
-    linkerd.io/inject: enabled
-
 # additional helm resources to render resources freely
 additionalResources: |
 

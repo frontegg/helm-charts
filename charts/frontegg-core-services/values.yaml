@@ -484,8 +484,6 @@ webhooks:
     env:
       - name: FRONTEGG_IS_SERVICE_OFFLINE_PROCESS
         value: "false"
-    podAnnotations:
-      config.linkerd.io/skip-outbound-ports: "8080"
     resources:
       requests:
         cpu: 500m

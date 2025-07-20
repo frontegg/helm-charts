@@ -142,23 +142,9 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- end }}
 {{- end -}}
 
-{{/* what is linkerd? */}}
-{{- define "linkerd.annotations" -}}
-{{ .Values.linkerd.annotations }}
-{{- end -}}
-
 {{- define "calculate.pod.annotations" -}}
-{{- if .linkerd.enabled }}
-{{- $merged := mergeOverwrite .podAnnotations .linkerd.annotations }}
-{{- if (index .podAnnotations "config.alpha.linkerd.io/proxy-wait-before-exit-seconds") }}
-{{- fail "config.alpha.linkerd.io/proxy-wait-before-exit-seconds annotation is populated automatically and is equal to terminationGracePeriodSeconds, remove the linkerd annotation from your values" }}
-{{- end }}
-{{- $merged | toYaml }}
-config.alpha.linkerd.io/proxy-wait-before-exit-seconds: {{ .terminationGracePeriodSeconds | quote }}
-{{- else }}
 {{- with .podAnnotations }}
 {{- toYaml . }}
-{{- end }}
 {{- end }}
 {{- end -}}
 
