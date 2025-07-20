@@ -3,7 +3,7 @@ name: frontegg-core-services
 description: Frontegg Core Services Helm Chart
 type: application
 
-version: 0.0.1-alpha.8
+version: 0.0.1-alpha.9
 appVersion: 2025.06
 
 maintainers:

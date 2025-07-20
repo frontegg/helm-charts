@@ -3,7 +3,7 @@ name: frontegg-dashboard
 description: Frontegg Dashboard Helm Chart
 type: application
 
-version: 0.0.1-alpha.3
+version: 0.0.1-alpha.9
 appVersion: 2025.06
 
 maintainers:
