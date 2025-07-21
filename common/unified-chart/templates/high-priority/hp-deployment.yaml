@@ -114,15 +114,28 @@ spec:
             - {{ . | quote  }}
             {{- end }}
           {{- end }}
-      {{- with $values.web.nodeSelector }}
+      {{- with $values.hp.nodeSelector }}
       nodeSelector:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $values.web.affinity }}
+      {{- if $values.hp.affinity }}
       affinity:
-      {{- toYaml . | nindent 8 }}
+        {{- tpl ($values.hp.affinity | toYaml) $top | toYaml | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.frontegg.com/name
+                      operator: In
+                      values:
+                        - {{ include "hp.name" $top }}
+                topologyKey: "kubernetes.io/hostname"
       {{- end }}
-      {{- with $values.web.tolerations }}
+      {{- with $values.hp.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
   {{- end }}

@@ -292,6 +292,16 @@ worker:
                 - type: Pods
                   value: 1
                   periodSeconds: 15
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: workload
+                operator: In
+                values:
+                  - general
+                  - '{{ include "worker.name" $ }}-poop'
 
 jobs:
   mgr:

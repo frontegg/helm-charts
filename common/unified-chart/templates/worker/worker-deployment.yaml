@@ -117,9 +117,22 @@ spec:
       nodeSelector:
       {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with $values.web.affinity }}
+      {{- if $values.worker.affinity }}
       affinity:
-      {{- toYaml . | nindent 8 }}
+      {{- tpl ($values.worker.affinity | toYaml) $top | nindent 8 }}
+      {{- else }}
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.frontegg.com/name
+                      operator: In
+                      values:
+                        - {{ include "worker.name" $top }}
+                topologyKey: "kubernetes.io/hostname"
       {{- end }}
       {{- with $values.web.tolerations }}
       tolerations:
