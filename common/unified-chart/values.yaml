@@ -132,7 +132,7 @@ web:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
 
-  terminationGracePeriodSeconds: 90
+  terminationGracePeriodSeconds: 30
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -194,7 +194,7 @@ worker:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "worker.name" $ }}'
-  terminationGracePeriodSeconds: 90
+  terminationGracePeriodSeconds: 30
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -273,7 +273,7 @@ hp:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "hp.name" $ }}'
-  terminationGracePeriodSeconds: 90
+  terminationGracePeriodSeconds: 30
   nodeSelector: {}
   tolerations: []
   affinity: {}
