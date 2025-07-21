@@ -274,6 +274,10 @@ hp:
         horizontalPodAutoscalerConfig:
           name: '{{ include "hp.name" $ }}'
   terminationGracePeriodSeconds: 90
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+
 
 jobs:
   mgr:
