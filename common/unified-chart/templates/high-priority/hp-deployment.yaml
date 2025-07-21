@@ -120,7 +120,7 @@ spec:
       {{- end }}
       {{- if $values.hp.affinity }}
       affinity:
-        {{- toYaml $values.hp.affinity | nindent 8 }}
+        {{- tpl $values.hp.affinity $top | toYaml | nindent 8 }}
       {{- else }}
       affinity:
         podAntiAffinity:
