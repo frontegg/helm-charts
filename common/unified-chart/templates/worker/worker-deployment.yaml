@@ -119,7 +119,7 @@ spec:
       {{- end }}
       {{- if $values.worker.affinity }}
       affinity:
-      {{- toYaml $values.worker.affinity | nindent 8 }}
+      {{- tpl $values.worker.affinity $top | toYaml | nindent 8 }}
       {{- else }}
       affinity:
         podAntiAffinity:
