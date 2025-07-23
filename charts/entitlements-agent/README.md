@@ -56,7 +56,7 @@ helm install my-entitlements-agent ./charts/entitlements-agent \
 | Parameter                              | Description                 | Default |
 | -------------------------------------- | --------------------------- | ------- |
 | `cockroachdb.operator.enabled`         | Use CockroachDB Operator    | `true`  |
-| `cockroachdb.operator.tlsEnabled`      | Enable TLS for CockroachDB  | `true`  |
+| `cockroachdb.tlsEnabled`               | Enable TLS for CockroachDB  | `true`  |
 | `cockroachdb.replicaCount`             | Number of CockroachDB nodes | `3`     |
 | `spicedb.replicaCount`                 | Number of SpiceDB replicas  | `1`     |
 | `env.spicedbSync.fronteggClientId`     | Frontegg Client ID          | `""`    |
@@ -66,9 +66,9 @@ helm install my-entitlements-agent ./charts/entitlements-agent \
 
 ```yaml
 cockroachdb:
+  tlsEnabled: true # Enable TLS (recommended for production)
   operator:
     enabled: true # Use CockroachDB Operator
-    tlsEnabled: true # Enable TLS (recommended for production)
     additionalLabels: {} # Additional labels for CrdbCluster
     additionalAnnotations: {} # Additional annotations for CrdbCluster
   replicaCount: 3 # Number of CockroachDB nodes
@@ -81,6 +81,7 @@ cockroachdb:
 
 ```yaml
 cockroachdb:
+  tlsEnabled: false # TLS not supported for manual StatefulSet mode
   operator:
     enabled: false # Disable operator, use manual StatefulSet
   replicaCount: 3 # Number of CockroachDB nodes

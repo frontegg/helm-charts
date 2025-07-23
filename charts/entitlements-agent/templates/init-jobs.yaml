@@ -25,7 +25,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.operator.tlsEnabled }}
+      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
       initContainers:
         - name: setup-certs
           image: busybox:1.35
@@ -54,7 +54,7 @@ spec:
             - /cockroach/cockroach
             - sql
             {{- if .Values.cockroachdb.operator.enabled }}
-            {{- if .Values.cockroachdb.operator.tlsEnabled }}
+            {{- if .Values.cockroachdb.tlsEnabled }}
             - --certs-dir=/cockroach-certs
             - --host={{ include "fullname" . }}-cockroachdb-public:{{ .Values.service.cockroachdb.port }}
             {{- else }}
@@ -66,7 +66,7 @@ spec:
             - --host={{ include "fullname" . }}-cockroachdb:{{ .Values.service.cockroachdb.port }}
             {{- end }}
             - --execute=CREATE DATABASE IF NOT EXISTS {{ .Values.env.cockroachdb.pgdatabase }};
-          {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.operator.tlsEnabled }}
+          {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
           volumeMounts:
             - name: client-certs-formatted
               mountPath: /cockroach-certs
@@ -76,7 +76,7 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.operator.tlsEnabled }}
+      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
       volumes:
         - name: client-certs-raw
           projected:
@@ -114,7 +114,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.operator.tlsEnabled }}
+      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
       initContainers:
         - name: setup-certs
           image: busybox:1.35
@@ -146,7 +146,7 @@ spec:
             - head
             - --datastore-engine={{ .Values.spicedb.datastore.engine }}
             {{- if .Values.cockroachdb.operator.enabled }}
-            {{- if .Values.cockroachdb.operator.tlsEnabled }}
+            {{- if .Values.cockroachdb.tlsEnabled }}
             - --datastore-conn-uri=postgres://root@{{ include "fullname" . }}-cockroachdb-public:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=require&sslcert=/cockroach-certs/client.root.crt&sslkey=/cockroach-certs/client.root.key&sslrootcert=/cockroach-certs/ca.crt
             {{- else }}
             - --datastore-conn-uri=postgres://{{ .Values.env.cockroachdb.pguser }}:{{ .Values.env.cockroachdb.pgpassword }}@{{ include "fullname" . }}-cockroachdb-public:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=disable
@@ -154,7 +154,7 @@ spec:
             {{- else }}
             - --datastore-conn-uri=postgres://{{ .Values.env.cockroachdb.pguser }}:{{ .Values.env.cockroachdb.pgpassword }}@{{ include "fullname" . }}-cockroachdb:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=disable
             {{- end }}
-          {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.operator.tlsEnabled }}
+          {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
           volumeMounts:
             - name: client-certs-formatted
               mountPath: /cockroach-certs
@@ -164,7 +164,7 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.operator.tlsEnabled }}
+      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
       volumes:
         - name: client-certs-raw
           projected:

@@ -29,6 +29,9 @@ cockroachdb:
   pullPolicy: IfNotPresent
   replicaCount: 3
 
+  # Enable TLS for the CockroachDB cluster (recommended for production)
+  tlsEnabled: true
+
   # Storage configuration
   persistence:
     enabled: true
@@ -39,8 +42,6 @@ cockroachdb:
   # When enabled, deploys CockroachDB using the CockroachDB Operator instead of manual StatefulSet
   operator:
     enabled: true
-    # Enable TLS for the CockroachDB cluster (recommended for production)
-    tlsEnabled: true
     # Additional labels to apply to the CrdbCluster resource
     additionalLabels: {}
     # Additional annotations to apply to the CrdbCluster resource

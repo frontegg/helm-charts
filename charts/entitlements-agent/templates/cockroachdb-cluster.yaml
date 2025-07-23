@@ -23,7 +23,7 @@ spec:
     {{- with .Values.resources.cockroachdb }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-  tlsEnabled: {{ .Values.cockroachdb.operator.tlsEnabled }}
+  tlsEnabled: {{ .Values.cockroachdb.tlsEnabled }}
   image:
     name: {{ .Values.cockroachdb.repository }}:{{ .Values.cockroachdb.tag }}
   nodes: {{ .Values.cockroachdb.replicaCount }}
