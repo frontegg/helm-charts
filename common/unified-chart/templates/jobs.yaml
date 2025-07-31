@@ -84,6 +84,9 @@ spec:
                   key: {{ $value }}
             {{- end }}
             {{- end }}
+            {{- with .vars }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
+            {{- end }}
           {{- if $values.configmap.data }}
           envFrom:
             - configMapRef:
