@@ -47,7 +47,7 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        - name: {{ include "container.name" $top }}
+        - name: {{ include "web.container.name" $top }}
           {{- if $values.web.image }}
           image: "{{ $values.web.image.prefix }}{{ required "values.web.image.name required" $values.web.image.name }}:{{ required "values.web.image.tag" $values.web.image.tag }}"
           {{- else }}
