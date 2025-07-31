@@ -93,19 +93,22 @@ spec:
               resources:
                 {{- required "$job.resources is required" $job.resources | toYaml | nindent 16 }}
               env:
-              {{- if $values.externalSecret.enabled }}
+                {{- if $values.externalSecret.enabled }}
                 - name: FRONTEGG_CONFIG_DIRECTORY
                   value: "/etc/config"
-              {{- end }}
-              {{- range $config_name, $values := $values.configuration.map }}
-              {{- range $key, $value :=  $values}}
+                {{- end }}
+                {{- range $config_name, $values := $values.configuration.map }}
+                {{- range $key, $value :=  $values}}
                 - name: {{ $key }}
                   valueFrom:
                     configMapKeyRef:
                       name: {{ $config_name }}
                       key: {{ $value }}
-              {{- end }}
-              {{- end }}
+                {{- end }}
+                {{- end }}
+                {{- with $job.vars }}
+                {{- tpl (toYaml .) $ | nindent 16 }}
+                {{- end }}
               {{- if $values.configmap.data }}
               envFrom:
                 - configMapRef:

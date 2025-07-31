@@ -76,6 +76,7 @@ imagePullSecrets:
 web:
   enabled: false
   env: []
+  containerName: ""
   # - name: SOME_WEB_VAR
   #   value: some_web_value
   additionalVolumes: ""
@@ -153,6 +154,7 @@ web:
 
 worker:
   enabled: false
+  containerName: ""
   env: []
   #   - name: SOME_WORKER_VAR
   #     value: some_worker_value
@@ -215,6 +217,7 @@ worker:
 
 hp:
   enabled: false
+  containerName: ""
   env: []
   # - name: SOME_WEB_VAR
   #   value: some_web_value

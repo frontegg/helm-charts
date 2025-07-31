@@ -154,6 +154,12 @@ web:
   ports:
     - name: http
       containerPort: 3050
+  vars:
+    - name: SPICEDB_DATABASE_URL
+      valueFrom:
+        secretRef:
+          name: '{{ include "name" $ }}'
+          key: SPICEDB_DATABASE_URL
   podAnnotations:
     some/other: anot
     some/other2: anot2
@@ -181,6 +187,10 @@ web:
 
 hp:
   enabled: true
+  image:
+    name: shit
+    prefix: dumpster/
+    tag: latest
   resources:
     requests:
       cpu: 500m
@@ -210,6 +220,12 @@ hp:
   ports:
     - name: http
       containerPort: 3000
+  vars:
+    - name: SPICEDB_DATABASE_URL
+      valueFrom:
+        secretRef:
+          name: '{{ include "name" $ }}'
+          key: SPICEDB_DATABASE_URL
   podAnnotations:
     some/other: hp
     some/other2: hp2
@@ -249,6 +265,13 @@ worker:
     scrape-for-metrics: enabled
   nodeSelector:
     workload: general
+  vars:
+    - name: SPICEDB_DATABASE_URL
+      valueFrom:
+        secretRef:
+          name: '{{ include "name" $ }}'
+          key: SPICEDB_DATABASE_URL
+
   ports:
     - name: access-port
       containerPort: 3000
@@ -324,6 +347,13 @@ jobs:
       image: testimage
       command: ["/bin/bash"]
       args: ["test"]
+    vars:
+      - name: SPICEDB_DATABASE_URL
+        valueFrom:
+          secretRef:
+            name: '{{ include "name" $ }}'
+            key: SPICEDB_DATABASE_URL
+
 
   test2:
     enabled: true
@@ -384,6 +414,12 @@ cronjobs:
       - name: worker-vol
         mountPath: /etc/smokescreen/config.yaml
         subPath: config.yaml
+    vars:
+      - name: SPICEDB_DATABASE_URL
+        valueFrom:
+          secretRef:
+            name: '{{ include "name" $ }}'
+            key: SPICEDB_DATABASE_URL
 
 serviceAccount:
   enabled: true

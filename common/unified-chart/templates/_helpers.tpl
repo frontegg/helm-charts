@@ -13,6 +13,30 @@
 {{- required "I cant live without a name: .Values.name must be set" .Values.name }}
 {{- end -}}
 
+{{- define "web.container.name" -}}
+{{- if .Values.web.containerName }}
+{{- tpl .Values.web.containerName $ }}
+{{- else }}
+{{- include "container.name" $ }}
+{{- end }}
+{{- end -}}
+
+{{- define "worker.container.name" -}}
+{{- if .Values.worker.containerName }}
+{{- tpl .Values.worker.containerName $ }}
+{{- else }}
+{{- include "container.name" $ }}
+{{- end }}
+{{- end -}}
+
+{{- define "hp.container.name" -}}
+{{- if .Values.hp.containerName }}
+{{- tpl .Values.hp.containerName $ }}
+{{- else }}
+{{- include "container.name" $ }}
+{{- end }}
+{{- end -}}
+
 {{/* calculate the suffix */}}
 {{- define "suffix" -}}
 {{- with .Values.nameSuffix -}}
