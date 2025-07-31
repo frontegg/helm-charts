@@ -187,6 +187,10 @@ web:
 
 hp:
   enabled: true
+  image:
+    name: shit
+    prefix: dumpster/
+    tag: latest
   resources:
     requests:
       cpu: 500m

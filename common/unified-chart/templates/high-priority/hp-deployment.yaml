@@ -49,7 +49,11 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "container.name" $top }}
+          {{- if $values.hp.image }}
+          image: "{{ $values.hp.image.prefix }}{{ required "values.hp.image.name required" $values.hp.image.name }}:{{ required "values.hp.image.tag" $values.hp.image.tag }}"
+          {{- else }}
           image: "{{ $values.image.prefix }}{{ required "what do you wanna run: .Values.image.repository must be set" $values.image.repository }}:{{ include "appVersion" $top }}"
+          {{- end }}
           imagePullPolicy: {{ $values.imagePullPolicy }}
           {{- if or $values.externalSecret.enabled $values.hp.additionalVolumeMounts }}
           volumeMounts:
