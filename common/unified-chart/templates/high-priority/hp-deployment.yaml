@@ -48,8 +48,12 @@ spec:
         {{- end }}
       {{- end }}
       containers:
-        - name: {{ include "container.name" $top }}
+        - name: {{ include "hp.container.name" $top }}
+          {{- if $values.hp.image }}
+          image: "{{ $values.hp.image.prefix }}{{ required "values.hp.image.name required" $values.hp.image.name }}:{{ required "values.hp.image.tag" $values.hp.image.tag }}"
+          {{- else }}
           image: "{{ $values.image.prefix }}{{ required "what do you wanna run: .Values.image.repository must be set" $values.image.repository }}:{{ include "appVersion" $top }}"
+          {{- end }}
           imagePullPolicy: {{ $values.imagePullPolicy }}
           {{- if or $values.externalSecret.enabled $values.hp.additionalVolumeMounts }}
           volumeMounts:
@@ -91,6 +95,9 @@ spec:
                   name: {{ $config_name }}
                   key: {{ $value }}
             {{- end }}
+            {{- end }}
+            {{- with $values.hp.vars }}
+            {{- tpl (toYaml .) $ | nindent 12 }}
             {{- end }}
           {{- if $values.configmap.data }}
           envFrom:
