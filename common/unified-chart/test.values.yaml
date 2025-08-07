@@ -52,6 +52,8 @@ externalSecret:
         host: {{ $secret.databases.generalMysql.host | toYaml }}
         username: {{ $secret.databases.generalMysql.username | toYaml }}
         password: {{ $secret.databases.generalMysql.password | toYaml }}
+  data:
+    SHIT_FIST_SHIT: '{{ (.contents | fromYaml).shit.fist.shit }}'
 
 configmap:
   annotations:

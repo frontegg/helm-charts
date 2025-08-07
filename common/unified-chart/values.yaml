@@ -334,13 +334,15 @@ configuration:
 
 externalSecret:
   enabled: false
+  mountAsVolume: true
   mountPath: /etc/config/config.yaml
   subPath: config
   refreshInterval: 1m
   annotations: {}
-  text: |
-    {{- $secret := .contents | fromYaml }}
-    apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}
+  text: ""
+    # {{- $secret := .contents | fromYaml }}
+    # apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}
+  data: ""
   additionalSecrets: ""
 
 prometheusRule:
