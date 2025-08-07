@@ -60,7 +60,7 @@ spec:
           {{- end }}
           {{- if or $values.externalSecret.enabled $job.additionalVolumes }}
           volumes:
-            {{- if $values.externalSecret.enabled }}
+            {{- if and $values.externalSecret.enabled $values.externalSecret.mountAsVolume }}
             - name: secret-volume
               secret:
                 secretName: {{ include "secret.name" $ }}
@@ -83,7 +83,7 @@ spec:
               imagePullPolicy: {{ $values.imagePullPolicy }}
               {{- if or $values.externalSecret.enabled $job.additionalVolumeMounts }}
               volumeMounts:
-                {{- if $values.externalSecret.enabled }}
+                {{- if and $values.externalSecret.enabled $values.externalSecret.mountAsVolume }}
                 {{- include "externalsecret.volumemount" $ | nindent 16 }}
                 {{- end }}
                 {{- with $job.additionalVolumeMounts }}
