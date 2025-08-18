@@ -94,7 +94,7 @@ web:
     # The use of maxUnavailable is recommended as it automatically responds to changes in the number of replicas.
     # only 1 of maxUnavailable or minAvailable is allowed
     # can be an integer or precentage
-    maxUnavailable: 30%
+    maxUnavailable: 10%
     # minAvailable: 50%
   service:
     scrape: true
