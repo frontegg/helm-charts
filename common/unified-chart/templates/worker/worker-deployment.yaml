@@ -48,6 +48,10 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "worker.container.name" $top }}
+          {{- with $values.worker.lifecycle }}
+          lifecycle:
+            {{- . | toYaml | nindent 12 }}
+          {{- end }}
           image: "{{ $values.image.prefix }}{{ required ".Values.image.repository must be set" $values.image.repository }}:{{ include "appVersion" $top }}"
           imagePullPolicy: {{ $values.imagePullPolicy }}
           {{- if or $values.externalSecret.enabled $values.web.additionalVolumeMounts }}
