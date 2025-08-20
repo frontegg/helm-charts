@@ -134,6 +134,11 @@ web:
     #     name: EXAMPLE /example/test/
 
   terminationGracePeriodSeconds: 30
+  lifecycle:
+    enabled: true
+    preStop:
+      sleep:
+        seconds: 10
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -197,6 +202,11 @@ worker:
         horizontalPodAutoscalerConfig:
           name: '{{ include "worker.name" $ }}'
   terminationGracePeriodSeconds: 30
+  lifecycle:
+    enabled: true
+    preStop:
+      sleep:
+        seconds: 10
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -280,7 +290,11 @@ hp:
   nodeSelector: {}
   tolerations: []
   affinity: {}
-
+  lifecycle:
+    enabled: true
+    preStop:
+      sleep:
+        seconds: 10
 
 jobs:
   mgr:
