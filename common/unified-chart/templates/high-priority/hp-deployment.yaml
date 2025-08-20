@@ -49,9 +49,10 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "hp.container.name" $top }}
-          {{- with $values.hp.lifecycle }}
+          {{- if $values.hp.lifecycle.enabled }}
           lifecycle:
-            {{- . | toYaml | nindent 12 }}
+            {{- $lifecycle := $values.hp.lifecycle }}
+            {{- unset $lifecycle "enabled" | toYaml | nindent 12 }}
           {{- end }}
           {{- if $values.hp.image }}
           image: "{{ $values.hp.image.prefix }}{{ required "values.hp.image.name required" $values.hp.image.name }}:{{ required "values.hp.image.tag" $values.hp.image.tag }}"

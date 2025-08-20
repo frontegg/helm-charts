@@ -48,9 +48,10 @@ spec:
       {{- end }}
       containers:
         - name: {{ include "web.container.name" $top }}
-          {{- with $values.web.lifecycle }}
+          {{- if $values.web.lifecycle.enabled }}
           lifecycle:
-            {{- . | toYaml | nindent 12 }}
+            {{- $lifecycle := $values.web.lifecycle }}
+            {{- unset $lifecycle "enabled" | toYaml | nindent 12 }}
           {{- end }}
           {{- if $values.web.image }}
           image: "{{ $values.web.image.prefix }}{{ required "values.web.image.name required" $values.web.image.name }}:{{ required "values.web.image.tag" $values.web.image.tag }}"
