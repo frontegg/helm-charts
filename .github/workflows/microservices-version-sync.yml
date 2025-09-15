@@ -33,6 +33,16 @@ jobs:
 
       - name: Install dependencies
         run: |
+          echo "=== DEBUG INFO ==="
+          echo "Current directory: $(pwd)"
+          echo "GitHub workspace: ${{ github.workspace }}"
+          echo "Listing workspace contents:"
+          ls -la ${{ github.workspace }}/
+          echo "Checking if scripts directory exists:"
+          ls -la ${{ github.workspace }}/scripts/ || echo "Scripts directory not found"
+          echo "Checking for requirements.txt:"
+          ls -la ${{ github.workspace }}/scripts/requirements.txt || echo "requirements.txt not found"
+          echo "=== END DEBUG ==="
           pip install -r ${{ github.workspace }}/scripts/requirements.txt
 
       - name: Extract Services
