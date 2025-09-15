@@ -33,11 +33,30 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
             print(f"    Trying path: {path}")
         try:
             response = requests.get(url, headers=headers, timeout=10)
-            if response.status_code == 200:
+            if verbose:
+                print(f"    Response status: {response.status_code}")
+            
+            if response.status_code == 401:
+                if verbose:
+                    print(f"    ❌ Authentication failed - check GitHub token permissions")
+                continue
+            elif response.status_code == 403:
+                if verbose:
+                    print(f"    ❌ Access forbidden - token may not have repository access")
+                continue
+            elif response.status_code == 404:
+                if verbose:
+                    print(f"    ❌ Path not found: {path}")
+                continue
+            elif response.status_code == 200:
                 content = response.json()
                 if content.get('type') == 'file':
                     # Decode base64 content
                     file_content = base64.b64decode(content['content']).decode('utf-8')
+                    
+                    if verbose:
+                        print(f"    Found file at {path}, content length: {len(file_content)}")
+                        print(f"    First 200 chars: {file_content[:200]}...")
                     
                     # Try to extract version from YAML content
                     try:
@@ -46,9 +65,13 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
                         version_fields = ['version', 'appVersion', 'tag', 'image_tag', 'imageTag']
                         
                         if isinstance(yaml_content, dict):
+                            if verbose:
+                                print(f"    YAML keys: {list(yaml_content.keys())}")
                             # Direct fields
                             for field in version_fields:
                                 if field in yaml_content:
+                                    if verbose:
+                                        print(f"    Found {field}: {yaml_content[field]}")
                                     return str(yaml_content[field])
                             
                             # Nested structures
@@ -82,9 +105,43 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
                     
                     return f"found-in-{path}"
         except Exception as e:
+            if verbose:
+                print(f"    Error accessing {path}: {str(e)}")
             continue
     
     return None
+
+
+def test_repository_access(repo, token, verbose=False):
+    """Test if we can access the AppState repository"""
+    headers = {
+        'Authorization': f'token {token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    
+    url = f'https://api.github.com/repos/{repo}'
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            if verbose:
+                repo_info = response.json()
+                print(f"✅ Repository access OK: {repo_info.get('full_name')} (private: {repo_info.get('private')})")
+            return True
+        elif response.status_code == 401:
+            print(f"❌ Authentication failed for {repo}. Check your GitHub token.")
+            return False
+        elif response.status_code == 403:
+            print(f"❌ Access forbidden to {repo}. Token may not have repository access.")
+            return False
+        elif response.status_code == 404:
+            print(f"❌ Repository {repo} not found or not accessible.")
+            return False
+        else:
+            print(f"❌ Unexpected response {response.status_code} accessing {repo}")
+            return False
+    except Exception as e:
+        print(f"❌ Error accessing repository {repo}: {str(e)}")
+        return False
 
 
 def main():
@@ -124,6 +181,14 @@ def main():
         if args.verbose:
             print(f"Loaded {len(services)} services from {args.services_file}")
             print(f"Querying AppState repository: {args.repo}")
+        
+        # Test repository access first
+        if not test_repository_access(args.repo, token, args.verbose):
+            print("\n❌ Cannot access AppState repository. Please check:")
+            print("  1. GitHub token is valid and not expired")
+            print("  2. Token has access to the frontegg/AppState repository")
+            print("  3. Repository name is correct")
+            return 1
         
         appstate_versions = {}
         
