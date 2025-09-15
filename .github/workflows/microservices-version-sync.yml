@@ -1,0 +1,333 @@
+name: OnPrem Update Charts - Microservices Version Sync
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Run in dry-run mode (no actual updates)'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  APPSTATE_REPO: 'frontegg/AppState'
+  TERRAFORM_REPO: 'frontegg/terraform-private-env'
+  WORKFLOW_NAME: 'Create Customer Environment'
+
+jobs:
+  extract-microservices:
+    name: Extract Microservices and Versions
+    runs-on: ubuntu-latest
+    outputs:
+      all-services: ${{ steps.extract.outputs.all-services }}
+    steps:
+      - name: Checkout helm-charts repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Extract Services
+        id: extract
+        run: |
+          python3 scripts/extract_services.py --verbose
+
+      - name: Upload services artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: extracted-services
+          path: |
+            core_services.json
+            dashboard_services.json
+            all_services.json
+
+  query-appstate-versions:
+    name: Query AppState Production Versions
+    runs-on: ubuntu-latest
+    needs: extract-microservices
+    outputs:
+      appstate-versions: ${{ steps.query.outputs.versions }}
+    steps:
+      - name: Download services artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: extracted-services
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Query AppState Repository
+        id: query
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/query_appstate.py --verbose
+
+      - name: Upload AppState versions
+        uses: actions/upload-artifact@v3
+        with:
+          name: appstate-versions
+          path: appstate_versions.json
+
+  compare-and-summarize:
+    name: Compare Versions and Create Summary
+    runs-on: ubuntu-latest
+    needs: [extract-microservices, query-appstate-versions]
+    outputs:
+      has-updates: ${{ steps.compare.outputs.has-updates }}
+      summary: ${{ steps.compare.outputs.summary }}
+      updates-needed: ${{ steps.compare.outputs.updates-needed }}
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: extracted-services
+
+      - name: Download AppState versions
+        uses: actions/download-artifact@v3
+        with:
+          name: appstate-versions
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Compare Versions
+        id: compare
+        run: |
+          python3 scripts/compare_versions.py --verbose
+
+      - name: Upload comparison results
+        uses: actions/upload-artifact@v3
+        with:
+          name: comparison-results
+          path: comparison_results.json
+
+  update-helm-values:
+    name: Update Helm Values Files
+    runs-on: ubuntu-latest
+    needs: compare-and-summarize
+    if: needs.compare-and-summarize.outputs.has-updates == 'true' && github.event.inputs.dry_run != 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Download comparison results
+        uses: actions/download-artifact@v3
+        with:
+          name: comparison-results
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r scripts/requirements.txt
+
+      - name: Update Values Files
+        run: |
+          python3 scripts/update_values.py --verbose
+
+      - name: Commit changes
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          if git diff --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          git add charts/*/values.yaml
+          
+          # Generate commit message with updated services
+          echo "chore: update microservices versions from AppState" > commit_msg.txt
+          echo "" >> commit_msg.txt
+          echo "Auto-updated microservice versions to match production AppState versions." >> commit_msg.txt
+          echo "" >> commit_msg.txt
+          echo "Updated services:" >> commit_msg.txt
+          python3 -c "
+          import json
+          with open('comparison_results.json', 'r') as f:
+              results = json.load(f)
+          for update in results['updates_needed']:
+              print(f'- {update[\"service\"]}: {update[\"helm_version\"]} → {update[\"appstate_version\"]}')
+          " >> commit_msg.txt
+          
+          git commit -F commit_msg.txt
+          git push
+
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [compare-and-summarize, update-helm-values]
+    if: needs.compare-and-summarize.outputs.has-updates == 'true' && github.event.inputs.dry_run != 'true'
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Download comparison results
+        uses: actions/download-artifact@v3
+        with:
+          name: comparison-results
+
+      - name: Generate release tag
+        id: tag
+        run: |
+          # Generate tag based on current date and time
+          TAG="sync-$(date +%Y%m%d-%H%M%S)"
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
+          echo "Generated tag: $TAG"
+
+      - name: Create Release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ steps.tag.outputs.tag }}
+          release_name: "Microservices Version Sync - ${{ steps.tag.outputs.tag }}"
+          body: |
+            # Microservices Version Sync
+            
+            This release contains automated updates to microservice versions based on AppState production versions.
+            
+            ${{ needs.compare-and-summarize.outputs.summary }}
+            
+            ## Changes Made
+            - Updated Helm values files with new AppVersion values
+            - Synchronized versions with AppState production environment
+            
+            ## Next Steps
+            This release will trigger the deployment workflow to update the customer environments.
+          draft: false
+          prerelease: false
+
+  trigger-deployment:
+    name: Trigger Deployment Workflow
+    runs-on: ubuntu-latest
+    needs: [compare-and-summarize, create-release]
+    if: needs.compare-and-summarize.outputs.has-updates == 'true' && github.event.inputs.dry_run != 'true'
+    steps:
+      - name: Trigger terraform-private-env workflow
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            try {
+              const response = await github.rest.actions.createWorkflowDispatch({
+                owner: 'frontegg',
+                repo: 'terraform-private-env',
+                workflow_id: 'Create Customer Environment',
+                ref: 'main',
+                inputs: {
+                  reason: 'Automated microservices version sync',
+                  triggered_by: 'helm-charts-version-sync'
+                }
+              });
+              
+              console.log('Successfully triggered deployment workflow');
+              console.log('Response:', response.status);
+            } catch (error) {
+              console.error('Failed to trigger deployment workflow:', error);
+              
+              // Try with workflow file name if workflow name doesn't work
+              try {
+                const response = await github.rest.actions.createWorkflowDispatch({
+                  owner: 'frontegg',
+                  repo: 'terraform-private-env', 
+                  workflow_id: 'create-customer-environment.yml',
+                  ref: 'main',
+                  inputs: {
+                    reason: 'Automated microservices version sync',
+                    triggered_by: 'helm-charts-version-sync'
+                  }
+                });
+                
+                console.log('Successfully triggered deployment workflow with file name');
+                console.log('Response:', response.status);
+              } catch (secondError) {
+                console.error('Failed to trigger deployment workflow with file name:', secondError);
+                throw secondError;
+              }
+            }
+
+  notify-results:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [compare-and-summarize, update-helm-values, create-release, trigger-deployment]
+    if: always()
+    steps:
+      - name: Download comparison results
+        uses: actions/download-artifact@v3
+        with:
+          name: comparison-results
+        continue-on-error: true
+
+      - name: Create Job Summary
+        run: |
+          echo "# Microservices Version Sync Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ needs.compare-and-summarize.outputs.has-updates }}" == "true" ]; then
+            echo "## ✅ Sync Completed Successfully" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "The following actions were completed:" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Extracted microservices from Helm charts" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Queried AppState repository for production versions" >> $GITHUB_STEP_SUMMARY
+            echo "- ✅ Compared versions and identified updates needed" >> $GITHUB_STEP_SUMMARY
+            
+            if [ "${{ github.event.inputs.dry_run }}" != "true" ]; then
+              echo "- ✅ Updated Helm values files" >> $GITHUB_STEP_SUMMARY
+              echo "- ✅ Created GitHub release" >> $GITHUB_STEP_SUMMARY
+              echo "- ✅ Triggered deployment workflow" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "- ⏭️ Skipped updates (dry-run mode)" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "## ℹ️ No Updates Needed" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All microservices are already up to date with AppState production versions." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Add detailed summary if available
+          if [ -f "comparison_results.json" ]; then
+            echo "## Detailed Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            python3 -c "
+            import json
+            try:
+                with open('comparison_results.json', 'r') as f:
+                    results = json.load(f)
+                print(results['summary'])
+            except:
+                print('Summary not available')
+            " >> $GITHUB_STEP_SUMMARY
+          fi
