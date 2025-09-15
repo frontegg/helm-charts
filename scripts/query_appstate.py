@@ -21,29 +21,10 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
         'Accept': 'application/vnd.github.v3+json'
     }
     
-    # Try different possible file paths in AppState repo
-    # Primary pattern: applications/{service-name}/production-global
+    # AppState repo structure: applications/{service-name}/production-global/values.yaml
     possible_paths = [
-        f'applications/{service_name}/production-global',
-        f'applications/{service_name}/production-global.yaml',
-        f'applications/{service_name}/production-global.yml',
-        # Fallback patterns for different naming conventions
-        f'production/{service_name}.yaml',
-        f'production/{service_name}.yml',
-        f'prod/{service_name}.yaml',
-        f'prod/{service_name}.yml',
-        f'{service_name}/production.yaml',
-        f'{service_name}/production.yml',
-        f'{service_name}/prod.yaml',
-        f'{service_name}/prod.yml',
-        f'services/{service_name}/production.yaml',
-        f'services/{service_name}/production.yml',
-        f'services/{service_name}/prod.yaml',
-        f'services/{service_name}/prod.yml',
-        f'environments/production/{service_name}.yaml',
-        f'environments/production/{service_name}.yml',
-        f'apps/{service_name}/production.yaml',
-        f'apps/{service_name}/production.yml'
+        f'applications/{service_name}/production-global/values.yaml',
+        f'applications/{service_name}/production-global/values.yml'
     ]
     
     for path in possible_paths:
