@@ -402,54 +402,12 @@ jobs:
             fi
             echo "" >> $GITHUB_STEP_SUMMARY
             
-            # Create a simple table from the detailed results
+            # Generate the summary table using the dedicated script
             if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
-              STATUS_EMOJI="🔄 Would update"
+              python3 scripts/generate_summary_table.py --dry-run >> $GITHUB_STEP_SUMMARY
             else
-              STATUS_EMOJI="✅ Updated"
+              python3 scripts/generate_summary_table.py >> $GITHUB_STEP_SUMMARY
             fi
-            
-            # Extract table data from the summary and reformat it
-            python3 << 'EOF' >> $GITHUB_STEP_SUMMARY
-import json
-import sys
-import os
-
-try:
-    with open('comparison_results.json', 'r') as f:
-        results = json.load(f)
-    
-    dry_run = os.environ.get('GITHUB_EVENT_INPUTS_DRY_RUN') == 'true'
-    
-    # Print table header
-    print('| Service | Chart | Original Version | Updated Version | Status |')
-    print('|---------|-------|------------------|-----------------|--------|')
-    
-    # Print services that need updates
-    updates_needed = results.get('updates_needed', [])
-    for update in updates_needed:
-        service = update.get('service', 'Unknown')
-        chart = update.get('chart', 'Unknown')
-        helm_ver = update.get('helm_version', 'Unknown')
-        appstate_ver = update.get('appstate_version', 'Unknown')
-        status = '🔄 Would update' if dry_run else '✅ Updated'
-        print(f'| {service} | {chart} | `{helm_ver}` | `{appstate_ver}` | {status} |')
-    
-    # Print up-to-date services
-    up_to_date = results.get('up_to_date', [])
-    for service_info in up_to_date:
-        service = service_info.get('service', 'Unknown')
-        chart = service_info.get('chart', 'Unknown')
-        version = service_info.get('version', 'Unknown')
-        print(f'| {service} | {chart} | `{version}` | `{version}` | ✅ Up to date |')
-    
-    if not updates_needed and not up_to_date:
-        print('| No data | - | - | - | ❌ No comparison data available |')
-        
-except Exception as e:
-    print('| Error | - | - | - | ❌ Failed to parse comparison data |')
-    print(f'Error details: {str(e)}', file=sys.stderr)
-EOF
             
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
