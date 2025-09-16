@@ -120,13 +120,7 @@ jobs:
           echo "Auto-updated microservice versions to match production AppState versions." >> commit_msg.txt
           echo "" >> commit_msg.txt
           echo "Updated services:" >> commit_msg.txt
-          python3 -c '
-            import json
-            with open("comparison_results.json", "r") as f:
-                results = json.load(f)
-            for update in results["updates_needed"]:
-                print(f"- {update[\"service\"]}: {update[\"helm_version\"]} → {update[\"appstate_version\"]}")
-            ' >> commit_msg.txt
+          python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"- {update[\"service\"]}: {update[\"helm_version\"]} → {update[\"appstate_version\"]}") for update in results["updates_needed"]]' >> commit_msg.txt
           
           git commit -F commit_msg.txt
           git push
@@ -393,17 +387,33 @@ jobs:
           
           echo "" >> $GITHUB_STEP_SUMMARY
           
+          # Add version comparison table if updates are available (for both dry-run and actual runs)
+          if [ -f "comparison_results.json" ] && [ "${{ needs.extract-query-compare.outputs.has-updates }}" == "true" ]; then
+            if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+              echo "## 📊 Planned Version Updates (Dry Run)" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "## 📊 Version Updates Summary" >> $GITHUB_STEP_SUMMARY
+            fi
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "| Service | Chart | Original Version | Updated Version | Status |" >> $GITHUB_STEP_SUMMARY
+            echo "|---------|-------|------------------|-----------------|--------|" >> $GITHUB_STEP_SUMMARY
+            
+            # Generate table rows for services that need updates
+            if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | 🔄 Would update |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null
+            else
+              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | ✅ Updated |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null
+            fi
+            
+            # Add up-to-date services if any
+            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {service[\"service\"]} | {service[\"chart\"]} | `{service[\"version\"]}` | `{service[\"version\"]}` | ✅ Up to date |") for service in results.get("up_to_date", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null
+            
+            echo "" >> $GITHUB_STEP_SUMMARY
+          fi
+          
           # Add detailed summary if available
           if [ -f "comparison_results.json" ]; then
-            echo "## Detailed Results" >> $GITHUB_STEP_SUMMARY
+            echo "## 📋 Detailed Results" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            python3 -c '
-              import json
-              try:
-                  with open("comparison_results.json", "r") as f:
-                      results = json.load(f)
-                  print(results["summary"])
-              except:
-                  print("Summary not available")
-              ' >> $GITHUB_STEP_SUMMARY
+            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); print(results.get("summary", "Summary not available"))' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Summary not available" >> $GITHUB_STEP_SUMMARY
           fi
