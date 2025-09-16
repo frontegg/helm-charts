@@ -184,10 +184,16 @@ def main():
         
         # Test repository access first
         if not test_repository_access(args.repo, token, args.verbose):
-            print("\n❌ Cannot access AppState repository. Please check:")
-            print("  1. GitHub token is valid and not expired")
-            print("  2. Token has access to the frontegg/AppState repository")
-            print("  3. Repository name is correct")
+            print("\n🚨 CRITICAL ERROR: Cannot access AppState repository!")
+            print("❌ This is likely a GitHub App authentication/permission issue.")
+            print("\n🔧 Please check:")
+            print("  1. GitHub App ID (GH_APP_ID) is correct")
+            print("  2. GitHub App Private Key (GH_APP_PRIVATE_KEY) contains full PEM content")
+            print("  3. GitHub App is installed on the frontegg organization")
+            print("  4. GitHub App has Contents:Read and Metadata:Read permissions")
+            print("  5. GitHub App has access to the AppState repository")
+            print(f"\n📍 Repository being accessed: {args.repo}")
+            print("💡 Run the workflow's debug step for detailed diagnostics")
             return 1
         
         appstate_versions = {}

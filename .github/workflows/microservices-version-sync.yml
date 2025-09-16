@@ -52,6 +52,134 @@ jobs:
           private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
           owner: frontegg
           repositories: AppState,terraform-private-env
+        continue-on-error: false
+
+      - name: Verify Token Generation
+        if: steps.app-token.outcome == 'failure'
+        run: |
+          echo "🚨 CRITICAL ERROR: GitHub App token generation failed!"
+          echo "❌ This indicates a problem with your GitHub App configuration."
+          echo ""
+          echo "🔧 Please check:"
+          echo "1. GH_APP_ID secret exists and contains the correct App ID (numeric)"
+          echo "2. GH_APP_PRIVATE_KEY secret exists and contains the full PEM private key"
+          echo "3. GitHub App exists and is accessible"
+          echo "4. Private key matches the GitHub App"
+          echo ""
+          echo "💡 Common issues:"
+          echo "- Private key missing '-----BEGIN PRIVATE KEY-----' header"
+          echo "- Private key missing '-----END PRIVATE KEY-----' footer"
+          echo "- App ID is incorrect or doesn't exist"
+          echo "- Private key was regenerated but secret not updated"
+          exit 1
+
+      - name: Debug GitHub App Token
+        env:
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
+        run: |
+          echo "=== GitHub App Token Debug Information ==="
+          echo "Token length: ${#GITHUB_TOKEN}"
+          echo "Token prefix: $(echo $GITHUB_TOKEN | cut -c1-20)..."
+          echo "Token type: $(echo $GITHUB_TOKEN | cut -c1-4)"
+          echo ""
+          
+          # Set flag to track if any test fails
+          TESTS_FAILED=false
+          
+          echo "=== Testing GitHub API Access ==="
+          # Test authentication
+          echo "1. Testing authentication..."
+          AUTH_RESPONSE=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+                              -H "Accept: application/vnd.github.v3+json" \
+                              https://api.github.com/user)
+          HTTP_CODE="${AUTH_RESPONSE: -3}"
+          echo "Auth test HTTP code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Authentication failed"
+            echo "Response: $(echo $AUTH_RESPONSE | head -c -4)"
+            TESTS_FAILED=true
+          else
+            echo "✅ Authentication successful"
+            echo "User: $(echo $AUTH_RESPONSE | head -c -4 | jq -r '.login // "unknown"')"
+          fi
+          echo ""
+          
+          # Test repository access
+          echo "2. Testing repository access to frontegg/AppState..."
+          REPO_RESPONSE=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+                              -H "Accept: application/vnd.github.v3+json" \
+                              https://api.github.com/repos/frontegg/AppState)
+          HTTP_CODE="${REPO_RESPONSE: -3}"
+          echo "Repository access HTTP code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Repository access failed"
+            echo "Response: $(echo $REPO_RESPONSE | head -c -4 | jq -r '.message // "No message"')"
+            TESTS_FAILED=true
+          else
+            echo "✅ Repository access successful"
+            REPO_DATA=$(echo $REPO_RESPONSE | head -c -4)
+            echo "Repository: $(echo $REPO_DATA | jq -r '.full_name')"
+            echo "Private: $(echo $REPO_DATA | jq -r '.private')"
+            echo "Permissions: $(echo $REPO_DATA | jq -r '.permissions // "No permissions info"')"
+          fi
+          echo ""
+          
+          # Test specific file access
+          echo "3. Testing file access..."
+          FILE_RESPONSE=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+                              -H "Accept: application/vnd.github.v3+json" \
+                              https://api.github.com/repos/frontegg/AppState/contents/applications/admins-service/production-global/values.yaml)
+          HTTP_CODE="${FILE_RESPONSE: -3}"
+          echo "File access HTTP code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ File access failed"
+            echo "Response: $(echo $FILE_RESPONSE | head -c -4 | jq -r '.message // "No message"')"
+            TESTS_FAILED=true
+          else
+            echo "✅ File access successful"
+            echo "File found: applications/admins-service/production-global/values.yaml"
+          fi
+          echo ""
+          
+          # Test GitHub App installation
+          echo "4. Testing GitHub App installation..."
+          INSTALL_RESPONSE=$(curl -s -w "%{http_code}" -H "Authorization: token $GITHUB_TOKEN" \
+                                 -H "Accept: application/vnd.github.v3+json" \
+                                 https://api.github.com/repos/frontegg/AppState/installation)
+          HTTP_CODE="${INSTALL_RESPONSE: -3}"
+          echo "Installation check HTTP code: $HTTP_CODE"
+          
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "❌ Installation check failed"
+            echo "Response: $(echo $INSTALL_RESPONSE | head -c -4 | jq -r '.message // "No message"')"
+            TESTS_FAILED=true
+          else
+            echo "✅ Installation found"
+            INSTALL_DATA=$(echo $INSTALL_RESPONSE | head -c -4)
+            echo "Installation ID: $(echo $INSTALL_DATA | jq -r '.id')"
+            echo "App ID: $(echo $INSTALL_DATA | jq -r '.app_id')"
+            echo "Permissions: $(echo $INSTALL_DATA | jq -r '.permissions')"
+          fi
+          
+          echo ""
+          echo "=== Debug Summary ==="
+          if [ "$TESTS_FAILED" = true ]; then
+            echo "❌ One or more authentication tests failed!"
+            echo "🛑 STOPPING WORKFLOW - Fix GitHub App configuration before proceeding"
+            echo ""
+            echo "Common fixes:"
+            echo "1. Check GH_APP_ID secret is correct (numeric value)"
+            echo "2. Check GH_APP_PRIVATE_KEY secret contains full PEM content"
+            echo "3. Verify GitHub App is installed on frontegg organization"
+            echo "4. Ensure GitHub App has Contents:Read and Metadata:Read permissions"
+            exit 1
+          else
+            echo "✅ All authentication tests passed!"
+            echo "🚀 Proceeding with AppState queries..."
+          fi
 
       - name: Query AppState Repository
         id: query
