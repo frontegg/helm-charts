@@ -120,13 +120,13 @@ jobs:
           echo "Auto-updated microservice versions to match production AppState versions." >> commit_msg.txt
           echo "" >> commit_msg.txt
           echo "Updated services:" >> commit_msg.txt
-          python3 -c "
-import json
-with open('comparison_results.json', 'r') as f:
-    results = json.load(f)
-for update in results['updates_needed']:
-    print(f'- {update[\"service\"]}: {update[\"helm_version\"]} → {update[\"appstate_version\"]}')
-" >> commit_msg.txt
+          python3 -c '
+            import json
+            with open("comparison_results.json", "r") as f:
+                results = json.load(f)
+            for update in results["updates_needed"]:
+                print(f"- {update[\"service\"]}: {update[\"helm_version\"]} → {update[\"appstate_version\"]}")
+            ' >> commit_msg.txt
           
           git commit -F commit_msg.txt
           git push
@@ -397,13 +397,13 @@ for update in results['updates_needed']:
           if [ -f "comparison_results.json" ]; then
             echo "## Detailed Results" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            python3 -c "
-import json
-try:
-    with open('comparison_results.json', 'r') as f:
-        results = json.load(f)
-    print(results['summary'])
-except:
-    print('Summary not available')
-" >> $GITHUB_STEP_SUMMARY
+            python3 -c '
+              import json
+              try:
+                  with open("comparison_results.json", "r") as f:
+                      results = json.load(f)
+                  print(results["summary"])
+              except:
+                  print("Summary not available")
+              ' >> $GITHUB_STEP_SUMMARY
           fi
