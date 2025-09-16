@@ -44,10 +44,19 @@ jobs:
         run: |
           python3 scripts/extract_services.py --verbose
 
+      - name: Generate GitHub App Token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: frontegg
+          repositories: AppState,terraform-private-env
+
       - name: Query AppState Repository
         id: query
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           python3 scripts/query_appstate.py --verbose
 
@@ -128,17 +137,27 @@ jobs:
     if: needs.extract-query-compare.outputs.has-updates == 'true' && github.event.inputs.dry_run != 'true'
     outputs:
       workflowRunId: ${{ steps.trigger.outputs.workflowRunId }}
+      deployToken: ${{ steps.deploy-app-token.outputs.token }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
+      - name: Generate GitHub App Token for Deployment
+        id: deploy-app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          owner: frontegg
+          repositories: terraform-private-env
+
       - name: Trigger terraform-private-env workflow
         id: trigger
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ steps.deploy-app-token.outputs.token }}
           script: |
             try {
               // Trigger the workflow
@@ -228,7 +247,7 @@ jobs:
         id: wait
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ needs['trigger-deployment'].outputs.deployToken }}
           script: |
             const runId = '${{ needs['trigger-deployment'].outputs.workflowRunId }}';
             const maxWaitTime = 30 * 60 * 1000; // 30 minutes
