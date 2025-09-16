@@ -402,51 +402,54 @@ jobs:
             fi
             echo "" >> $GITHUB_STEP_SUMMARY
             
-            # Try to extract and display the table from the summary field instead of parsing JSON directly
-            python3 -c "
+            # Create a simple table from the detailed results
+            if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+              STATUS_EMOJI="🔄 Would update"
+            else
+              STATUS_EMOJI="✅ Updated"
+            fi
+            
+            # Extract table data from the summary and reformat it
+            python3 << 'EOF' >> $GITHUB_STEP_SUMMARY
 import json
 import sys
+import os
+
 try:
     with open('comparison_results.json', 'r') as f:
         results = json.load(f)
     
-    # Extract the table from the summary markdown
-    summary = results.get('summary', '')
-    lines = summary.split('\n')
+    dry_run = os.environ.get('GITHUB_EVENT_INPUTS_DRY_RUN') == 'true'
     
-    # Find the table in the summary
-    in_table = False
-    table_found = False
+    # Print table header
+    print('| Service | Chart | Original Version | Updated Version | Status |')
+    print('|---------|-------|------------------|-----------------|--------|')
     
-    for line in lines:
-        if '| Service | Chart |' in line:
-            in_table = True
-            table_found = True
-            print('| Service | Chart | Original Version | Updated Version | Status |')
-            print('|---------|-------|------------------|-----------------|--------|')
-            continue
-        elif in_table and line.startswith('|') and '|' in line.strip():
-            # Parse existing table row and add status column
-            parts = [p.strip() for p in line.split('|')[1:-1]]  # Remove empty first/last parts
-            if len(parts) >= 3 and parts[0] != 'Service':  # Skip header row
-                service, chart, version = parts[0], parts[1], parts[2]
-                if len(parts) == 4:  # Has both helm and appstate versions
-                    helm_ver, appstate_ver = parts[2], parts[3]
-                    status = '🔄 Would update' if '${{ github.event.inputs.dry_run }}' == 'true' else '✅ Updated'
-                    print(f'| {service} | {chart} | {helm_ver} | {appstate_ver} | {status} |')
-                else:  # Up to date service
-                    status = '✅ Up to date'
-                    print(f'| {service} | {chart} | {version} | {version} | {status} |')
-        elif in_table and not line.startswith('|'):
-            break
+    # Print services that need updates
+    updates_needed = results.get('updates_needed', [])
+    for update in updates_needed:
+        service = update.get('service', 'Unknown')
+        chart = update.get('chart', 'Unknown')
+        helm_ver = update.get('helm_version', 'Unknown')
+        appstate_ver = update.get('appstate_version', 'Unknown')
+        status = '🔄 Would update' if dry_run else '✅ Updated'
+        print(f'| {service} | {chart} | `{helm_ver}` | `{appstate_ver}` | {status} |')
     
-    if not table_found:
+    # Print up-to-date services
+    up_to_date = results.get('up_to_date', [])
+    for service_info in up_to_date:
+        service = service_info.get('service', 'Unknown')
+        chart = service_info.get('chart', 'Unknown')
+        version = service_info.get('version', 'Unknown')
+        print(f'| {service} | {chart} | `{version}` | `{version}` | ✅ Up to date |')
+    
+    if not updates_needed and not up_to_date:
         print('| No data | - | - | - | ❌ No comparison data available |')
         
 except Exception as e:
     print('| Error | - | - | - | ❌ Failed to parse comparison data |')
-    sys.stderr.write(f'Error: {e}\n')
-" >> $GITHUB_STEP_SUMMARY
+    print(f'Error details: {str(e)}', file=sys.stderr)
+EOF
             
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
