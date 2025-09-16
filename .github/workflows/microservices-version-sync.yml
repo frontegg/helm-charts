@@ -401,18 +401,52 @@ jobs:
               echo "## 📊 Version Updates Summary" >> $GITHUB_STEP_SUMMARY
             fi
             echo "" >> $GITHUB_STEP_SUMMARY
-            echo "| Service | Chart | Original Version | Updated Version | Status |" >> $GITHUB_STEP_SUMMARY
-            echo "|---------|-------|------------------|-----------------|--------|" >> $GITHUB_STEP_SUMMARY
             
-            # Generate table rows for services that need updates
-            if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
-              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | 🔄 Would update |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "| Error | - | - | - | ❌ Failed to load data |" >> $GITHUB_STEP_SUMMARY
-            else
-              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | ✅ Updated |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "| Error | - | - | - | ❌ Failed to load data |" >> $GITHUB_STEP_SUMMARY
-            fi
-            
-            # Add up-to-date services if any
-            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {service[\"service\"]} | {service[\"chart\"]} | `{service[\"version\"]}` | `{service[\"version\"]}` | ✅ Up to date |") for service in results.get("up_to_date", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
+            # Try to extract and display the table from the summary field instead of parsing JSON directly
+            python3 -c "
+import json
+import sys
+try:
+    with open('comparison_results.json', 'r') as f:
+        results = json.load(f)
+    
+    # Extract the table from the summary markdown
+    summary = results.get('summary', '')
+    lines = summary.split('\n')
+    
+    # Find the table in the summary
+    in_table = False
+    table_found = False
+    
+    for line in lines:
+        if '| Service | Chart |' in line:
+            in_table = True
+            table_found = True
+            print('| Service | Chart | Original Version | Updated Version | Status |')
+            print('|---------|-------|------------------|-----------------|--------|')
+            continue
+        elif in_table and line.startswith('|') and '|' in line.strip():
+            # Parse existing table row and add status column
+            parts = [p.strip() for p in line.split('|')[1:-1]]  # Remove empty first/last parts
+            if len(parts) >= 3 and parts[0] != 'Service':  # Skip header row
+                service, chart, version = parts[0], parts[1], parts[2]
+                if len(parts) == 4:  # Has both helm and appstate versions
+                    helm_ver, appstate_ver = parts[2], parts[3]
+                    status = '🔄 Would update' if '${{ github.event.inputs.dry_run }}' == 'true' else '✅ Updated'
+                    print(f'| {service} | {chart} | {helm_ver} | {appstate_ver} | {status} |')
+                else:  # Up to date service
+                    status = '✅ Up to date'
+                    print(f'| {service} | {chart} | {version} | {version} | {status} |')
+        elif in_table and not line.startswith('|'):
+            break
+    
+    if not table_found:
+        print('| No data | - | - | - | ❌ No comparison data available |')
+        
+except Exception as e:
+    print('| Error | - | - | - | ❌ Failed to parse comparison data |')
+    sys.stderr.write(f'Error: {e}\n')
+" >> $GITHUB_STEP_SUMMARY
             
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
