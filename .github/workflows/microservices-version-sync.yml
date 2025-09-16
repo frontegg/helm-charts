@@ -355,6 +355,14 @@ jobs:
           echo "# Microservices Version Sync Results" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           
+          # Debug: Check if comparison results file exists
+          if [ -f "comparison_results.json" ]; then
+            echo "✅ Comparison results file found" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⚠️ Comparison results file not found - some details may be missing" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
           if [ "${{ needs.extract-query-compare.outputs.has-updates }}" == "true" ]; then
             echo "## ✅ Sync Completed Successfully" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
@@ -398,13 +406,13 @@ jobs:
             
             # Generate table rows for services that need updates
             if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
-              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | 🔄 Would update |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null
+              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | 🔄 Would update |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "| Error | - | - | - | ❌ Failed to load data |" >> $GITHUB_STEP_SUMMARY
             else
-              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | ✅ Updated |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null
+              python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {update[\"service\"]} | {update[\"chart\"]} | `{update[\"helm_version\"]}` | `{update[\"appstate_version\"]}` | ✅ Updated |") for update in results.get("updates_needed", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "| Error | - | - | - | ❌ Failed to load data |" >> $GITHUB_STEP_SUMMARY
             fi
             
             # Add up-to-date services if any
-            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {service[\"service\"]} | {service[\"chart\"]} | `{service[\"version\"]}` | `{service[\"version\"]}` | ✅ Up to date |") for service in results.get("up_to_date", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null
+            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); [print(f"| {service[\"service\"]} | {service[\"chart\"]} | `{service[\"version\"]}` | `{service[\"version\"]}` | ✅ Up to date |") for service in results.get("up_to_date", [])]' >> $GITHUB_STEP_SUMMARY 2>/dev/null || true
             
             echo "" >> $GITHUB_STEP_SUMMARY
           fi
@@ -413,5 +421,9 @@ jobs:
           if [ -f "comparison_results.json" ]; then
             echo "## 📋 Detailed Results" >> $GITHUB_STEP_SUMMARY
             echo "" >> $GITHUB_STEP_SUMMARY
-            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); print(results.get("summary", "Summary not available"))' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Summary not available" >> $GITHUB_STEP_SUMMARY
+            python3 -c 'import json; results = json.load(open("comparison_results.json", "r")); print(results.get("summary", "Summary not available"))' >> $GITHUB_STEP_SUMMARY 2>/dev/null || echo "Summary not available - comparison results could not be loaded" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## 📋 Detailed Results" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "Comparison results file not found - this may indicate an issue with the comparison step" >> $GITHUB_STEP_SUMMARY
           fi
