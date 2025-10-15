@@ -20,7 +20,7 @@ data:
     - dashboard-custom-code-prehook-activation-enabled:
         treatment: off
     - new-pricing-enforcement-premium-features:
-        treatment: on
+        treatment: off
     - allow-sso-config-id-on-authorize:
         treatment: on
     - ip-provider:
@@ -80,7 +80,7 @@ data:
     - oauth-vendor-cache:
         treatment: on
     - new-pricing-enforcement-lock-envs:
-        treatment: on
+        treatment: off
     - dashboard-use-pre-step:
         treatment: on
     - login-box-use-pre-step:
@@ -152,7 +152,7 @@ data:
     - backoffice-aggrergate-users-accounts-visits:
         treatment: off
     - new-pricing-enforcement:
-        treatment: on
+        treatment: off
     - identity-sso-force-pkce:
         treatment: off
     - api_gw_allow_missing_alias:
@@ -562,7 +562,9 @@ data:
     - dashboard-backoffice:
         treatment: on
     - dashboard-allow-pricing-view:
-        treatment: on
+        treatment: off
+    - dashboard-subscriptions:
+        treatment: off
     - custom-login-self-service-in-account_details:
         treatment: on
     - custom-login-box:
