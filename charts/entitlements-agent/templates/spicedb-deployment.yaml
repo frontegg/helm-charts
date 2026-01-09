@@ -1,0 +1,154 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fullname" . }}-spicedb
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: spicedb
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.spicedb.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: spicedb
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "commonLabels" . | nindent 8 }}
+        app.kubernetes.io/component: spicedb
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
+      initContainers:
+        - name: setup-certs
+          image: busybox:1.35
+          command:
+            - /bin/sh
+            - -c
+            - |
+              cp /tls-certs/ca.crt /cockroach-certs/
+              cp /tls-certs/tls.crt /cockroach-certs/client.root.crt
+              cp /tls-certs/tls.key /cockroach-certs/client.root.key
+              chmod 644 /cockroach-certs/ca.crt /cockroach-certs/client.root.crt
+              chmod 644 /cockroach-certs/client.root.key
+              chown -R 65532:65532 /cockroach-certs/
+          volumeMounts:
+            - name: client-certs-raw
+              mountPath: /tls-certs
+              readOnly: true
+            - name: client-certs-formatted
+              mountPath: /cockroach-certs
+      {{- end }}
+      containers:
+        - name: spicedb
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.spicedb.repository }}:{{ .Values.spicedb.tag }}"
+          imagePullPolicy: {{ .Values.spicedb.pullPolicy }}
+          command:
+            - spicedb
+            - serve
+            - --datastore-engine={{ .Values.spicedb.datastore.engine }}
+            {{- if .Values.cockroachdb.operator.enabled }}
+            {{- if .Values.cockroachdb.tlsEnabled }}
+            - --datastore-conn-uri=postgres://root@{{ include "fullname" . }}-cockroachdb-public:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=require&sslcert=/cockroach-certs/client.root.crt&sslkey=/cockroach-certs/client.root.key&sslrootcert=/cockroach-certs/ca.crt
+            {{- else }}
+            - --datastore-conn-uri=postgres://{{ .Values.env.cockroachdb.pguser }}:{{ .Values.env.cockroachdb.pgpassword }}@{{ include "fullname" . }}-cockroachdb-public:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=disable
+            {{- end }}
+            {{- else }}
+            - --datastore-conn-uri=postgres://{{ .Values.env.cockroachdb.pguser }}:{{ .Values.env.cockroachdb.pgpassword }}@{{ include "fullname" . }}-cockroachdb:{{ .Values.service.cockroachdb.port }}/{{ .Values.env.cockroachdb.pgdatabase }}?sslmode=disable
+            {{- end }}
+            - --log-level={{ .Values.spicedb.logLevel }}
+          ports:
+            - name: grpc
+              containerPort: 50051
+              protocol: TCP
+            - name: http
+              containerPort: 8443
+              protocol: TCP
+          {{- if .Values.env.spicedb }}
+          env:
+            {{- range $key, $value := .Values.env.spicedb }}
+            - name: {{ include "toEnvVarName" $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+          {{- end }}
+          {{- if .Values.healthChecks.spicedb.enabled }}
+          livenessProbe:
+            grpc:
+              port: 50051
+            initialDelaySeconds: {{ .Values.healthChecks.spicedb.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthChecks.spicedb.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.spicedb.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthChecks.spicedb.failureThreshold }}
+          readinessProbe:
+            grpc:
+              port: 50051
+            initialDelaySeconds: {{ .Values.healthChecks.spicedb.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthChecks.spicedb.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.spicedb.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthChecks.spicedb.failureThreshold }}
+          {{- end }}
+          {{- with .Values.resources.spicedb }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            - name: spicedb-data
+              mountPath: /data
+            {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
+            - name: client-certs-formatted
+              mountPath: /cockroach-certs
+              readOnly: true
+            {{- end }}
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        - name: spicedb-data
+          emptyDir: {}
+        {{- if and .Values.cockroachdb.operator.enabled .Values.cockroachdb.tlsEnabled }}
+        - name: client-certs-raw
+          projected:
+            sources:
+            - secret:
+                name: {{ include "fullname" . }}-cockroachdb-root
+            - secret:
+                name: {{ include "fullname" . }}-cockroachdb-ca
+        - name: client-certs-formatted
+          emptyDir: {}
+        {{- end }}
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }} 
