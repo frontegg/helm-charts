@@ -1,0 +1,27 @@
+{{- if not .Values.existingConfigMap }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "e10s-engine-sync.fullname" . }}
+  labels:
+    {{- include "e10s-engine-sync.labels" . | nindent 4 }}
+data:
+  FRONTEGG_URL: {{ required ".Values.frontegg.url is required" .Values.frontegg.url | quote }}
+  SPICEDB_ADDRESS: {{ required ".Values.spicedb.address is required" .Values.spicedb.address | quote }}
+  SYNC_MODE: {{ .Values.sync.mode | quote }}
+  MAX_SYNC_RETRIES: {{ .Values.sync.maxRetries | quote }}
+  SYNC_RETRY_DELAY: {{ .Values.sync.retryDelay | quote }}
+  ZED_KEYRING_PASSWORD: {{ .Values.zed.keyringPassword | quote }}
+  ZED_IMPORT_BATCH_SIZE: {{ .Values.zed.importBatchSize | quote }}
+  ZED_IMPORT_WORKERS: {{ .Values.zed.importWorkers | quote }}
+  ZED_DELETE_BATCH_SIZE: {{ .Values.zed.deleteBatchSize | quote }}
+  ZED_DELETE_BATCH_DELAY: {{ .Values.zed.deleteBatchDelay | quote }}
+  ZED_DELETE_TIMEOUT_RETRY_DELAY: {{ .Values.zed.deleteTimeoutRetryDelay | quote }}
+  {{- if .Values.entitlementsServiceUrl }}
+  ENTITLEMENTS_SERVICE_URL: {{ .Values.entitlementsServiceUrl | quote }}
+  {{- end }}
+  {{- with .Values.configmap.additionalData }}
+  {{- toYaml . | nindent 2 }}
+  {{- end }}
+{{- end }}
+

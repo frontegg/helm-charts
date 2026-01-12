@@ -196,38 +196,3 @@ app.frontegg.com/name: {{ include "name" . }}-hp
 {{- fail "nil value provided - check your values" }}
 {{- end }}
 {{- end }}
-
-{{/* e10s-engine-sync service name */}}
-{{- define "e10sEngineSync.name" -}}
-{{ include "name" . }}-e10s-sync
-{{- end -}}
-
-{{/* e10s-engine-sync labels */}}
-{{- define "e10sEngineSync.labels" -}}
-app.frontegg.com/team: {{ .Values.team }}
-app.frontegg.com/appVersion: {{ include "appVersion" . | quote }}
-{{ include "e10sEngineSync.selector.labels" . }}
-{{- end -}}
-
-{{/* e10s-engine-sync selector labels */}}
-{{- define "e10sEngineSync.selector.labels" -}}
-app.frontegg.com/name: {{ include "e10sEngineSync.name" . }}
-{{- end -}}
-
-{{/* e10s-engine-sync secret name */}}
-{{- define "e10sEngineSync.secret.name" -}}
-{{- if .Values.e10sEngineSync.existingSecret }}
-{{- .Values.e10sEngineSync.existingSecret }}
-{{- else }}
-{{- include "e10sEngineSync.name" . }}
-{{- end }}
-{{- end -}}
-
-{{/* e10s-engine-sync configmap name */}}
-{{- define "e10sEngineSync.configmap.name" -}}
-{{- if .Values.e10sEngineSync.existingConfigMap }}
-{{- .Values.e10sEngineSync.existingConfigMap }}
-{{- else }}
-{{- include "e10sEngineSync.name" . }}
-{{- end }}
-{{- end -}}
