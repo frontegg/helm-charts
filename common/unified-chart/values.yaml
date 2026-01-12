@@ -353,7 +353,8 @@ externalSecret:
   subPath: config
   refreshInterval: 1m
   annotations: {}
-  text: ""
+  text:
+    ""
     # {{- $secret := .contents | fromYaml }}
     # apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}
   data: ""
@@ -416,6 +417,126 @@ role:
 rolebinding:
   enabled: false
   namespace: ""
+
+# =============================================================================
+# E10S-ENGINE-SYNC (SpiceDB Synchronization Worker)
+# =============================================================================
+# This component synchronizes Frontegg entitlements data to SpiceDB.
+# Enable this for customers who want to run SpiceDB sync in their own cluster.
+e10sEngineSync:
+  enabled: false
+  containerName: "engine-sync"
+
+  # Image configuration
+  image:
+    repository: frontegg/e10s-engine-sync
+    tag: "latest"
+    pullPolicy: Always
+
+  replicaCount: 1
+
+  # Additional environment variables (using standard Helm format)
+  vars: []
+  # - name: CUSTOM_VAR
+  #   value: "custom-value"
+
+  # Ports configuration
+  ports:
+    - name: http
+      containerPort: 3000
+
+  # Service configuration
+  service:
+    enabled: true
+    type: ClusterIP
+    ports:
+      - port: 80
+        targetPort: 3000
+        protocol: TCP
+        name: http
+
+  # Resource limits and requests
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: 500m
+      memory: 512Mi
+
+  # Probes (optional - configure based on your deployment pattern)
+  # Leave empty {} if not needed (e.g., for CronJob usage)
+  livenessProbe: {}
+  readinessProbe: {}
+
+  terminationGracePeriodSeconds: 30
+  podAnnotations: {}
+  nodeSelector: {}
+  tolerations: []
+  affinity: {}
+  additionalVolumes: ""
+  additionalVolumeMounts: ""
+
+  # ==========================================================================
+  # REQUIRED CONFIGURATION - Customer must provide these values
+  # ==========================================================================
+
+  # Frontegg API credentials (REQUIRED)
+  frontegg:
+    # Your Frontegg Client ID
+    clientId: ""
+    # Your Frontegg Client Secret
+    clientSecret: ""
+    # The Frontegg API URL (e.g., https://api.frontegg.com)
+    url: ""
+
+  # SpiceDB connection settings (REQUIRED)
+  spicedb:
+    # SpiceDB gRPC address (e.g., spicedb.default.svc.cluster.local:50051)
+    address: ""
+    # SpiceDB gRPC preshared key for authentication
+    presharedKey: ""
+
+  # ==========================================================================
+  # OPTIONAL CONFIGURATION
+  # ==========================================================================
+
+  # Sync behavior configuration
+  sync:
+    # Sync mode: "diff" (incremental) or "full" (complete resync)
+    mode: "diff"
+    # Maximum retry attempts for failed syncs
+    maxRetries: 3
+    # Delay between retries in seconds
+    retryDelay: 30
+
+  # ZED CLI configuration (for SpiceDB operations)
+  zed:
+    keyringPassword: "spicedb-sync-keyring"
+    importBatchSize: 1000
+    importWorkers: 1
+    deleteBatchSize: 1000
+    deleteBatchDelay: "0.5"
+    deleteTimeoutRetryDelay: "1"
+
+  # Optional: Entitlements service URL
+  entitlementsServiceUrl: ""
+
+  # Secret configuration
+  secret:
+    # Set to false if using existingSecret
+    enabled: true
+    additionalData: {}
+
+  # ConfigMap configuration
+  configmap:
+    additionalData: {}
+
+  # Use existing secret instead of creating one
+  existingSecret: ""
+
+  # Use existing configmap instead of creating one
+  existingConfigMap: ""
 
 # additional helm resources to render resources freely
 additionalResources: |

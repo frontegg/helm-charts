@@ -1,0 +1,23 @@
+{{- $top := . -}}
+{{- $values := $top.Values -}}
+{{- if and $values.e10sEngineSync.enabled $values.e10sEngineSync.service.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "e10sEngineSync.name" $top }}
+  labels:
+    {{- include "e10sEngineSync.labels" $top | nindent 4 }}
+spec:
+  type: {{ $values.e10sEngineSync.service.type }}
+  ports:
+    {{- range $values.e10sEngineSync.service.ports }}
+    - port: {{ .port }}
+      targetPort: {{ .targetPort }}
+      protocol: {{ .protocol | default "TCP" }}
+      name: {{ .name }}
+    {{- end }}
+  selector:
+    {{- include "e10sEngineSync.selector.labels" $top | nindent 4 }}
+{{- end }}
+
