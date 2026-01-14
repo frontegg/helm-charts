@@ -1,15 +1,15 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "e10s-engine-sync.fullname" . }}
+  name: {{ include "fullname" . }}
   labels:
-    {{- include "e10s-engine-sync.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 spec:
   replicas: {{ .Values.replicaCount }}
   revisionHistoryLimit: 2
   selector:
     matchLabels:
-      {{- include "e10s-engine-sync.selectorLabels" . | nindent 6 }}
+      {{- include "selectorLabels" . | nindent 6 }}
   template:
     metadata:
       annotations:
@@ -21,14 +21,12 @@ spec:
         {{- toYaml . | nindent 8 }}
         {{- end }}
       labels:
-        {{- include "e10s-engine-sync.labels" . | nindent 8 }}
+        {{- include "labels" . | nindent 8 }}
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
     spec:
-      {{- if .Values.serviceAccount.create }}
-      serviceAccountName: {{ include "e10s-engine-sync.serviceAccountName" . }}
-      {{- end }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
       terminationGracePeriodSeconds: {{ .Values.terminationGracePeriodSeconds }}
       {{- with .Values.imagePullSecrets }}
       imagePullSecrets:
@@ -50,24 +48,24 @@ spec:
             - name: FRONTEGG_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "e10s-engine-sync.secretName" . }}
+                  name: {{ include "secretName" . }}
                   key: FRONTEGG_CLIENT_ID
             - name: FRONTEGG_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "e10s-engine-sync.secretName" . }}
+                  name: {{ include "secretName" . }}
                   key: FRONTEGG_CLIENT_SECRET
             - name: SPICEDB_GRPC_PRESHARED_KEY
               valueFrom:
                 secretKeyRef:
-                  name: {{ include "e10s-engine-sync.secretName" . }}
+                  name: {{ include "secretName" . }}
                   key: SPICEDB_GRPC_PRESHARED_KEY
             {{- with .Values.env }}
             {{- toYaml . | nindent 12 }}
             {{- end }}
           envFrom:
             - configMapRef:
-                name: {{ include "e10s-engine-sync.configMapName" . }}
+                name: {{ include "configMapName" . }}
           ports:
             {{- toYaml .Values.ports | nindent 12 }}
           {{- with .Values.livenessProbe }}

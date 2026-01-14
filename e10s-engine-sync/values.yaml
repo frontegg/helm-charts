@@ -5,7 +5,7 @@ replicaCount: 1
 
 image:
   repository: frontegg/e10s-engine-sync
-  tag: "latest"
+  tag: "832421d"
   pullPolicy: IfNotPresent
 
 imagePullSecrets: []
@@ -37,7 +37,6 @@ ports:
 
 # Service configuration
 service:
-  enabled: true
   type: ClusterIP
   port: 80
   targetPort: 3000
@@ -47,9 +46,6 @@ resources:
   requests:
     cpu: 100m
     memory: 256Mi
-  limits:
-    cpu: 500m
-    memory: 512Mi
 
 # Probes (optional - configure based on your deployment pattern)
 livenessProbe: {}
@@ -101,13 +97,10 @@ entitlementsServiceUrl: ""
 # Secret configuration
 secret:
   enabled: true
-  additionalData: {}
 
 # ConfigMap configuration
-configmap:
-  additionalData: {}
+configmap: {}
 
 # Use existing secret/configmap instead of creating
 existingSecret: ""
 existingConfigMap: ""
-

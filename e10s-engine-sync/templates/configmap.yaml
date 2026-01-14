@@ -2,9 +2,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: {{ include "e10s-engine-sync.fullname" . }}
+  name: {{ include "fullname" . }}
   labels:
-    {{- include "e10s-engine-sync.labels" . | nindent 4 }}
+    {{- include "labels" . | nindent 4 }}
 data:
   FRONTEGG_URL: {{ required ".Values.frontegg.url is required" .Values.frontegg.url | quote }}
   SPICEDB_ADDRESS: {{ required ".Values.spicedb.address is required" .Values.spicedb.address | quote }}
@@ -17,11 +17,6 @@ data:
   ZED_DELETE_BATCH_SIZE: {{ .Values.zed.deleteBatchSize | quote }}
   ZED_DELETE_BATCH_DELAY: {{ .Values.zed.deleteBatchDelay | quote }}
   ZED_DELETE_TIMEOUT_RETRY_DELAY: {{ .Values.zed.deleteTimeoutRetryDelay | quote }}
-  {{- if .Values.entitlementsServiceUrl }}
   ENTITLEMENTS_SERVICE_URL: {{ .Values.entitlementsServiceUrl | quote }}
-  {{- end }}
-  {{- with .Values.configmap.additionalData }}
-  {{- toYaml . | nindent 2 }}
-  {{- end }}
 {{- end }}
 

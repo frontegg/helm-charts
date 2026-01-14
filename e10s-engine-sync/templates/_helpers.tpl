@@ -1,14 +1,14 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "e10s-engine-sync.name" -}}
+{{- define "name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Create a default fully qualified app name.
 */}}
-{{- define "e10s-engine-sync.fullname" -}}
+{{- define "fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -24,16 +24,16 @@ Create a default fully qualified app name.
 {{/*
 Create chart name and version as used by the chart label.
 */}}
-{{- define "e10s-engine-sync.chart" -}}
+{{- define "chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
 {{/*
 Common labels
 */}}
-{{- define "e10s-engine-sync.labels" -}}
-helm.sh/chart: {{ include "e10s-engine-sync.chart" . }}
-{{ include "e10s-engine-sync.selectorLabels" . }}
+{{- define "labels" -}}
+helm.sh/chart: {{ include "chart" . }}
+{{ include "selectorLabels" . }}
 {{- if .Chart.AppVersion }}
 app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
 {{- end }}
@@ -43,41 +43,37 @@ app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{/*
 Selector labels
 */}}
-{{- define "e10s-engine-sync.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "e10s-engine-sync.name" . }}
+{{- define "selectorLabels" -}}
+app.kubernetes.io/name: {{ include "name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "e10s-engine-sync.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "e10s-engine-sync.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
+{{- define "serviceAccountName" -}}
+{{- default (include "fullname" .) .Values.serviceAccount.name }}
 {{- end }}
 
 {{/*
 Secret name
 */}}
-{{- define "e10s-engine-sync.secretName" -}}
+{{- define "secretName" -}}
 {{- if .Values.existingSecret }}
 {{- .Values.existingSecret }}
 {{- else }}
-{{- include "e10s-engine-sync.fullname" . }}
+{{- include "fullname" . }}
 {{- end }}
 {{- end }}
 
 {{/*
 ConfigMap name
 */}}
-{{- define "e10s-engine-sync.configMapName" -}}
+{{- define "configMapName" -}}
 {{- if .Values.existingConfigMap }}
 {{- .Values.existingConfigMap }}
 {{- else }}
-{{- include "e10s-engine-sync.fullname" . }}
+{{- include "fullname" . }}
 {{- end }}
 {{- end }}
 

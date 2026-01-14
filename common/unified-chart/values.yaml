@@ -353,8 +353,7 @@ externalSecret:
   subPath: config
   refreshInterval: 1m
   annotations: {}
-  text:
-    ""
+  text: ""
     # {{- $secret := .contents | fromYaml }}
     # apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}
   data: ""
@@ -417,6 +416,7 @@ role:
 rolebinding:
   enabled: false
   namespace: ""
+
 # additional helm resources to render resources freely
 additionalResources: |
 
