@@ -15,9 +15,7 @@ fullnameOverride: ""
 containerName: "engine-sync"
 
 serviceAccount:
-  create: true
   annotations: {}
-  name: ""
 
 podAnnotations: {}
 podLabels: {}
@@ -95,8 +93,7 @@ zed:
 entitlementsServiceUrl: ""
 
 # Secret configuration
-secret:
-  enabled: true
+# Note: Secret is always created unless existingSecret is provided
 
 # ConfigMap configuration
 configmap: {}
