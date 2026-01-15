@@ -2283,6 +2283,26 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/connectors-worker-0.1.7/connectors-worker-0.1.7.tgz
     version: 0.1.7
+  e10s-engine-sync:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2026-01-15T11:04:53.702808271Z"
+    description: A Helm chart for SpiceDB sync - synchronizes Frontegg entitlements
+      to SpiceDB
+    digest: eff8df5bca7734235f97f6fd2f74d2dc84392c7c5c9c34d0fd61e01727e55a43
+    keywords:
+    - spicedb
+    - entitlements
+    - sync
+    - frontegg
+    maintainers:
+    - name: Frontegg
+      url: https://frontegg.com
+    name: e10s-engine-sync
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/e10s-engine-sync-0.0.1/e10s-engine-sync-0.0.1.tgz
+    version: 0.0.1
   entitlements-agent:
   - apiVersion: v2
     created: "2025-07-01T14:51:54.725997536Z"
@@ -9658,4 +9678,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2025-10-15T15:54:21.851311499Z"
+generated: "2026-01-15T11:04:53.703813205Z"
