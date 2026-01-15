@@ -1,0 +1,103 @@
+# E10S Engine Sync - SpiceDB Synchronization
+# Minimal chart for customers to deploy SpiceDB sync in their own cluster
+
+replicaCount: 1
+
+image:
+  repository: frontegg/e10s-engine-sync
+  tag: "832421d"
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+containerName: "engine-sync"
+
+serviceAccount:
+  annotations: {}
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+# Additional environment variables
+env: []
+# - name: CUSTOM_VAR
+#   value: "custom-value"
+
+# Ports configuration
+ports:
+  - name: http
+    containerPort: 3000
+
+# Service configuration
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# Resource limits and requests
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+
+# Probes (optional - configure based on your deployment pattern)
+livenessProbe: {}
+readinessProbe: {}
+
+terminationGracePeriodSeconds: 30
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# =============================================================================
+# REQUIRED CONFIGURATION - Customer must provide these values
+# =============================================================================
+
+# Frontegg API credentials (REQUIRED)
+frontegg:
+  clientId: ""
+  clientSecret: ""
+  url: ""
+
+# SpiceDB connection settings (REQUIRED)
+spicedb:
+  address: ""
+  presharedKey: ""
+
+# =============================================================================
+# OPTIONAL CONFIGURATION
+# =============================================================================
+
+# Sync behavior configuration
+sync:
+  mode: "diff"
+  maxRetries: 3
+  retryDelay: 30
+
+# ZED CLI configuration
+zed:
+  keyringPassword: "spicedb-sync-keyring"
+  importBatchSize: 1000
+  importWorkers: 1
+  deleteBatchSize: 1000
+  deleteBatchDelay: "0.5"
+  deleteTimeoutRetryDelay: "1"
+
+# Optional: Entitlements service URL
+entitlementsServiceUrl: ""
+
+# Secret configuration
+# Note: Secret is always created unless existingSecret is provided
+
+# ConfigMap configuration
+configmap: {}
+
+# Use existing secret/configmap instead of creating
+existingSecret: ""
+existingConfigMap: ""
