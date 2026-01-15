@@ -2,7 +2,7 @@ apiVersion: v2
 name: e10s-engine-sync
 description: A Helm chart for SpiceDB sync - synchronizes Frontegg entitlements to SpiceDB
 type: application
-version: 0.1.0
+version: 0.0.1
 appVersion: "latest"
 keywords:
   - spicedb
@@ -12,4 +12,3 @@ keywords:
 maintainers:
   - name: Frontegg
     url: https://frontegg.com
-
