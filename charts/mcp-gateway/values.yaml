@@ -4,8 +4,7 @@
 
 # MCP Auth container/deployment configuration
 mcpAuth:
-  repository: frontegg/hybrid-agent-link-auth
-  prefix: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
+  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agent-link-auth
   tag: latest
   pullPolicy: IfNotPresent
   replicaCount: 1
@@ -37,8 +36,7 @@ mcpAuth:
 
 # MCP Gateway container/deployment configuration
 mcpGw:
-  repository: frontegg/hybrid-agent-link-auth
-  prefix: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
+  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agent-link-auth
   tag: latest
   pullPolicy: IfNotPresent
   replicaCount: 1
