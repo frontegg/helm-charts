@@ -95,10 +95,10 @@ service:
 
 ingress:
   mcpGw:
-    enabled: false
+    enabled: true
     annotations: {}
   mcpAuth:
-    enabled: false
+    enabled: true
     annotations: {}
 
 autoscaling:
