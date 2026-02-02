@@ -14,24 +14,24 @@ mcpGw:
 # Note: Both services share most config, defined separately for flexibility
 env:
   mcpAuth:
-    redisHost: "redis-headless"
+    redisHost: "<your-redis-host>"
     redisTlsEnabled: "false"
-    fronteggRegion: "stg"
-    vendorClientId: "1398bcd1-2dad-469e-a3e0-fff9c33330d5"
-    vendorClientSecret: "d26bdc72-233c-4a78-82b5-8feb83ece676"
-    applicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
-    externalAuthorizationUrl: "https://ysh1lmd6ooieut6raolgif.mcp-gw.stg.frontegg.com"
-    externalAuthorizationApplicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
+    fronteggRegion: "eu"
+    vendorClientId: "<your-vendor-client-id>"
+    vendorClientSecret: "<your-vendor-client-secret>"
+    applicationId: "<your-application-id>"
+    externalAuthorizationUrl: "<your-external-authorization-url>"
+    externalAuthorizationApplicationId: "<your-application-id>"
 
   mcpGw:
-    redisHost: "redis-headless"
+    redisHost: "<your-redis-host>"
     redisTlsEnabled: "false"
-    fronteggRegion: "stg"
-    vendorClientId: "1398bcd1-2dad-469e-a3e0-fff9c33330d5"
-    vendorClientSecret: "d26bdc72-233c-4a78-82b5-8feb83ece676"
-    applicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
-    externalAuthorizationUrl: "https://ysh1lmd6ooieut6raolgif.mcp-gw.stg.frontegg.com"
-    externalAuthorizationApplicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
+    fronteggRegion: "eu"
+    vendorClientId: "<your-vendor-client-id>"
+    vendorClientSecret: "<your-vendor-client-secret>"
+    applicationId: "<your-application-id>"
+    externalAuthorizationUrl: "<your-external-authorization-url>"
+    externalAuthorizationApplicationId: "<your-application-id>"
 
 
 # Optional: Pull secrets for private registries

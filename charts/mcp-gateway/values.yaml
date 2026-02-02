@@ -93,14 +93,6 @@ securityContext:
 service:
   type: ClusterIP
 
-ingress:
-  mcpGw:
-    enabled: true
-    annotations: {}
-  mcpAuth:
-    enabled: true
-    annotations: {}
-
 autoscaling:
   mcpAuth:
     enabled: false
