@@ -96,20 +96,10 @@ service:
 ingress:
   mcpGw:
     enabled: false
-    hostnameOverride: ""
-    ingressClassName: ""
     annotations: {}
-    tls:
-      enabled: false
-      secretName: ""
   mcpAuth:
     enabled: false
-    hostnameOverride: ""
-    ingressClassName: ""
     annotations: {}
-    tls:
-      enabled: false
-      secretName: ""
 
 autoscaling:
   mcpAuth:

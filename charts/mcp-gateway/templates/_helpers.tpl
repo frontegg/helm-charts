@@ -88,25 +88,3 @@ Convert camelCase to UPPER_SNAKE_CASE
 {{- $result := regexReplaceAll "([a-z0-9])([A-Z])" . "${1}_${2}" -}}
 {{- $result | upper -}}
 {{- end }}
-
-{{/*
-MCP Gateway hostname
-*/}}
-{{- define "mcpGwHostname" -}}
-{{- if .Values.ingress.mcpGw.hostnameOverride -}}
-{{- .Values.ingress.mcpGw.hostnameOverride | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "mcp-gw-%s.dev.frontegg.com" .Release.Name | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}
-
-{{/*
-MCP Auth hostname
-*/}}
-{{- define "mcpAuthHostname" -}}
-{{- if .Values.ingress.mcpAuth.hostnameOverride -}}
-{{- .Values.ingress.mcpAuth.hostnameOverride | trimSuffix "-" -}}
-{{- else -}}
-{{- printf "mcp-auth-%s.dev.frontegg.com" .Release.Name | trimSuffix "-" -}}
-{{- end -}}
-{{- end -}}

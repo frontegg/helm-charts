@@ -1,39 +1,44 @@
 {{- if .Values.ingress.mcpGw.enabled -}}
 {{- $fullName := include "fullname" . -}}
-{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
 apiVersion: networking.k8s.io/v1
-{{- else -}}
-apiVersion: extensions/v1beta1
-{{- end }}
 kind: Ingress
 metadata:
   name: {{ $fullName }}-gw-ingress
   labels:
     {{- include "commonLabels" . | nindent 4 }}
     app.kubernetes.io/component: mcp-gw
-  {{- with .Values.ingress.mcpGw.annotations }}
   annotations:
+    nginx.ingress.kubernetes.io/configuration-snippet: |
+      more_clear_input_headers "Host" "X-Forwarded-Host";
+      proxy_set_header Host $http_host;
+      proxy_set_header X-Forwarded-Host $http_x_forwarded_host;
+      proxy_set_header X-Trace-ID $opentelemetry_trace_id;
+    nginx.ingress.kubernetes.io/enable-opentelemetry: "true"
+    nginx.ingress.kubernetes.io/proxy-body-size: 4m
+    nginx.ingress.kubernetes.io/server-snippet: |
+      add_header Cache-Control "no-transform";
+      location ~* ^/(frontegg/)?(metrics|healthcheck)$ {
+        deny all;
+        return 403;
+      }
+    {{- with .Values.ingress.mcpGw.annotations }}
     {{- toYaml . | nindent 4 }}
-  {{- end }}
+    {{- end }}
 spec:
-  {{- with .Values.ingress.mcpGw.ingressClassName }}
-  ingressClassName: {{ . | quote }}
-  {{- end }}
-{{- if .Values.ingress.mcpGw.tls.enabled }}
+  ingressClassName: nginx
   tls:
     - hosts:
-        - {{ include "mcpGwHostname" . | quote }}
-      secretName: {{ .Values.ingress.mcpGw.tls.secretName }}
-{{- end }}
+        - "mcp-gw.george-clooney.venv.life"
+      secretName: frontegg-secret-2020
   rules:
-    - host: {{ include "mcpGwHostname" . | quote }}
+    - host: "mcp-gw.george-clooney.venv.life"
       http:
         paths:
         - path: /
+          pathType: Prefix
           backend:
             service:
               name: {{ $fullName }}-gw
               port:
                 number: 8080
-          pathType: ImplementationSpecific
 {{- end }}
