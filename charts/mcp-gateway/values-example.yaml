@@ -1,0 +1,65 @@
+# Example values file for mcp-gateway
+# Copy this file and customize for your environment:
+#   cp values-example.yaml my-values.yaml
+#   helm install mcp-gateway ./charts/mcp-gateway -f my-values.yaml
+
+# Image configuration
+mcpAuth:
+  repository: frontegg/mcp-auth
+  tag: "v1.0.0"
+  replicaCount: 2
+
+mcpGw:
+  repository: frontegg/mcp-gw
+  tag: "v1.0.0"
+  replicaCount: 2
+
+# Shared environment variables
+# Note: Both services share most config, defined separately for flexibility
+env:
+  mcpAuth:
+    redisHost: "redis-headless"
+    redisTlsEnabled: "false"
+    fronteggRegion: "stg"
+    vendorClientId: "1398bcd1-2dad-469e-a3e0-fff9c33330d5"
+    vendorClientSecret: "d26bdc72-233c-4a78-82b5-8feb83ece676"
+    applicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
+    externalAuthorizationUrl: "https://ysh1lmd6ooieut6raolgif.mcp-gw.stg.frontegg.com"
+    externalAuthorizationApplicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
+
+  mcpGw:
+    redisHost: "redis-headless"
+    redisTlsEnabled: "false"
+    fronteggRegion: "stg"
+    vendorClientId: "1398bcd1-2dad-469e-a3e0-fff9c33330d5"
+    vendorClientSecret: "d26bdc72-233c-4a78-82b5-8feb83ece676"
+    applicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
+    externalAuthorizationUrl: "https://ysh1lmd6ooieut6raolgif.mcp-gw.stg.frontegg.com"
+    externalAuthorizationApplicationId: "090aa6c0-cadb-4ed9-8d20-2375e5ef6bb4"
+
+
+# Optional: Pull secrets for private registries
+# imagePullSecrets:
+#   - name: my-registry-secret
+
+# Optional: Resource customization
+# mcpAuth:
+#   resources:
+#     requests:
+#       cpu: 500m
+#       memory: 512Mi
+#     limits:
+#       memory: 1Gi
+
+# Optional: Enable autoscaling
+# autoscaling:
+#   mcpAuth:
+#     enabled: true
+#     minReplicas: 2
+#     maxReplicas: 10
+#     targetCPUUtilizationPercentage: 70
+#   mcpGw:
+#     enabled: true
+#     minReplicas: 2
+#     maxReplicas: 10
+#     targetCPUUtilizationPercentage: 70

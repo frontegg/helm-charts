@@ -1,0 +1,33 @@
+MCP Gateway has been deployed with the following services:
+
+1. MCP Auth Service:
+   Service: {{ include "fullname" . }}-auth
+   Port: 8080
+
+2. MCP Gateway Service:
+   Service: {{ include "fullname" . }}-gw
+   Port: 8080
+
+To access the services:
+{{- if contains "NodePort" .Values.service.type }}
+  export NODE_IP=$(kubectl get nodes --namespace {{ .Release.Namespace }} -o jsonpath="{.items[0].status.addresses[0].address}")
+
+  # MCP Auth
+  export NODE_PORT_AUTH=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "fullname" . }}-auth)
+  echo "MCP Auth: http://$NODE_IP:$NODE_PORT_AUTH"
+
+  # MCP Gateway
+  export NODE_PORT_GW=$(kubectl get --namespace {{ .Release.Namespace }} -o jsonpath="{.spec.ports[0].nodePort}" services {{ include "fullname" . }}-gw)
+  echo "MCP Gateway: http://$NODE_IP:$NODE_PORT_GW"
+{{- else if contains "LoadBalancer" .Values.service.type }}
+  NOTE: It may take a few minutes for the LoadBalancer IP to be available.
+
+  kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "fullname" . }}-auth
+  kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "fullname" . }}-gw
+{{- else if contains "ClusterIP" .Values.service.type }}
+  # Port forward MCP Auth
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-auth 8080:8080
+
+  # Port forward MCP Gateway (in another terminal)
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-gw 8081:8080
+{{- end }}

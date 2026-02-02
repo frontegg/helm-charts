@@ -1,0 +1,157 @@
+# Default values for mcp-gateway
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+# MCP Auth container/deployment configuration
+mcpAuth:
+  repository: frontegg/hybrid-agent-link-auth
+  prefix: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
+  tag: latest
+  pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 3
+    periodSeconds: 5
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 3
+    periodSeconds: 5
+  startupProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    failureThreshold: 10
+    periodSeconds: 10
+
+# MCP Gateway container/deployment configuration
+mcpGw:
+  repository: frontegg/hybrid-agent-link-auth
+  prefix: "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/"
+  tag: latest
+  pullPolicy: IfNotPresent
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      memory: 512Mi
+  livenessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 3
+    periodSeconds: 5
+  readinessProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 3
+    periodSeconds: 5
+  startupProbe:
+    httpGet:
+      path: /health
+      port: http
+    initialDelaySeconds: 5
+    failureThreshold: 10
+    periodSeconds: 10
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext:
+  capabilities:
+    drop:
+    - NET_RAW
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+
+autoscaling:
+  mcpAuth:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+  mcpGw:
+    enabled: false
+    minReplicas: 1
+    maxReplicas: 100
+    targetCPUUtilizationPercentage: 80
+    # targetMemoryUtilizationPercentage: 80
+
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+env:
+  # MCP Auth container environment variables
+  mcpAuth:
+    redisHost: ""
+    redisTlsEnabled: "true"
+    cacheTtl: "300"
+    fronteggRegion: "eu"
+    vendorClientId: ""
+    vendorClientSecret: ""
+    applicationId: ""
+    fronteggMcpGwHost: ""
+    externalAuthorizationUrl: ""
+    integrationCallbackEndpoint: ""
+  # MCP Gateway container environment variables
+  mcpGw:
+    redisHost: ""
+    redisTlsEnabled: "true"
+    fronteggRegion: "eu"
+    cacheTtl: "300"
+    vendorClientId: ""
+    vendorClientSecret: ""
+    applicationId: ""
+    fronteggMcpGwHost: ""
+    externalAuthorizationUrl: ""
+    integrationCallbackEndpoint: ""
+    # approvalFlowWebhookEndpoint: ""
+    # eventWebhookProvider: ""
+    # eventWebhookUrl: ""
+    # eventWebhookSecret: ""

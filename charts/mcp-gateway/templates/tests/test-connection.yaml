@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: {{ include "fullname" . }}-test-connection
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget-auth
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "fullname" . }}-auth:8080/health']
+    - name: wget-gw
+      image: busybox
+      command: ['wget']
+      args: ['{{ include "fullname" . }}-gw:8080/health']
+  restartPolicy: Never
