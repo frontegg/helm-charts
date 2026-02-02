@@ -5,14 +5,10 @@
 
 # Image configuration
 mcpAuth:
-  repository: frontegg/mcp-auth
-  tag: "v1.0.0"
-  replicaCount: 2
+  replicaCount: 1
 
 mcpGw:
-  repository: frontegg/mcp-gw
-  tag: "v1.0.0"
-  replicaCount: 2
+  replicaCount: 1
 
 # Shared environment variables
 # Note: Both services share most config, defined separately for flexibility
