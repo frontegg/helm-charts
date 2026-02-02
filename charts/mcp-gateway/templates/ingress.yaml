@@ -1,12 +1,11 @@
-{{- if .Values.ingress.mcpGw.enabled -}}
+{{- if or .Values.ingress.mcpGw.enabled .Values.ingress.mcpAuth.enabled -}}
 {{- $fullName := include "fullname" . -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ $fullName }}-gw-ingress
+  name: {{ $fullName }}-ingress
   labels:
     {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-gw
   annotations:
     nginx.ingress.kubernetes.io/configuration-snippet: |
       more_clear_input_headers "Host" "X-Forwarded-Host";
@@ -21,9 +20,6 @@ metadata:
         deny all;
         return 403;
       }
-    {{- with .Values.ingress.mcpGw.annotations }}
-    {{- toYaml . | nindent 4 }}
-    {{- end }}
 spec:
   ingressClassName: nginx
   tls:
@@ -34,6 +30,13 @@ spec:
     - host: "mcp-gw.george-clooney.venv.life"
       http:
         paths:
+        - path: /.well-known
+          pathType: Prefix
+          backend:
+            service:
+              name: {{ $fullName }}-auth
+              port:
+                number: 8080
         - path: /
           pathType: Prefix
           backend:
