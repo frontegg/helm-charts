@@ -1,0 +1,39 @@
+{{- if .Values.ingress.mcpAuth.enabled -}}
+{{- $fullName := include "fullname" . -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: extensions/v1beta1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}-auth-ingress
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-auth
+  {{- with .Values.ingress.mcpAuth.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.mcpAuth.ingressClassName }}
+  ingressClassName: {{ . | quote }}
+  {{- end }}
+{{- if .Values.ingress.mcpAuth.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ include "mcpAuthHostname" . | quote }}
+      secretName: {{ .Values.ingress.mcpAuth.tls.secretName }}
+{{- end }}
+  rules:
+    - host: {{ include "mcpAuthHostname" . | quote }}
+      http:
+        paths:
+        - path: /
+          backend:
+            service:
+              name: {{ $fullName }}-auth
+              port:
+                number: 8080
+          pathType: ImplementationSpecific
+{{- end }}
