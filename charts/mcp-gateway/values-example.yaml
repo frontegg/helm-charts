@@ -10,28 +10,16 @@ mcpAuth:
 mcpGw:
   replicaCount: 1
 
-# Shared environment variables
-# Note: Both services share most config, defined separately for flexibility
+# Environment variables (shared by both mcp-auth and mcp-gw)
 env:
-  mcpAuth:
-    redisHost: "<your-redis-host>"
-    redisTlsEnabled: "false"
-    fronteggRegion: "eu"
-    vendorClientId: "<your-vendor-client-id>"
-    vendorClientSecret: "<your-vendor-client-secret>"
-    applicationId: "<your-application-id>"
-    externalAuthorizationUrl: "<your-external-authorization-url>"
-    externalAuthorizationApplicationId: "<your-application-id>"
-
-  mcpGw:
-    redisHost: "<your-redis-host>"
-    redisTlsEnabled: "false"
-    fronteggRegion: "eu"
-    vendorClientId: "<your-vendor-client-id>"
-    vendorClientSecret: "<your-vendor-client-secret>"
-    applicationId: "<your-application-id>"
-    externalAuthorizationUrl: "<your-external-authorization-url>"
-    externalAuthorizationApplicationId: "<your-application-id>"
+  redisHost: "<your-redis-host>"
+  redisTlsEnabled: "false"
+  fronteggRegion: "eu"
+  vendorClientId: "<your-vendor-client-id>"
+  vendorClientSecret: "<your-vendor-client-secret>"
+  applicationId: "<your-application-id>"
+  externalAuthorizationUrl: "<your-external-authorization-url>"
+  externalAuthorizationApplicationId: "<your-application-id>"
 
 
 # Optional: Pull secrets for private registries

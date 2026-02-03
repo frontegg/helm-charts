@@ -46,7 +46,7 @@ spec:
           env:
             - name: PORT
               value: "8080"
-            {{- range $key, $value := .Values.env.mcpGw }}
+            {{- range $key, $value := .Values.env }}
             - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
