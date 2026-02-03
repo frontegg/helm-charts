@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mcp-gateway
+description: A Helm chart for frontegg's MCP Gateway (mcp-auth + mcp-gw)
+type: application
+version: 0.1.0

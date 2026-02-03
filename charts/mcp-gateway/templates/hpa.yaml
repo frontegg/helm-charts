@@ -1,0 +1,70 @@
+{{- if .Values.autoscaling.mcpAuth.enabled }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "fullname" . }}-auth
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-auth
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "fullname" . }}-auth
+  minReplicas: {{ .Values.autoscaling.mcpAuth.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.mcpAuth.maxReplicas }}
+  metrics:
+    {{- if .Values.autoscaling.mcpAuth.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.mcpAuth.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.autoscaling.mcpAuth.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.mcpAuth.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+{{- if and .Values.autoscaling.mcpAuth.enabled .Values.autoscaling.mcpGw.enabled }}
+---
+{{- end }}
+{{- if .Values.autoscaling.mcpGw.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "fullname" . }}-gw
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-gw
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "fullname" . }}-gw
+  minReplicas: {{ .Values.autoscaling.mcpGw.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.mcpGw.maxReplicas }}
+  metrics:
+    {{- if .Values.autoscaling.mcpGw.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.mcpGw.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.autoscaling.mcpGw.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.autoscaling.mcpGw.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
