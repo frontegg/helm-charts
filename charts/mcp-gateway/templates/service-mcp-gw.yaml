@@ -8,7 +8,7 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - port: 8080
+    - port: {{ .Values.mcpGw.port }}
       targetPort: http
       protocol: TCP
       name: http
