@@ -51,26 +51,6 @@ app.kubernetes.io/name: {{ include "name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
-{{- define "mcpAuthCommonLabels" -}}
-    {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-auth
-{{- end }}
-
-{{- define "mcpGwCommonLabels" -}}
-    {{- include "commonLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-gw
-{{- end }}
-
-{{- define "mcpAuthSelectorLabels" -}}
-    {{- include "selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-auth
-{{- end }}
-
-{{- define "mcpGwSelectorLabels" -}}
-    {{- include "selectorLabels" . | nindent 4 }}
-    app.kubernetes.io/component: mcp-gw
-{{- end }}
-
 {{/*
 Create the name of the service account to use
 */}}

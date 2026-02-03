@@ -31,7 +31,9 @@ spec:
           averageUtilization: {{ .Values.autoscaling.mcpAuth.targetMemoryUtilizationPercentage }}
     {{- end }}
 {{- end }}
+{{- if and .Values.autoscaling.mcpAuth.enabled .Values.autoscaling.mcpGw.enabled }}
 ---
+{{- end }}
 {{- if .Values.autoscaling.mcpGw.enabled }}
 apiVersion: autoscaling/v2
 kind: HorizontalPodAutoscaler
