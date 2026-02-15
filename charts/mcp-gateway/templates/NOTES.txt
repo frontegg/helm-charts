@@ -2,11 +2,11 @@ MCP Gateway has been deployed with the following services:
 
 1. MCP Auth Service:
    Service: {{ include "fullname" . }}-auth
-   Port: 8080
+   Port: {{ .Values.mcpAuth.port }}
 
 2. MCP Gateway Service:
    Service: {{ include "fullname" . }}-gw
-   Port: 8080
+   Port: {{ .Values.mcpGw.port }}
 
 To access the services:
 {{- if contains "NodePort" .Values.service.type }}
@@ -26,8 +26,19 @@ To access the services:
   kubectl get --namespace {{ .Release.Namespace }} svc -w {{ include "fullname" . }}-gw
 {{- else if contains "ClusterIP" .Values.service.type }}
   # Port forward MCP Auth
-  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-auth 8080:8080
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-auth 8080:{{ .Values.mcpAuth.port }}
 
   # Port forward MCP Gateway (in another terminal)
-  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-gw 8081:8080
+  kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-gw 8081:{{ .Values.mcpGw.port }}
 {{- end }}
+
+Routing Configuration:
+  The following paths should be routed to the appropriate service:
+
+  {{ include "fullname" . }}-auth (port {{ .Values.mcpAuth.port }}):
+    - /.well-known/*
+    - /authorize
+    - /integration-callback
+
+  {{ include "fullname" . }}-gw (port {{ .Values.mcpGw.port }}):
+    - / (all other paths)
