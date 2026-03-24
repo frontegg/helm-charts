@@ -1,4 +1,5 @@
 {{- $top := . }}
+{{- $values := .Values }}
 ---
 apiVersion: {{ template "apiVersion" . }}
 kind: ConfigMap
@@ -18,6 +19,12 @@ metadata:
 {{- if .Values.configmapData }}
 data:
   {{- range $configmapKey, $configmapValue := .Values.configmapData }}
+  {{- range $trimKey := $values.trimHttpsPrefix }}
+  {{- if eq $configmapKey $trimKey }}
+  {{ tpl $configmapKey $top }}: {{ toYaml (tpl $configmapValue $top) | trimPrefix "https://" }}
+  {{- else }} 
   {{ tpl $configmapKey $top }}: {{ toYaml (tpl $configmapValue $top) }}
+  {{- end }}
+  {{- end }}
   {{- end }}
 {{- end }}

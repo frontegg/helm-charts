@@ -1,5 +1,9 @@
 ---
+# test locally by running the following 
+# helm template . --set test=crapme --set configmapData.endpoint="https://fuck-{{ .Values.test }}" --debug --set nameOverride=shit --set targetNamespace=crappiddy --set configmapData.endpointx="https://fuck-{{ .Values.test }}"
 targetNamespace: default
 # test: crap
 # configmapData:
 #   shit: "fuck-{{ .Values.test }}"
+trimHttpsPrefix:
+  - endpoint
