@@ -3,7 +3,7 @@ appVersion: "v1.0.0"
 
 description: inject data between clusters
 name: injector
-version: 1.0.0
+version: 1.0.1
 
 maintainers:
   - email: platform@frontegg.com

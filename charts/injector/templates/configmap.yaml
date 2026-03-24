@@ -3,6 +3,7 @@
 apiVersion: {{ template "apiVersion" . }}
 kind: ConfigMap
 metadata:
+  namespace: {{ .Values.targetNamespace }}
   {{- if .Values.annotations }}
   annotations:
     {{ toYaml .Values.annotations | nindent 4 }}

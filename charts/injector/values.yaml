@@ -1,4 +1,5 @@
 ---
+targetNamespace: default
 # test: crap
 # configmapData:
 #   shit: "fuck-{{ .Values.test }}"
