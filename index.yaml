@@ -4785,6 +4785,19 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/identity-service-0.1.11/identity-service-0.1.11.tgz
     version: 0.1.11
+  injector:
+  - apiVersion: v2
+    appVersion: v1.0.0
+    created: "2026-03-24T11:54:49.222660366Z"
+    description: inject data between clusters
+    digest: d528e11ca554d9f2633d469afc93b6592aa6c0086e0867de8af4b55d277e02be
+    maintainers:
+    - email: platform@frontegg.com
+      name: Frontegg Platform
+    name: injector
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/injector-1.0.0/injector-1.0.0.tgz
+    version: 1.0.0
   integrations-service:
   - apiVersion: v2
     created: "2023-12-12T14:22:00.320549793Z"
@@ -9697,4 +9710,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2026-02-15T11:14:06.870536335Z"
+generated: "2026-03-24T11:54:49.223556545Z"
