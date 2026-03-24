@@ -1,0 +1,10 @@
+apiVersion: v2
+appVersion: "v1.0.0"
+
+description: inject data between clusters
+name: injector
+version: 1.0.0
+
+maintainers:
+  - email: platform@frontegg.com
+    name: Frontegg Platform

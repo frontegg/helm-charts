@@ -1,0 +1,4 @@
+---
+# test: crap
+# configmapData:
+#   shit: "fuck-{{ .Values.test }}"

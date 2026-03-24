@@ -1,0 +1,22 @@
+{{- $top := . }}
+---
+apiVersion: {{ template "apiVersion" . }}
+kind: ConfigMap
+metadata:
+  {{- if .Values.annotations }}
+  annotations:
+    {{ toYaml .Values.annotations | nindent 4 }}
+  {{- end }}
+  labels:
+    app: {{ template "configmap.name" $top }}
+    chart: {{ .Chart.Name }}
+  {{- if .Values.labels }}
+    {{ toYaml .Values.labels | indent 4 }}
+  {{- end }}
+  name: {{ template "configmap.name" $top }}
+{{- if .Values.configmapData }}
+data:
+  {{- range $configmapKey, $configmapValue := .Values.configmapData }}
+  {{ tpl $configmapKey $top }}: {{ toYaml (tpl $configmapValue $top) }}
+  {{- end }}
+{{- end }}
