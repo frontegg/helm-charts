@@ -4788,6 +4788,18 @@ entries:
   injector:
   - apiVersion: v2
     appVersion: v1.0.0
+    created: "2026-03-24T13:43:20.968784968Z"
+    description: inject data between clusters
+    digest: f8ff95bc2352bf171ac2034890d1bec5c518e3603748a96e8b8ffc3a4a6af120
+    maintainers:
+    - email: platform@frontegg.com
+      name: Frontegg Platform
+    name: injector
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/injector-1.0.2/injector-1.0.2.tgz
+    version: 1.0.2
+  - apiVersion: v2
+    appVersion: v1.0.0
     created: "2026-03-24T12:59:22.539461678Z"
     description: inject data between clusters
     digest: faeb8661942b57998bb4842d41f7abafc32a06d1a98f82d8b3511bc79188c177
@@ -9722,4 +9734,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2026-03-24T12:59:22.540402391Z"
+generated: "2026-03-24T13:43:20.96985649Z"
