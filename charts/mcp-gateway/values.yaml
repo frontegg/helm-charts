@@ -5,7 +5,7 @@
 # MCP Auth container/deployment configuration
 mcpAuth:
   repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-auth
-  tag: 91ef8d3
+  tag: f49b4bc
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
@@ -38,7 +38,7 @@ mcpAuth:
 # MCP Gateway container/deployment configuration
 mcpGw:
   repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-gw
-  tag: 91ef8d3
+  tag: f49b4bc
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
