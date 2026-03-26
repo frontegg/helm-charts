@@ -4,8 +4,8 @@
 
 # MCP Auth container/deployment configuration
 mcpAuth:
-  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agent-link-auth
-  tag: 2026.2.14.075916
+  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-auth
+  tag: f49b4bc
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
@@ -37,8 +37,8 @@ mcpAuth:
 
 # MCP Gateway container/deployment configuration
 mcpGw:
-  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agent-link-gw
-  tag: 2026.2.14.075916
+  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-gw
+  tag: f49b4bc
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
@@ -128,6 +128,7 @@ affinity: {}
 
 env:
   redisHost: ""
+  redisPort: "6379"
   redisPassword: ""
   redisDb: "0"
   redisTlsEnabled: "true"
@@ -138,7 +139,7 @@ env:
   applicationId: ""
   fronteggMcpGwHost: ""
   externalAuthorizationUrl: ""
-  integrationCallbackEndpoint: ""
+  hybridAuthHost: ""
   # approvalFlowWebhookEndpoint: ""
   # eventWebhookProvider: ""
   # eventWebhookUrl: ""
