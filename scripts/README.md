@@ -154,14 +154,9 @@ The scripts automatically detect services in the Helm values files based on:
 - Presence of `name` field  
 - Valid service structure
 
-For AppState queries, the scripts try multiple path patterns:
-- `applications/{service-name}/production-global` (primary pattern)
-- `applications/{service-name}/production-global.yaml`
-- `production/{service}.yaml` (fallback)
-- `prod/{service}.yaml` (fallback)
-- `{service}/production.yaml` (fallback)
-- `services/{service}/production.yaml` (fallback)
-- And more...
+For AppState queries, the scripts use the correct repository structure:
+- `applications/{service-name}/production-global/values.yaml`
+- `applications/{service-name}/production-global/values.yml` (fallback for .yml extension)
 
 ## Contributing
 
