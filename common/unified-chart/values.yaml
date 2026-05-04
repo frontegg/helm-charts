@@ -138,7 +138,7 @@ web:
     enabled: true
     preStop:
       sleep:
-        seconds: 10
+        seconds: 30
   livenessProbe:
     # failureThreshold: 3
     # httpGet:
@@ -294,7 +294,7 @@ hp:
     enabled: true
     preStop:
       sleep:
-        seconds: 10
+        seconds: 30
 
 jobs:
   mgr:
