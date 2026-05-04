@@ -8165,6 +8165,18 @@ entries:
     version: 4.0.87
   unified-chart-production-us:
   - apiVersion: v2
+    created: "2026-05-04T12:59:06.786263675Z"
+    description: Frontegg Unified Chart
+    digest: 5157264c79e72dc9c0c69d16f631b5aa1ed8ee91085a7ff34b191063907c169d
+    maintainers:
+    - email: platform@frontegg.com
+      name: platform
+    name: unified-chart-production-us
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/unified-chart-production-us-4.0.124/unified-chart-production-us-4.0.124.tgz
+    version: 4.0.124
+  - apiVersion: v2
     created: "2026-05-04T12:51:29.637054834Z"
     description: Frontegg Unified Chart
     digest: 4c78e04f70a52b59194fc94027f4d4391e96b54484d8bd0e35e7748807d014b7
@@ -9848,4 +9860,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2026-05-04T12:58:42.767691597Z"
+generated: "2026-05-04T12:59:06.788073553Z"
