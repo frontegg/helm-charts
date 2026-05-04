@@ -133,7 +133,7 @@ web:
     #       pathRegex: /example/test/
     #     name: EXAMPLE /example/test/
 
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 40
   lifecycle:
     enabled: true
     preStop:
@@ -286,7 +286,7 @@ hp:
       advanced:
         horizontalPodAutoscalerConfig:
           name: '{{ include "hp.name" $ }}'
-  terminationGracePeriodSeconds: 30
+  terminationGracePeriodSeconds: 40
   nodeSelector: {}
   tolerations: []
   affinity: {}
