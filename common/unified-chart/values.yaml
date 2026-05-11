@@ -353,11 +353,31 @@ externalSecret:
   subPath: config
   refreshInterval: 1m
   annotations: {}
+  creationPolicy: Orphan
+  deletionPolicy: Retain
   text: ""
     # {{- $secret := .contents | fromYaml }}
     # apiKey: {{ $secret.frontegg.apiKeys.someServiceApiKey | default "xxx" }}
   data: ""
   additionalSecrets: ""
+  cleanup:
+    enabled: true
+    schedule: "0 3 * * *"
+    image: bitnami/kubectl:1.30
+    imagePullPolicy: IfNotPresent
+    concurrencyPolicy: Forbid
+    successfulJobsHistoryLimit: 1
+    failedJobsHistoryLimit: 1
+    backoffLimit: 1
+    ttlSecondsAfterFinished: 3600
+    restartPolicy: Never
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: 200m
+        memory: 128Mi
 
 prometheusRule:
   enabled: false

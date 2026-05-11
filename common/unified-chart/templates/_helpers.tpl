@@ -138,7 +138,7 @@ app.frontegg.com/name: {{ include "name" . }}-worker
 {{- end -}}
 
 {{- define "secret.name" -}}
-{{ include "name" . }}
+{{ include "name" . }}-{{ include "appVersion" . }}
 {{- end -}}
 
 {{/*
