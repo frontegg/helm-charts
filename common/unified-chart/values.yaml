@@ -363,7 +363,7 @@ externalSecret:
   cleanup:
     enabled: true
     schedule: "0 3 * * *"
-    image: bitnami/kubectl:1.30
+    image: alpine/kubectl:1.36.0
     imagePullPolicy: IfNotPresent
     concurrencyPolicy: Forbid
     successfulJobsHistoryLimit: 1
