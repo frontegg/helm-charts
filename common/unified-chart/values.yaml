@@ -353,7 +353,7 @@ externalSecret:
   subPath: config
   refreshInterval: 1m
   annotations: {}
-  creationPolicy: Orphan
+  creationPolicy: Owner
   deletionPolicy: Retain
   text: ""
     # {{- $secret := .contents | fromYaml }}
