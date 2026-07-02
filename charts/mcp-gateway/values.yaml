@@ -5,7 +5,7 @@
 # MCP Auth container/deployment configuration
 mcpAuth:
   repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-auth
-  tag: e130230
+  tag: 3c9f1ce
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
@@ -38,7 +38,7 @@ mcpAuth:
 # MCP Gateway container/deployment configuration
 mcpGw:
   repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-gw
-  tag: e130230
+  tag: 3c9f1ce
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
@@ -141,6 +141,12 @@ env:
   externalAuthorizationUrl: ""
   hybridAuthHost: ""
   # approvalFlowWebhookEndpoint: ""
+  # Event delivery (choose one sink for non-raw events):
+  #  - webhook: set eventWebhookProvider/Url/Secret below
+  #  - stdout:  set eventStdoutEnabled "true" to emit newline-delimited JSON
+  #             events to stdout (tagged {"stream":"mcp-gw-events",...}) for a
+  #             log collector (OTEL/Fluent Bit/Vector) to scrape. No webhook needed.
+  # eventStdoutEnabled: "true"
   # eventWebhookProvider: ""
   # eventWebhookUrl: ""
   # eventWebhookSecret: ""
