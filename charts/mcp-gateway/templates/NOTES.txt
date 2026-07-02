@@ -32,13 +32,35 @@ To access the services:
   kubectl --namespace {{ .Release.Namespace }} port-forward svc/{{ include "fullname" . }}-gw 8081:{{ .Values.mcpGw.port }}
 {{- end }}
 
+Health checks:
+  Both services expose GET /health on port {{ .Values.mcpGw.port }} and should return 200.
+    kubectl rollout status deploy/{{ include "fullname" . }}-auth --namespace {{ .Release.Namespace }}
+    kubectl rollout status deploy/{{ include "fullname" . }}-gw --namespace {{ .Release.Namespace }}
+
 Routing Configuration:
-  The following paths should be routed to the appropriate service:
+  This chart ships no Ingress/router. Front both services with your own ingress or
+  API gateway, preserving the Host header (must match env.fronteggMcpGwHost).
+  Route the auth paths below to -auth; send everything else to -gw. Declare the auth
+  paths BEFORE the catch-all "/" on order-based routers.
 
   {{ include "fullname" . }}-auth (port {{ .Values.mcpAuth.port }}):
-    - /.well-known/*
-    - /authorize
-    - /integration-callback
+    - /.well-known/*                    (GET)
+    - /authorize                        (GET)
+    - /dcr/register                     (POST)
+    - /token                            (POST)
+    - /integration-callback             (GET)
+    - /integration-callback/implicit    (POST)
+    - /external-mcp/authorize           (GET)
+    - /external-mcp/callback            (GET)
 
   {{ include "fullname" . }}-gw (port {{ .Values.mcpGw.port }}):
     - / (all other paths)
+{{- if eq (.Values.env.eventStdoutEnabled | default "") "true" }}
+
+Event delivery:
+  EVENT_STDOUT_ENABLED is on — events are written to each pod's stdout as
+  newline-delimited JSON tagged {"stream":"mcp-gw-events",...}. Point your log
+  collector (OTEL/Fluent Bit/Vector) at container stdout and filter on that stream.
+{{- end }}
+
+Docs: https://developers.frontegg.com/agen-for-saas/configuration/hosting-mcp-gateway
