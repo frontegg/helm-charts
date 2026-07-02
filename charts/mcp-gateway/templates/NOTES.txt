@@ -50,7 +50,6 @@ Routing Configuration:
     - /token                            (POST)
     - /integration-callback            (GET)
     - /integration-callback/implicit   (POST)
-    - /security-stepup-verify           (GET)
     - /external-mcp/authorize           (GET)
     - /external-mcp/callback            (GET)
 
