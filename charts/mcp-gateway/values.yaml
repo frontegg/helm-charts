@@ -141,11 +141,6 @@ env:
   externalAuthorizationUrl: ""
   hybridAuthHost: ""
   # approvalFlowWebhookEndpoint: ""
-  # Event delivery (choose one sink for non-raw events):
-  #  - webhook: set eventWebhookProvider/Url/Secret below
-  #  - stdout:  set eventStdoutEnabled "true" to emit newline-delimited JSON
-  #             events to stdout (tagged {"stream":"mcp-gw-events",...}) for a
-  #             log collector (OTEL/Fluent Bit/Vector) to scrape. No webhook needed.
   # eventStdoutEnabled: "true"
   # eventWebhookProvider: ""
   # eventWebhookUrl: ""
