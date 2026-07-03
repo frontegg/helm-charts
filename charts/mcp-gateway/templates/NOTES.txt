@@ -49,7 +49,6 @@ Routing Configuration:
     - /dcr/register                     (POST)
     - /token                            (POST)
     - /integration-callback             (GET)
-    - /integration-callback/implicit    (POST)
     - /external-mcp/authorize           (GET)
     - /external-mcp/callback            (GET)
 
