@@ -4981,6 +4981,15 @@ entries:
     version: 0.1.2
   mcp-gateway:
   - apiVersion: v2
+    created: "2026-07-03T08:24:59.2974363Z"
+    description: A Helm chart for frontegg's MCP Gateway (mcp-auth + mcp-gw)
+    digest: c6ae6b6410d1cd042e78c75cf12da8dcb7945367ebd782057a2179692a76c33b
+    name: mcp-gateway
+    type: application
+    urls:
+    - https://github.com/frontegg/helm-charts/releases/download/mcp-gateway-0.7.0/mcp-gateway-0.7.0.tgz
+    version: 0.7.0
+  - apiVersion: v2
     created: "2026-07-02T13:36:52.204286775Z"
     description: A Helm chart for frontegg's MCP Gateway (mcp-auth + mcp-gw)
     digest: 2797e9044f59441431385e6aacc48974e4c51a0a7b04a0e8647aaf8757b48de7
@@ -10058,4 +10067,4 @@ entries:
     urls:
     - https://github.com/frontegg/helm-charts/releases/download/webpush-service-0.3.2/webpush-service-0.3.2.tgz
     version: 0.3.2
-generated: "2026-07-02T13:36:52.205604469Z"
+generated: "2026-07-03T08:24:59.29848603Z"
