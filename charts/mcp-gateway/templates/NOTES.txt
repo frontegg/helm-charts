@@ -66,8 +66,9 @@ Event delivery:
 Integration secret encryption:
   SECRET_ENCRYPTION_KEY is set — integration secrets (client secrets and API keys)
   delivered encrypted by the control plane are decrypted at runtime (AES-256-GCM,
-  "v2:" format). The key must be 32 bytes and match the one used to encrypt on the
-  control plane.
+  "v2:" format). The key must be a 32-character string (used as-is as the AES-256
+  key, not a Base64/hex-encoded 32-byte value) and match the one used to encrypt on
+  the control plane.
 {{- end }}
 
 Docs: https://developers.frontegg.com/agen-for-saas/configuration/hosting-mcp-gateway

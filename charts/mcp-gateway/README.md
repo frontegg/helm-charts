@@ -140,7 +140,7 @@ secrets (OAuth **client secrets** and **API keys**) **encrypted**, so they never
 Redis as plaintext. Set `secretEncryptionKey`; the gateway decrypts on read.
 
 - Algorithm: **AES-256-GCM**, format `v2:<iv_hex>:<authTag_hex>:<ciphertext_hex>`.
-- The key must be **exactly 32 bytes** and **identical** to the one the control plane encrypts with.
+- The key must be a **32-character string** (used verbatim as the AES-256 key — **not** a Base64/hex-encoded 32-byte value, which would be longer and fail with `Invalid key length`) and **identical** to the one the control plane encrypts with.
 - Values without the `v2:` prefix are passed through unchanged, so it can be rolled out gradually.
 
 Source the key from a k8s Secret rather than committing it to `values.yaml`.
