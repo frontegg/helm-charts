@@ -138,7 +138,12 @@ app.frontegg.com/name: {{ include "name" . }}-worker
 {{- end -}}
 
 {{- define "secret.name" -}}
-{{ include "name" . }}-{{ include "appVersion" . }}
+{{- $text := .Values.externalSecret.text | default "" -}}
+{{- $data := .Values.externalSecret.data | default dict -}}
+{{- $schema := dict "text" $text "data" $data | toYaml -}}
+{{- $hash := $schema | sha256sum | trunc 16 -}}
+{{- $base := printf "%s-%s" (include "name" .) (include "appVersion" .) | trunc 236 | trimSuffix "-" | trimSuffix "." -}}
+{{- printf "%s-%s" $base $hash -}}
 {{- end -}}
 
 {{/*
