@@ -146,3 +146,9 @@ env:
   # eventWebhookProvider: ""
   # eventWebhookUrl: ""
   # eventWebhookSecret: ""
+
+# Name of a pre-existing Secret (managed outside this chart, e.g. by External Secrets
+# Operator or sealed-secrets) to load into both deployments via envFrom. Its keys must
+# already be UPPER_SNAKE_CASE env var names. Use this to keep sensitive values out of
+# Helm values / env above.
+existingSecret: ""

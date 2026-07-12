@@ -51,6 +51,9 @@ spec:
             - name: {{ include "toEnvVarName" $key }}
               value: {{ $value | quote }}
             {{- end }}
+          {{- with (include "secretEnvFrom" .) }}
+          {{- . | nindent 10 }}
+          {{- end }}
           ports:
             - name: http
               containerPort: 8080

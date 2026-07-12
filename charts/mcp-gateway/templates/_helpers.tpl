@@ -69,3 +69,15 @@ Convert camelCase to UPPER_SNAKE_CASE
 {{- $result := regexReplaceAll "([a-z0-9])([A-Z])" . "${1}_${2}" -}}
 {{- $result | upper -}}
 {{- end }}
+
+{{/*
+envFrom block loading a pre-existing Secret (.Values.existingSecret) into the
+container. Renders nothing when unset.
+*/}}
+{{- define "secretEnvFrom" -}}
+{{- with .Values.existingSecret -}}
+envFrom:
+  - secretRef:
+      name: {{ . }}
+{{- end -}}
+{{- end -}}
