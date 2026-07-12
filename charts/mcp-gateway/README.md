@@ -149,9 +149,15 @@ envFrom:
 ```
 
 The chart does not create or manage this Secret — it must exist in the release
-namespace before the pods start, or they fail with `CreateContainerConfigError`. Keys
-present in both `existingSecret` and `env` resolve to the `env` value (inline `value:`
-wins over `envFrom`). Changing the Secret does **not** restart the pods automatically —
+namespace before the pods start, or they fail with `CreateContainerConfigError`.
+
+Only **non-empty** `env` values are rendered inline; an empty/unset `env` key (like the
+default `redisPassword: ""`) is omitted entirely, so the same key from `existingSecret`
+takes effect. If you set a key to a non-empty value under `env` **and** in the Secret,
+the inline `env` value wins (a container `env.value` overrides `envFrom`) — so to source
+a value from the Secret, leave its `env` key empty or unset.
+
+Changing the Secret does **not** restart the pods automatically —
 run `kubectl rollout restart deploy/<release>-mcp-gateway-auth deploy/<release>-mcp-gateway-gw`
 (or use a controller like Stakater Reloader).
 
