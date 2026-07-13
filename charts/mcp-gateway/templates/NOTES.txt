@@ -61,6 +61,14 @@ Event delivery:
   newline-delimited JSON tagged {"stream":"mcp-gw-events",...}. Point your log
   collector (OTEL/Fluent Bit/Vector) at container stdout and filter on that stream.
 {{- end }}
+{{- with .Values.existingSecret }}
+
+External secret:
+  Loading env vars from the pre-existing Secret "{{ . }}" via envFrom. Ensure it exists
+  in namespace {{ $.Release.Namespace }} with UPPER_SNAKE_CASE keys before the pods start.
+  Changes to that Secret do not restart pods automatically — run:
+    kubectl rollout restart deploy/{{ include "fullname" $ }}-auth deploy/{{ include "fullname" $ }}-gw --namespace {{ $.Release.Namespace }}
+{{- end }}
 {{- if .Values.env.secretEncryptionKey }}
 
 Integration secret encryption:

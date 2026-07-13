@@ -50,6 +50,9 @@ env:
   hybridAuthHost: "https://auth.example.com"
 ```
 
+To keep secrets out of your values file, put them in a Secret you manage yourself and
+reference it with `existingSecret` — see [Configuration](#configuration).
+
 ## Routing
 
 Configure your ingress/API gateway with the path map below. Route the auth paths to
@@ -77,7 +80,19 @@ Router requirements:
 ## Configuration
 
 Keys under `env` are camelCase and converted to `UPPER_SNAKE_CASE` environment variables
-(e.g. `vendorClientId` → `VENDOR_CLIENT_ID`). Every key under `env` is injected into **both** deployments.
+(e.g. `vendorClientId` → `VENDOR_CLIENT_ID`). Every key under `env` is injected into
+**both** deployments, rendered inline as `value:` on the containers.
+
+For secrets, you have two options:
+
+- **Inline under `env`** — simplest; the value lives in your Helm values (and the Helm
+  release, stored in the cluster). Fine for quick start / dev.
+- **`existingSecret`** — name of a Secret you manage **outside** this chart (External
+  Secrets Operator, sealed-secrets, `kubectl create secret`, …). When set, it's loaded
+  into both deployments via `envFrom`, keeping secret material out of Helm entirely.
+  Its keys must already be `UPPER_SNAKE_CASE` env var names (e.g. `REDIS_PASSWORD`), and
+  the Secret must exist in the release namespace before the pods start. Recommended for
+  production. See [Referencing an existing Secret](#referencing-an-existing-secret).
 
 ### Required environment (`env`)
 
@@ -110,6 +125,42 @@ Keys under `env` are camelCase and converted to `UPPER_SNAKE_CASE` environment v
 
 To add any other env var, just add a key under `env`.
 
+### Referencing an existing Secret
+
+To keep sensitive values out of Helm, create a Secret whose keys are the final
+`UPPER_SNAKE_CASE` env var names and point `existingSecret` at it:
+
+```bash
+kubectl create secret generic my-mcp-secrets \
+  --from-literal=REDIS_PASSWORD='...' \
+  --from-literal=SECRET_ENCRYPTION_KEY='...'
+```
+
+```yaml
+existingSecret: "my-mcp-secrets"
+```
+
+The Secret is loaded into both deployments via `envFrom`:
+
+```yaml
+envFrom:
+  - secretRef:
+      name: my-mcp-secrets
+```
+
+The chart does not create or manage this Secret — it must exist in the release
+namespace before the pods start, or they fail with `CreateContainerConfigError`.
+
+Only **non-empty** `env` values are rendered inline; an empty/unset `env` key (like the
+default `redisPassword: ""`) is omitted entirely, so the same key from `existingSecret`
+takes effect. If you set a key to a non-empty value under `env` **and** in the Secret,
+the inline `env` value wins (a container `env.value` overrides `envFrom`) — so to source
+a value from the Secret, leave its `env` key empty or unset.
+
+Changing the Secret does **not** restart the pods automatically —
+run `kubectl rollout restart deploy/<release>-mcp-gateway-auth deploy/<release>-mcp-gateway-gw`
+(or use a controller like Stakater Reloader).
+
 ### Event delivery
 
 Non-raw events are delivered to **one** sink:
@@ -135,15 +186,18 @@ Non-raw events are delivered to **one** sink:
 
 ### Integration secret encryption
 
-For hybrid (on-prem) deployments, the Frontegg control plane can deliver integration
-secrets (OAuth **client secrets** and **API keys**) **encrypted**, so they never sit in
-Redis as plaintext. Set `secretEncryptionKey`; the gateway decrypts on read.
+For hybrid (on-prem) deployments, set `secretEncryptionKey` to enable end-to-end
+encryption of integration secrets (OAuth **client secrets** and **API keys**). When
+configured, the Frontegg control plane delivers them **encrypted** and the gateway
+decrypts on read, in memory — they are never written to your Redis cache in cleartext.
 
 - Algorithm: **AES-256-GCM**, format `v2:<iv_hex>:<authTag_hex>:<ciphertext_hex>`.
 - The key must be a **32-character string** (used verbatim as the AES-256 key — **not** a Base64/hex-encoded 32-byte value, which would be longer and fail with `Invalid key length`) and **identical** to the one the control plane encrypts with.
 - Values without the `v2:` prefix are passed through unchanged, so it can be rolled out gradually.
 
-Source the key from a k8s Secret rather than committing it to `values.yaml`.
+To keep the key out of Helm values, provide it as `SECRET_ENCRYPTION_KEY` in an
+`existingSecret` (see [Referencing an existing Secret](#referencing-an-existing-secret))
+instead of setting `secretEncryptionKey` inline.
 
 ### Common values
 
