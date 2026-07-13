@@ -24,13 +24,16 @@ spec:
           url: {{ .blackBox.url }}
           timeoutSeconds: {{ .blackBox.timeout | default "1200" }} 
           headers:
-            {{- range  $header := .blackBox.headers }}
+            {{- range $header := .blackBox.headers }}
             - key: {{ $header.key }} 
               value: {{ $header.value }}
             {{- end }}
           jsonBody:
             service-name: {{ include "githubrepo.name" $top }}
             version: {{ include "appVersion" $top }}
+            {{- with .jsonBody }}
+            {{- tpl ( toYaml . ) $top | nindent 12 }}
+            {{- end }}
       {{- end }}
 {{- end }}  
 {{- end }}  

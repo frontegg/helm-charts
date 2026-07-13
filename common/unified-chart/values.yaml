@@ -5,6 +5,7 @@
 # team: my-team-of-imbeciles
 # envID: local
 # appVersion: production-global-19900101.101010-zxc111y
+# deploymentRunId: 1234567890.1
 
 # CAUTION this will change name of all manifests
 nameSuffix: v2
@@ -33,7 +34,8 @@ argoRollouts:
           value: "application/json"
     steps:
       replicas: 1
-
+    jsonBody:
+      deploymentRunId: '{{ required "deploymentRunId is missing" .Values.deploymentRunId }}'
 image:
   repository:
   prefix:

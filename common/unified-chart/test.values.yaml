@@ -3,6 +3,7 @@ team: shitballz
 envID: local
 appVersion: production-global-19900101.101010-zxc111y
 repoName: shitballz-service
+#deploymentRunId: kdnkdmck
 
 argoRollouts:
   enabled: true
@@ -29,6 +30,7 @@ argoRollouts:
           value: "application/json"
     steps:
       replicas: 1
+
 
 image:
   repository: frontegg/crappy-service
