@@ -310,7 +310,7 @@ event-service:
 
   ## Provide the image docker tag default: latest
   ##
-  appVersion: "2021.5.5183929"
+  appVersion: "2021.5.6081417"
 
   ## Manage docker image properties
   ##
