@@ -113,11 +113,13 @@ app.frontegg.com/name: {{ include "name" . }}-web
 {{- define "job.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-job
 app.frontegg.com/instance: {{ .Release.Name }}
+app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
 {{- end -}}
 
 {{- define "cronjob.labels" -}}
 app.frontegg.com/name: {{ include "name" . }}-cronjob
 app.frontegg.com/instance: {{ .Release.Name }}
+app.frontegg.com/team: {{ required ".Values.team is required" .Values.team }}
 {{- end -}}
 
 {{- define "worker.labels" -}}
