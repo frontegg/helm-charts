@@ -21,29 +21,10 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
         'Accept': 'application/vnd.github.v3+json'
     }
     
-    # Try different possible file paths in AppState repo
-    # Primary pattern: applications/{service-name}/production-global
+    # AppState repo structure: applications/{service-name}/production-global/values.yaml
     possible_paths = [
-        f'applications/{service_name}/production-global',
-        f'applications/{service_name}/production-global.yaml',
-        f'applications/{service_name}/production-global.yml',
-        # Fallback patterns for different naming conventions
-        f'production/{service_name}.yaml',
-        f'production/{service_name}.yml',
-        f'prod/{service_name}.yaml',
-        f'prod/{service_name}.yml',
-        f'{service_name}/production.yaml',
-        f'{service_name}/production.yml',
-        f'{service_name}/prod.yaml',
-        f'{service_name}/prod.yml',
-        f'services/{service_name}/production.yaml',
-        f'services/{service_name}/production.yml',
-        f'services/{service_name}/prod.yaml',
-        f'services/{service_name}/prod.yml',
-        f'environments/production/{service_name}.yaml',
-        f'environments/production/{service_name}.yml',
-        f'apps/{service_name}/production.yaml',
-        f'apps/{service_name}/production.yml'
+        f'applications/{service_name}/production-global/values.yaml',
+        f'applications/{service_name}/production-global/values.yml'
     ]
     
     for path in possible_paths:
@@ -52,11 +33,30 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
             print(f"    Trying path: {path}")
         try:
             response = requests.get(url, headers=headers, timeout=10)
-            if response.status_code == 200:
+            if verbose:
+                print(f"    Response status: {response.status_code}")
+            
+            if response.status_code == 401:
+                if verbose:
+                    print(f"    ❌ Authentication failed - check GitHub token permissions")
+                continue
+            elif response.status_code == 403:
+                if verbose:
+                    print(f"    ❌ Access forbidden - token may not have repository access")
+                continue
+            elif response.status_code == 404:
+                if verbose:
+                    print(f"    ❌ Path not found: {path}")
+                continue
+            elif response.status_code == 200:
                 content = response.json()
                 if content.get('type') == 'file':
                     # Decode base64 content
                     file_content = base64.b64decode(content['content']).decode('utf-8')
+                    
+                    if verbose:
+                        print(f"    Found file at {path}, content length: {len(file_content)}")
+                        print(f"    First 200 chars: {file_content[:200]}...")
                     
                     # Try to extract version from YAML content
                     try:
@@ -65,9 +65,13 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
                         version_fields = ['version', 'appVersion', 'tag', 'image_tag', 'imageTag']
                         
                         if isinstance(yaml_content, dict):
+                            if verbose:
+                                print(f"    YAML keys: {list(yaml_content.keys())}")
                             # Direct fields
                             for field in version_fields:
                                 if field in yaml_content:
+                                    if verbose:
+                                        print(f"    Found {field}: {yaml_content[field]}")
                                     return str(yaml_content[field])
                             
                             # Nested structures
@@ -101,9 +105,43 @@ def get_appstate_version(service_name, token, repo='frontegg/AppState', verbose=
                     
                     return f"found-in-{path}"
         except Exception as e:
+            if verbose:
+                print(f"    Error accessing {path}: {str(e)}")
             continue
     
     return None
+
+
+def test_repository_access(repo, token, verbose=False):
+    """Test if we can access the AppState repository"""
+    headers = {
+        'Authorization': f'token {token}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    
+    url = f'https://api.github.com/repos/{repo}'
+    try:
+        response = requests.get(url, headers=headers, timeout=10)
+        if response.status_code == 200:
+            if verbose:
+                repo_info = response.json()
+                print(f"✅ Repository access OK: {repo_info.get('full_name')} (private: {repo_info.get('private')})")
+            return True
+        elif response.status_code == 401:
+            print(f"❌ Authentication failed for {repo}. Check your GitHub token.")
+            return False
+        elif response.status_code == 403:
+            print(f"❌ Access forbidden to {repo}. Token may not have repository access.")
+            return False
+        elif response.status_code == 404:
+            print(f"❌ Repository {repo} not found or not accessible.")
+            return False
+        else:
+            print(f"❌ Unexpected response {response.status_code} accessing {repo}")
+            return False
+    except Exception as e:
+        print(f"❌ Error accessing repository {repo}: {str(e)}")
+        return False
 
 
 def main():
@@ -143,6 +181,20 @@ def main():
         if args.verbose:
             print(f"Loaded {len(services)} services from {args.services_file}")
             print(f"Querying AppState repository: {args.repo}")
+        
+        # Test repository access first
+        if not test_repository_access(args.repo, token, args.verbose):
+            print("\n🚨 CRITICAL ERROR: Cannot access AppState repository!")
+            print("❌ This is likely a GitHub App authentication/permission issue.")
+            print("\n🔧 Please check:")
+            print("  1. GitHub App ID (GH_APP_ID) is correct")
+            print("  2. GitHub App Private Key (GH_APP_PRIVATE_KEY) contains full PEM content")
+            print("  3. GitHub App is installed on the frontegg organization")
+            print("  4. GitHub App has Contents:Read and Metadata:Read permissions")
+            print("  5. GitHub App has access to the AppState repository")
+            print(f"\n📍 Repository being accessed: {args.repo}")
+            print("💡 Run the workflow's debug step for detailed diagnostics")
+            return 1
         
         appstate_versions = {}
         
