@@ -31,6 +31,9 @@ spec:
           jsonBody:
             service-name: {{ include "githubrepo.name" $top }}
             version: {{ include "appVersion" $top }}
+            {{- with .jsonBody }}
+            {{- tpl ( toYaml . ) $top | nindent 12 }}
+            {{- end }}
       {{- end }}
 {{- end }}  
 {{- end }}  
