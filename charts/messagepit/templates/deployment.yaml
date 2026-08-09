@@ -59,6 +59,9 @@ spec:
             - name: sendgrid
               containerPort: 8100
               protocol: TCP
+          volumeMounts:
+            - name: tmp
+              mountPath: /tmp
           env:
             - name: MP_SENDGRID_BIND_ADDR
               value: "0.0.0.0:8100"
@@ -95,6 +98,10 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: tmp
+          emptyDir:
+            sizeLimit: {{ .Values.storage.sizeLimit | quote }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

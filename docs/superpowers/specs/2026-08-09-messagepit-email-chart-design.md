@@ -12,7 +12,7 @@ The first release contains one MessagePit container in one Kubernetes Deployment
 
 The chart pins `ghcr.io/coreydaley/messagepit:1.3.0` by its multi-architecture manifest digest. MessagePit listens on `0.0.0.0:8100` for SendGrid and `0.0.0.0:8025` for the inbox UI/API. Twilio, webhook capture, and POP3 listeners are disabled through command arguments. MessagePit's SMTP listener cannot be disabled in this release, so it remains bound inside the pod but is neither declared as a container port nor exposed by the Service.
 
-Storage remains in memory. `MP_MAX_AGE` defaults to `24h` and `MP_MAX_MESSAGES` defaults to `10000` to bound mailbox growth while covering long E2E runs.
+Storage uses MessagePit's temporary SQLite database on a bounded pod-local `emptyDir` mounted at `/tmp`. `MP_MAX_AGE` defaults to `24h` and `MP_MAX_MESSAGES` defaults to `10000` to bound mailbox growth while covering long E2E runs. Replacing the pod clears this ephemeral database.
 
 ## Authentication and secrets
 
@@ -34,7 +34,7 @@ SENDGRID_API_KEY=<same value as MP_SENDGRID_API_KEY>
 The chart creates:
 
 - A ServiceAccount, configurable or replaceable with an existing account.
-- A single-replica Deployment using rolling updates with a maximum of one pod to avoid split inboxes.
+- A single-replica Deployment using rolling updates with a maximum of one pod to avoid split inboxes, plus a bounded `emptyDir` for MessagePit's temporary SQLite file.
 - A ClusterIP Service with named `ui` and `sendgrid` ports.
 - A Secret unless `existingSecret` is configured.
 - An optional NetworkPolicy. When enabled, its ingress peers are supplied by the environment-specific values because Identity and E2E namespace labels differ between clusters.

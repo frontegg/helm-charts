@@ -58,7 +58,16 @@ class MessagePitChartRenderTests(unittest.TestCase):
             {"maxSurge": 0, "maxUnavailable": 1},
             deployment["spec"]["strategy"]["rollingUpdate"],
         )
-        container = deployment["spec"]["template"]["spec"]["containers"][0]
+        pod_spec = deployment["spec"]["template"]["spec"]
+        self.assertEqual(
+            [{"name": "tmp", "emptyDir": {"sizeLimit": "1Gi"}}],
+            pod_spec.get("volumes", []),
+        )
+        container = pod_spec["containers"][0]
+        self.assertEqual(
+            [{"name": "tmp", "mountPath": "/tmp"}],
+            container["volumeMounts"],
+        )
         self.assertEqual(PINNED_IMAGE, container["image"])
         self.assertEqual(["--twilio=", "--webhook=", "--pop3="], container["args"])
         self.assertEqual(

@@ -31,6 +31,13 @@
         "maxMessages": { "type": "integer", "minimum": 1 }
       }
     },
+    "storage": {
+      "type": "object",
+      "required": ["sizeLimit"],
+      "properties": {
+        "sizeLimit": { "type": "string", "minLength": 1 }
+      }
+    },
     "networkPolicy": {
       "type": "object",
       "required": ["enabled", "ingressFrom"],
@@ -40,5 +47,5 @@
       }
     }
   },
-  "required": ["replicaCount", "image", "retention"]
+  "required": ["replicaCount", "image", "retention", "storage"]
 }

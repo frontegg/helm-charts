@@ -54,6 +54,10 @@ retention:
   maxAge: 24h
   maxMessages: 10000
 
+storage:
+  # MessagePit creates its temporary SQLite database under /tmp.
+  sizeLimit: 1Gi
+
 resources:
   requests:
     cpu: 50m

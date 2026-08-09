@@ -4,7 +4,7 @@
 
 **Goal:** Add a production-safe Helm chart that deploys one stock MessagePit pod as a private SendGrid-compatible email sink while leaving Twilio unchanged.
 
-**Architecture:** A one-replica Deployment runs MessagePit with in-memory bounded storage. A ClusterIP Service exposes only the SendGrid and inbox ports, credentials come from a chart-managed or existing Secret, and an optional NetworkPolicy limits ingress.
+**Architecture:** A one-replica Deployment runs MessagePit with bounded pod-local ephemeral storage. A ClusterIP Service exposes only the SendGrid and inbox ports, credentials come from a chart-managed or existing Secret, and an optional NetworkPolicy limits ingress.
 
 **Tech Stack:** Helm 3/4 templates, Kubernetes `apps/v1`, Python `unittest` with PyYAML, MessagePit 1.3.0.
 
@@ -15,7 +15,7 @@
 - Expose only UI/API port `8025` and SendGrid port `8100` through a ClusterIP Service.
 - Keep Twilio disabled and leave `TWILIO_API_URL` unset in Identity.
 - Require SendGrid bearer authentication and UI/API basic authentication.
-- Use in-memory storage with a default maximum age of `24h` and maximum count of `10000`.
+- Use a bounded pod-local `emptyDir` for MessagePit's temporary SQLite database, with a default maximum age of `24h` and maximum count of `10000`.
 - Do not add an Ingress, persistent volume, Twilio adapter, or Identity/E2E code change.
 
 ---
@@ -80,7 +80,7 @@ git commit -m "test: define MessagePit chart render contract"
 
 - [ ] **Step 1: Add chart metadata and secure defaults**
 
-Set chart version `0.1.0`, app version `1.3.0`, replica count `1`, the pinned image digest, bounded retention, restrictive container security defaults, and empty credential values. The JSON schema must reject replica counts other than one and invalid digest formats.
+Set chart version `0.1.0`, app version `1.3.0`, replica count `1`, the pinned image digest, bounded retention and ephemeral storage, restrictive container security defaults, and empty credential values. The JSON schema must reject replica counts other than one and invalid digest formats.
 
 - [ ] **Step 2: Add reusable helpers and ServiceAccount**
 
@@ -123,7 +123,7 @@ git commit -m "feat: add MessagePit chart foundations"
 
 - [ ] **Step 1: Add the Deployment**
 
-Render one container with the pinned digest, explicit `ui` and `sendgrid` ports, credentials from `messagepit.secretName`, retention environment variables, and arguments that disable Twilio, webhook capture, and POP3. Use `/messagepit readyz` for startup/readiness and `GET /healthz` on the `ui` port for liveness.
+Render one container with the pinned digest, explicit `ui` and `sendgrid` ports, credentials from `messagepit.secretName`, retention environment variables, a bounded `emptyDir` mounted at `/tmp`, and arguments that disable Twilio, webhook capture, and POP3. Use `/messagepit readyz` for startup/readiness and `GET /healthz` on the `ui` port for liveness.
 
 - [ ] **Step 2: Add the ClusterIP Service**
 
