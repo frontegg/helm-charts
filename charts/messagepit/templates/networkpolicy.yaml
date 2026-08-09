@@ -20,4 +20,8 @@ spec:
           protocol: TCP
         - port: {{ .Values.service.sendgridPort }}
           protocol: TCP
+        {{- range .Values.service.extraPorts }}
+        - port: {{ default .port .targetPort }}
+          protocol: {{ default "TCP" .protocol }}
+        {{- end }}
 {{- end }}

@@ -6,11 +6,13 @@ Deploy stock MessagePit in Frontegg Kubernetes clusters as a private SendGrid-co
 
 ## Scope
 
-The first release contains one MessagePit container in one Kubernetes Deployment with one replica. A ClusterIP Service exposes the SendGrid API on port `8100` and the inbox UI/API on port `8025`. The chart does not create an Ingress, persistent volume, Twilio adapter, or sidecar.
+The default release contains one MessagePit container in one Kubernetes Deployment with one replica. A ClusterIP Service exposes the SendGrid API on port `8100` and the inbox UI/API on port `8025`. The chart does not create an Ingress, persistent volume, or Twilio adapter image.
+
+The pod is sidecar-ready. Generic `sidecars`, `extraVolumes`, and `service.extraPorts` extension points allow an adapter to be added through values without editing chart templates. A disabled-by-default `messagepit.twilioIngest` switch makes MessagePit listen on pod-local loopback when an adapter is present. The adapter and MessagePit share the pod network namespace, so the internal ingest endpoint is `http://127.0.0.1:8200` and is never routed directly by the Service.
 
 ## Runtime configuration
 
-The chart pins `ghcr.io/coreydaley/messagepit:1.3.0` by its multi-architecture manifest digest. MessagePit listens on `0.0.0.0:8100` for SendGrid and `0.0.0.0:8025` for the inbox UI/API. Twilio, webhook capture, and POP3 listeners are disabled through command arguments. MessagePit's SMTP listener cannot be disabled in this release, so it remains bound inside the pod but is neither declared as a container port nor exposed by the Service.
+The chart pins `ghcr.io/coreydaley/messagepit:1.3.0` by its multi-architecture manifest digest. MessagePit listens on `0.0.0.0:8100` for SendGrid and `0.0.0.0:8025` for the inbox UI/API. Twilio, webhook capture, and POP3 listeners are disabled through command arguments by default. When `messagepit.twilioIngest.enabled=true`, only the Twilio listener changes: it binds to `127.0.0.1` on the configured internal port for a same-pod adapter. MessagePit's SMTP listener cannot be disabled in this release, so it remains bound inside the pod but is neither declared as a container port nor exposed by the Service.
 
 Storage uses MessagePit's temporary SQLite database on a bounded pod-local `emptyDir` mounted at `/tmp`. `MP_MAX_AGE` defaults to `24h` and `MP_MAX_MESSAGES` defaults to `10000` to bound mailbox growth while covering long E2E runs. Replacing the pod clears this ephemeral database.
 
@@ -39,7 +41,7 @@ The chart creates:
 - A Secret unless `existingSecret` is configured.
 - An optional NetworkPolicy. When enabled, its ingress peers are supplied by the environment-specific values because Identity and E2E namespace labels differ between clusters.
 
-The Deployment uses the image's `messagepit readyz` command for startup and readiness probes and the UI `/healthz` endpoint for liveness. It supports standard pod labels, annotations, image pull secrets, node selectors, tolerations, affinity, and resource overrides.
+The Deployment uses the image's `messagepit readyz` command for startup and readiness probes and the UI `/healthz` endpoint for liveness. It supports standard pod labels, annotations, image pull secrets, node selectors, tolerations, affinity, resource overrides, sidecar containers, and extra shared volumes. Extra Service ports can target named ports on a sidecar; the optional NetworkPolicy permits those same target ports.
 
 The default container security context disables privilege escalation, drops all capabilities, uses a read-only root filesystem, and runs as a non-root numeric user. These settings must pass a local stock-image smoke test before completion.
 
@@ -62,7 +64,7 @@ The default container security context disables privilege escalation, drops all 
 
 - Twilio Programmable Messaging migration.
 - Twilio Verify emulation.
-- A Twilio sidecar adapter.
+- A built or maintained Twilio sidecar adapter image.
 - Public ingress to the UI/API.
 - Persistent volumes or multi-replica MessagePit.
 - Changes to Identity or the E2E inbox client.

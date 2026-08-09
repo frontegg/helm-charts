@@ -4,5 +4,13 @@ MessagePit is available inside the cluster at:
   Inbox UI/API: http://{{ include "messagepit.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.uiPort }}
 
 Configure Identity with the SendGrid API URL and the same API key stored in
-{{ include "messagepit.secretName" . }}. Leave TWILIO_API_URL unset; this chart
-does not replace Twilio.
+{{ include "messagepit.secretName" . }}.
+{{- if .Values.messagepit.twilioIngest.enabled }}
+
+MessagePit's internal Twilio ingest is listening on pod-local loopback for a
+sidecar. Point Identity at the Service port configured for that adapter; never
+point Identity directly at the internal MessagePit listener.
+{{- else }}
+
+Leave TWILIO_API_URL unset; the Twilio adapter is not enabled.
+{{- end }}

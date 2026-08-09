@@ -39,6 +39,7 @@ class MessagePitChartRenderTests(unittest.TestCase):
         self.managed_values = CHART / "ci" / "test-values.yaml"
         self.external_values = CHART / "tests" / "existing-secret-values.yaml"
         self.network_policy_values = CHART / "tests" / "network-policy-values.yaml"
+        self.sidecar_values = CHART / "tests" / "sidecar-values.yaml"
 
     def test_managed_credentials_render_secure_single_pod_workload(self):
         documents = rendered_documents(self.managed_values)
@@ -168,6 +169,59 @@ class MessagePitChartRenderTests(unittest.TestCase):
         result = helm_template(self.managed_values, "--set", "replicaCount=2")
         self.assertNotEqual(0, result.returncode)
         self.assertIn("replicaCount", result.stderr)
+
+    def test_sidecar_can_be_enabled_without_changing_chart_templates(self):
+        documents = rendered_documents(self.sidecar_values)
+
+        deployment = one_resource(documents, "Deployment")
+        pod_spec = deployment["spec"]["template"]["spec"]
+        self.assertEqual(
+            ["messagepit", "twilio-adapter"],
+            [container["name"] for container in pod_spec["containers"]],
+        )
+
+        messagepit = pod_spec["containers"][0]
+        self.assertEqual(
+            ["--twilio=127.0.0.1:8200", "--webhook=", "--pop3="],
+            messagepit["args"],
+        )
+        self.assertEqual(
+            {"ui": 8025, "sendgrid": 8100, "twilio-internal": 8200},
+            {port["name"]: port["containerPort"] for port in messagepit["ports"]},
+        )
+
+        sidecar = pod_spec["containers"][1]
+        self.assertEqual(
+            "ghcr.io/frontegg/messagepit-twilio-adapter:test",
+            sidecar["image"],
+        )
+        self.assertEqual(
+            "http://127.0.0.1:8200",
+            sidecar["env"][0]["value"],
+        )
+        self.assertEqual(
+            {"tmp", "adapter-config"},
+            {volume["name"] for volume in pod_spec["volumes"]},
+        )
+
+        service = one_resource(documents, "Service")
+        self.assertEqual(
+            {
+                "ui": (8025, "ui"),
+                "sendgrid": (8100, "sendgrid"),
+                "twilio": (8200, "twilio-adapter"),
+            },
+            {
+                port["name"]: (port["port"], port["targetPort"])
+                for port in service["spec"]["ports"]
+            },
+        )
+
+        policy = one_resource(documents, "NetworkPolicy")
+        self.assertEqual(
+            {8025, 8100, "twilio-adapter"},
+            {port["port"] for port in policy["spec"]["ingress"][0]["ports"]},
+        )
 
 
 if __name__ == "__main__":

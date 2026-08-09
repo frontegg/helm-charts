@@ -19,5 +19,8 @@ spec:
       port: {{ .Values.service.sendgridPort }}
       targetPort: sendgrid
       protocol: TCP
+    {{- with .Values.service.extraPorts }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
   selector:
     {{- include "messagepit.selectorLabels" . | nindent 4 }}

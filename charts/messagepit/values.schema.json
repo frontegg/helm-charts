@@ -22,6 +22,68 @@
         }
       }
     },
+    "service": {
+      "type": "object",
+      "required": ["type", "uiPort", "sendgridPort", "extraPorts"],
+      "properties": {
+        "type": { "type": "string", "minLength": 1 },
+        "uiPort": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "sendgridPort": { "type": "integer", "minimum": 1, "maximum": 65535 },
+        "extraPorts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "port", "targetPort"],
+            "properties": {
+              "name": { "type": "string", "minLength": 1 },
+              "port": { "type": "integer", "minimum": 1, "maximum": 65535 },
+              "targetPort": {
+                "oneOf": [
+                  { "type": "integer", "minimum": 1, "maximum": 65535 },
+                  { "type": "string", "minLength": 1 }
+                ]
+              },
+              "protocol": { "type": "string", "enum": ["TCP", "UDP", "SCTP"] }
+            }
+          }
+        }
+      }
+    },
+    "messagepit": {
+      "type": "object",
+      "required": ["twilioIngest"],
+      "properties": {
+        "twilioIngest": {
+          "type": "object",
+          "required": ["enabled", "port"],
+          "properties": {
+            "enabled": { "type": "boolean" },
+            "port": { "type": "integer", "minimum": 1, "maximum": 65535 }
+          }
+        }
+      }
+    },
+    "sidecars": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "image"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 },
+          "image": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
+    "extraVolumes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1 }
+        }
+      }
+    },
     "existingSecret": { "type": "string" },
     "retention": {
       "type": "object",
@@ -47,5 +109,5 @@
       }
     }
   },
-  "required": ["replicaCount", "image", "retention", "storage"]
+  "required": ["replicaCount", "image", "service", "messagepit", "sidecars", "extraVolumes", "retention", "storage"]
 }

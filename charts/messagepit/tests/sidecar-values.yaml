@@ -1,0 +1,43 @@
+sendgrid:
+  apiKey: test-sendgrid-key
+
+ui:
+  auth: e2e:test-password
+
+messagepit:
+  twilioIngest:
+    enabled: true
+
+sidecars:
+  - name: twilio-adapter
+    image: ghcr.io/frontegg/messagepit-twilio-adapter:test
+    ports:
+      - name: twilio-adapter
+        containerPort: 8201
+        protocol: TCP
+    env:
+      - name: MESSAGEPIT_TWILIO_URL
+        value: http://127.0.0.1:8200
+    volumeMounts:
+      - name: adapter-config
+        mountPath: /etc/twilio-adapter
+        readOnly: true
+
+extraVolumes:
+  - name: adapter-config
+    configMap:
+      name: twilio-adapter
+
+service:
+  extraPorts:
+    - name: twilio
+      port: 8200
+      targetPort: twilio-adapter
+      protocol: TCP
+
+networkPolicy:
+  enabled: true
+  ingressFrom:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: identity-test

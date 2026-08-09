@@ -38,6 +38,15 @@ service:
   uiPort: 8025
   sendgridPort: 8100
   annotations: {}
+  # Additional ports can route traffic to a sidecar's named container port.
+  extraPorts: []
+
+messagepit:
+  twilioIngest:
+    # Enable only when a sidecar translates Twilio requests for MessagePit.
+    # This listener binds to pod-local loopback and is not exposed directly.
+    enabled: false
+    port: 8200
 
 # Creates a Secret when existingSecret is empty. Do not commit real credentials.
 sendgrid:
@@ -96,6 +105,12 @@ networkPolicy:
   ingressFrom: []
 
 extraEnv: []
+
+# Complete Kubernetes Container objects appended to the MessagePit pod.
+sidecars: []
+
+# Complete Kubernetes Volume objects shared by MessagePit and sidecars.
+extraVolumes: []
 
 nodeSelector: {}
 tolerations: []

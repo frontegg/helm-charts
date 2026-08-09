@@ -45,7 +45,11 @@ spec:
           image: "{{ .Values.image.repository }}@{{ .Values.image.digest }}"
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           args:
+            {{- if .Values.messagepit.twilioIngest.enabled }}
+            - --twilio=127.0.0.1:{{ .Values.messagepit.twilioIngest.port }}
+            {{- else }}
             - --twilio=
+            {{- end }}
             - --webhook=
             - --pop3=
           {{- with .Values.securityContext }}
@@ -59,6 +63,11 @@ spec:
             - name: sendgrid
               containerPort: 8100
               protocol: TCP
+            {{- if .Values.messagepit.twilioIngest.enabled }}
+            - name: twilio-internal
+              containerPort: {{ .Values.messagepit.twilioIngest.port }}
+              protocol: TCP
+            {{- end }}
           volumeMounts:
             - name: tmp
               mountPath: /tmp
@@ -98,10 +107,16 @@ spec:
           {{- end }}
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
+        {{- with .Values.sidecars }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       volumes:
         - name: tmp
           emptyDir:
             sizeLimit: {{ .Values.storage.sizeLimit | quote }}
+        {{- with .Values.extraVolumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
