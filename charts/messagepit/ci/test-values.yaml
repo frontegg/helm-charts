@@ -1,0 +1,5 @@
+sendgrid:
+  apiKey: test-sendgrid-key
+
+ui:
+  auth: e2e:test-password

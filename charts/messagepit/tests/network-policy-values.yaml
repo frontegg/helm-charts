@@ -1,0 +1,15 @@
+sendgrid:
+  apiKey: test-sendgrid-key
+
+ui:
+  auth: e2e:test-password
+
+networkPolicy:
+  enabled: true
+  ingressFrom:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: identity-test
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: e2e-runners
