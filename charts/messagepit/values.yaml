@@ -1,0 +1,100 @@
+replicaCount: 1
+revisionHistoryLimit: 2
+
+image:
+  repository: ghcr.io/coreydaley/messagepit
+  digest: sha256:04bd1a2f82c8b90aec52c6bfa4090ef1088acb025f5193f75112207886ef0a02
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+serviceAccount:
+  create: true
+  automount: false
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  seccompProfile:
+    type: RuntimeDefault
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+  readOnlyRootFilesystem: true
+  runAsGroup: 65532
+  runAsNonRoot: true
+  runAsUser: 65532
+
+service:
+  type: ClusterIP
+  uiPort: 8025
+  sendgridPort: 8100
+  annotations: {}
+
+# Creates a Secret when existingSecret is empty. Do not commit real credentials.
+sendgrid:
+  apiKey: ""
+
+# MessagePit format: username:password. Do not commit real credentials.
+ui:
+  auth: ""
+
+# Existing Secret must contain MP_SENDGRID_API_KEY and MP_UI_AUTH.
+existingSecret: ""
+
+retention:
+  maxAge: 24h
+  maxMessages: 10000
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    memory: 256Mi
+
+startupProbe:
+  exec:
+    command:
+      - /messagepit
+      - readyz
+  failureThreshold: 30
+  periodSeconds: 2
+  timeoutSeconds: 1
+
+readinessProbe:
+  exec:
+    command:
+      - /messagepit
+      - readyz
+  failureThreshold: 3
+  periodSeconds: 5
+  timeoutSeconds: 1
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: ui
+  failureThreshold: 3
+  periodSeconds: 10
+  timeoutSeconds: 1
+
+networkPolicy:
+  enabled: false
+  ingressFrom: []
+
+extraEnv: []
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+terminationGracePeriodSeconds: 30

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "replicaCount": {
+      "type": "integer",
+      "const": 1,
+      "description": "MessagePit uses an in-memory single inbox and must run as one replica."
+    },
+    "image": {
+      "type": "object",
+      "required": ["repository", "digest", "pullPolicy"],
+      "properties": {
+        "repository": { "type": "string", "minLength": 1 },
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "pullPolicy": {
+          "type": "string",
+          "enum": ["Always", "IfNotPresent", "Never"]
+        }
+      }
+    },
+    "existingSecret": { "type": "string" },
+    "retention": {
+      "type": "object",
+      "required": ["maxAge", "maxMessages"],
+      "properties": {
+        "maxAge": { "type": "string", "pattern": "^[1-9][0-9]*[hd]$" },
+        "maxMessages": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "networkPolicy": {
+      "type": "object",
+      "required": ["enabled", "ingressFrom"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "ingressFrom": { "type": "array" }
+      }
+    }
+  },
+  "required": ["replicaCount", "image", "retention"]
+}
