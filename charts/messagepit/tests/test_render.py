@@ -66,7 +66,12 @@ class MessagePitChartRenderTests(unittest.TestCase):
             {port["name"]: port["containerPort"] for port in container["ports"]},
         )
         self.assertEqual(
-            {"MP_MAX_AGE": "24h", "MP_MAX_MESSAGES": "10000"},
+            {
+                "MP_DISABLE_VERSION_CHECK": "true",
+                "MP_MAX_AGE": "24h",
+                "MP_MAX_MESSAGES": "10000",
+                "MP_SENDGRID_BIND_ADDR": "0.0.0.0:8100",
+            },
             {
                 item["name"]: item["value"]
                 for item in container["env"]

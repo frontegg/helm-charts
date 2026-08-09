@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "messagepit.fullname" . }}
+  labels:
+    {{- include "messagepit.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: ui
+      port: {{ .Values.service.uiPort }}
+      targetPort: ui
+      protocol: TCP
+    - name: sendgrid
+      port: {{ .Values.service.sendgridPort }}
+      targetPort: sendgrid
+      protocol: TCP
+  selector:
+    {{- include "messagepit.selectorLabels" . | nindent 4 }}

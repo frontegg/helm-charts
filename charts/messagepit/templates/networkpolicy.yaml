@@ -1,0 +1,23 @@
+{{- if .Values.networkPolicy.enabled }}
+{{- $ingressFrom := required "networkPolicy.ingressFrom is required when networkPolicy.enabled is true" .Values.networkPolicy.ingressFrom }}
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: {{ include "messagepit.fullname" . }}
+  labels:
+    {{- include "messagepit.labels" . | nindent 4 }}
+spec:
+  podSelector:
+    matchLabels:
+      {{- include "messagepit.selectorLabels" . | nindent 6 }}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        {{- toYaml $ingressFrom | nindent 8 }}
+      ports:
+        - port: {{ .Values.service.uiPort }}
+          protocol: TCP
+        - port: {{ .Values.service.sendgridPort }}
+          protocol: TCP
+{{- end }}

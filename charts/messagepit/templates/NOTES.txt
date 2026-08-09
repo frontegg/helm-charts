@@ -1,0 +1,8 @@
+MessagePit is available inside the cluster at:
+
+  SendGrid API: http://{{ include "messagepit.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.sendgridPort }}
+  Inbox UI/API: http://{{ include "messagepit.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.uiPort }}
+
+Configure Identity with the SendGrid API URL and the same API key stored in
+{{ include "messagepit.secretName" . }}. Leave TWILIO_API_URL unset; this chart
+does not replace Twilio.
