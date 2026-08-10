@@ -40,6 +40,8 @@ class MessagePitChartRenderTests(unittest.TestCase):
         self.external_values = CHART / "tests" / "existing-secret-values.yaml"
         self.network_policy_values = CHART / "tests" / "network-policy-values.yaml"
         self.sidecar_values = CHART / "tests" / "sidecar-values.yaml"
+        self.external_secret_values = CHART / "tests" / "external-secret-values.yaml"
+        self.ingress_values = CHART / "tests" / "ingress-values.yaml"
 
     def test_managed_credentials_render_secure_single_pod_workload(self):
         documents = rendered_documents(self.managed_values)
@@ -121,7 +123,7 @@ class MessagePitChartRenderTests(unittest.TestCase):
             container["startupProbe"]["exec"]["command"],
         )
         self.assertEqual(
-            {"path": "/healthz", "port": "ui"},
+            {"path": "/livez", "port": "ui"},
             container["livenessProbe"]["httpGet"],
         )
 
@@ -161,9 +163,76 @@ class MessagePitChartRenderTests(unittest.TestCase):
         ingress = policy["spec"]["ingress"][0]
         self.assertEqual(2, len(ingress["from"]))
         self.assertEqual(
-            {8025, 8100},
+            {"ui", "sendgrid"},
             {port["port"] for port in ingress["ports"]},
         )
+
+    def test_network_policy_rejects_an_empty_peer_list(self):
+        result = helm_template(
+            self.managed_values,
+            "--set",
+            "networkPolicy.enabled=true",
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("networkPolicy.ingressFrom must not be empty", result.stderr)
+
+    def test_external_secret_populates_messagepit_credentials(self):
+        documents = rendered_documents(self.external_secret_values)
+
+        self.assertFalse(any(document["kind"] == "Secret" for document in documents))
+        external_secret = one_resource(documents, "ExternalSecret")
+        self.assertEqual("messagepit", external_secret["spec"]["target"]["name"])
+        self.assertEqual(
+            "venv",
+            external_secret["spec"]["data"][0]["remoteRef"]["key"],
+        )
+        target_data = external_secret["spec"]["target"]["template"]["data"]
+        self.assertEqual(
+            {"MP_SENDGRID_API_KEY", "MP_UI_AUTH"},
+            set(target_data),
+        )
+        self.assertIn("externalServices.messagepit.sendgridApiKey", target_data["MP_SENDGRID_API_KEY"])
+        self.assertIn("externalServices.messagepit.inboxUsername", target_data["MP_UI_AUTH"])
+        self.assertIn("externalServices.messagepit.inboxPassword", target_data["MP_UI_AUTH"])
+
+        deployment = one_resource(documents, "Deployment")
+        secret_names = {
+            item["valueFrom"]["secretKeyRef"]["name"]
+            for item in deployment["spec"]["template"]["spec"]["containers"][0]["env"]
+            if "valueFrom" in item
+        }
+        self.assertEqual({"messagepit"}, secret_names)
+
+    def test_ingress_exposes_only_authenticated_ui_service(self):
+        documents = rendered_documents(self.ingress_values)
+
+        ingress = one_resource(documents, "Ingress")
+        self.assertEqual("nginx", ingress["spec"]["ingressClassName"])
+        self.assertEqual(
+            [{"hosts": ["messagepit.john-lennon.venv.life"], "secretName": "frontegg-secret-2020"}],
+            ingress["spec"]["tls"],
+        )
+        self.assertEqual(
+            "messagepit.john-lennon.venv.life",
+            ingress["spec"]["rules"][0]["host"],
+        )
+        backend = ingress["spec"]["rules"][0]["http"]["paths"][0]["backend"]["service"]
+        self.assertEqual("messagepit", backend["name"])
+        self.assertEqual({"name": "ui"}, backend["port"])
+        self.assertNotIn("8100", str(ingress))
+
+    def test_ingress_requires_tls_secret(self):
+        result = helm_template(
+            self.managed_values,
+            "--set",
+            "ingress.enabled=true",
+            "--set",
+            "venvSubDomain=john-lennon",
+            "--set",
+            "venvDomain=venv.life",
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn("ingress.tls.secretName is required", result.stderr)
 
     def test_schema_rejects_more_than_one_replica(self):
         result = helm_template(self.managed_values, "--set", "replicaCount=2")
@@ -219,7 +288,7 @@ class MessagePitChartRenderTests(unittest.TestCase):
 
         policy = one_resource(documents, "NetworkPolicy")
         self.assertEqual(
-            {8025, 8100, "twilio-adapter"},
+            {"ui", "sendgrid", "twilio-adapter"},
             {port["port"] for port in policy["spec"]["ingress"][0]["ports"]},
         )
 

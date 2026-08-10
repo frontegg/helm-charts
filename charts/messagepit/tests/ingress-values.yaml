@@ -1,0 +1,16 @@
+fullnameOverride: messagepit
+
+sendgrid:
+  apiKey: test-sendgrid-key
+
+ui:
+  auth: e2e:test-password
+
+venvSubDomain: john-lennon
+venvDomain: venv.life
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  tls:
+    secretName: frontegg-secret-2020
