@@ -10,6 +10,11 @@ imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
 
+# Used to derive a venv ingress hostname when ingress.hostname is empty.
+venvSubDomain: ""
+venvDomain: ""
+componentsCollectionIdentifier: ""
+
 serviceAccount:
   create: true
   automount: false
@@ -59,6 +64,27 @@ ui:
 # Existing Secret must contain MP_SENDGRID_API_KEY and MP_UI_AUTH.
 existingSecret: ""
 
+# Creates the credential Secret from the environment's external secret object.
+externalSecret:
+  enabled: false
+  refreshInterval: 1m
+  remoteKey: ""
+  targetSecretName: ""
+  creationPolicy: Owner
+  deletionPolicy: Retain
+  secretStoreRef:
+    name: external-secret-store
+    kind: ClusterSecretStore
+
+# Exposes only the authenticated inbox UI/API. SendGrid remains cluster-internal.
+ingress:
+  enabled: false
+  ingressClassName: ""
+  hostname: ""
+  annotations: {}
+  tls:
+    secretName: ""
+
 retention:
   maxAge: 24h
   maxMessages: 10000
@@ -94,7 +120,7 @@ readinessProbe:
 
 livenessProbe:
   httpGet:
-    path: /healthz
+    path: /livez
     port: ui
   failureThreshold: 3
   periodSeconds: 10

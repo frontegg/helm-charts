@@ -1,3 +1,4 @@
+{{- include "messagepit.validateCredentials" . }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -18,7 +19,7 @@ spec:
   template:
     metadata:
       annotations:
-        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        checksum/secret: {{ printf "%s%s" (include (print $.Template.BasePath "/secret.yaml") .) (include (print $.Template.BasePath "/external-secret.yaml") .) | sha256sum }}
         {{- with .Values.podAnnotations }}
         {{- toYaml . | nindent 8 }}
         {{- end }}

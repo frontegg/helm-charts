@@ -13,6 +13,8 @@ The chart creates one MessagePit Deployment and one ClusterIP Service:
 
 The mailbox uses a pod-local temporary SQLite database. Restarting or replacing the pod clears all captured messages. The chart enforces one replica because separate MessagePit pods would have separate inboxes.
 
+The optional Ingress exposes only port `8025`. MessagePit's `MP_UI_AUTH` Basic authentication protects the browser UI and management API. The SendGrid API on port `8100` remains cluster-internal.
+
 Twilio remains unchanged by default. Do not set `TWILIO_API_URL` until an adapter sidecar has been built and enabled.
 
 ## Sidecar-ready Twilio adapter
@@ -50,6 +52,43 @@ http://messagepit.messaging-test.svc.cluster.local:8200
 ```
 
 The adapter may use `extraVolumes` and normal container `volumeMounts` when it needs configuration or certificates. If NetworkPolicy is enabled, each `service.extraPorts` target is automatically permitted for the configured callers.
+
+## Install from an ExternalSecret
+
+This is the recommended venv configuration. The remote secret object contains dedicated MessagePit values:
+
+```yaml
+externalServices:
+  messagepit:
+    sendgridApiKey: <shared-venv-ingest-key>
+    inboxUsername: <shared-venv-inbox-username>
+    inboxPassword: <shared-venv-inbox-password>
+```
+
+Reference that object without committing its values:
+
+```yaml
+fullnameOverride: messagepit
+componentsCollectionIdentifier: venv
+
+externalSecret:
+  enabled: true
+
+venvSubDomain: john-lennon
+venvDomain: venv.life
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  annotations:
+    ingress.kubernetes.io/force-ssl-redirect: "true"
+  tls:
+    secretName: frontegg-secret-2020
+```
+
+The ExternalSecret creates `MP_SENDGRID_API_KEY` and composes `MP_UI_AUTH` as `inboxUsername:inboxPassword`. If `externalSecret.remoteKey` is empty, `componentsCollectionIdentifier` is used. Set `externalSecret.targetSecretName` only when another stable Secret name is required.
+
+`externalSecret.enabled` and `existingSecret` are mutually exclusive.
 
 ## Install with an existing Secret
 
@@ -170,6 +209,18 @@ http://messagepit.messaging-test.svc.cluster.local:8025/api/v1
 
 Clients must use HTTP Basic authentication with the username and password stored in `MP_UI_AUTH`.
 
+## Expose the inbox to GitHub-hosted tests
+
+Enable ingress with either an explicit `ingress.hostname` or `venvSubDomain` plus `venvDomain`. The venv values above produce:
+
+```text
+https://messagepit.john-lennon.venv.life
+```
+
+Opening that URL in a browser displays MessagePit's built-in inbox UI after Basic authentication. GitHub-hosted E2E tests use the same URL and credential through `MESSAGEPIT_BASE_URL`, `MESSAGEPIT_USERNAME`, and `MESSAGEPIT_PASSWORD`.
+
+TLS is mandatory when ingress is enabled. The Ingress backend always targets the named `ui` Service port; it never exposes the SendGrid or future Twilio ports.
+
 ## Restrict callers with NetworkPolicy
 
 NetworkPolicy is disabled by default because namespace and pod labels differ between clusters. Enable it with the exact caller selectors for the target environment:
@@ -219,6 +270,8 @@ python3 -m unittest discover -s charts/messagepit/tests -v
 helm lint charts/messagepit -f charts/messagepit/ci/test-values.yaml
 helm template test charts/messagepit -f charts/messagepit/ci/test-values.yaml
 helm template test charts/messagepit -f charts/messagepit/tests/existing-secret-values.yaml
+helm template test charts/messagepit -f charts/messagepit/tests/external-secret-values.yaml
+helm template test charts/messagepit -f charts/messagepit/tests/ingress-values.yaml
 helm template test charts/messagepit -f charts/messagepit/tests/network-policy-values.yaml
 helm template test charts/messagepit -f charts/messagepit/tests/sidecar-values.yaml
 ```

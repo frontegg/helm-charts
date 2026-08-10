@@ -1,0 +1,33 @@
+{{- if .Values.ingress.enabled }}
+{{- $hostname := include "messagepit.ingressHostname" . }}
+{{- $tlsSecret := required "ingress.tls.secretName is required when ingress is enabled" .Values.ingress.tls.secretName }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "messagepit.fullname" . }}
+  labels:
+    {{- include "messagepit.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.ingressClassName }}
+  ingressClassName: {{ . | quote }}
+  {{- end }}
+  tls:
+    - hosts:
+        - {{ $hostname | quote }}
+      secretName: {{ $tlsSecret | quote }}
+  rules:
+    - host: {{ $hostname | quote }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "messagepit.fullname" . }}
+                port:
+                  name: ui
+{{- end }}

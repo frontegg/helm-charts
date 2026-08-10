@@ -85,6 +85,46 @@
       }
     },
     "existingSecret": { "type": "string" },
+    "venvSubDomain": { "type": "string" },
+    "venvDomain": { "type": "string" },
+    "componentsCollectionIdentifier": { "type": "string" },
+    "externalSecret": {
+      "type": "object",
+      "required": ["enabled", "refreshInterval", "remoteKey", "targetSecretName", "creationPolicy", "deletionPolicy", "secretStoreRef"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "refreshInterval": { "type": "string", "minLength": 1 },
+        "remoteKey": { "type": "string" },
+        "targetSecretName": { "type": "string" },
+        "creationPolicy": { "type": "string", "enum": ["Owner", "Orphan", "Merge", "None"] },
+        "deletionPolicy": { "type": "string", "enum": ["Retain", "Delete", "Merge"] },
+        "secretStoreRef": {
+          "type": "object",
+          "required": ["name", "kind"],
+          "properties": {
+            "name": { "type": "string", "minLength": 1 },
+            "kind": { "type": "string", "enum": ["SecretStore", "ClusterSecretStore"] }
+          }
+        }
+      }
+    },
+    "ingress": {
+      "type": "object",
+      "required": ["enabled", "ingressClassName", "hostname", "annotations", "tls"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "ingressClassName": { "type": "string" },
+        "hostname": { "type": "string" },
+        "annotations": { "type": "object" },
+        "tls": {
+          "type": "object",
+          "required": ["secretName"],
+          "properties": {
+            "secretName": { "type": "string" }
+          }
+        }
+      }
+    },
     "retention": {
       "type": "object",
       "required": ["maxAge", "maxMessages"],
@@ -109,5 +149,5 @@
       }
     }
   },
-  "required": ["replicaCount", "image", "service", "messagepit", "sidecars", "extraVolumes", "retention", "storage"]
+  "required": ["replicaCount", "image", "service", "messagepit", "sidecars", "extraVolumes", "externalSecret", "ingress", "retention", "storage"]
 }

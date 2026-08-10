@@ -1,5 +1,8 @@
 {{- if .Values.networkPolicy.enabled }}
-{{- $ingressFrom := required "networkPolicy.ingressFrom is required when networkPolicy.enabled is true" .Values.networkPolicy.ingressFrom }}
+{{- $ingressFrom := .Values.networkPolicy.ingressFrom }}
+{{- if eq (len $ingressFrom) 0 }}
+{{- fail "networkPolicy.ingressFrom must not be empty when networkPolicy.enabled is true" }}
+{{- end }}
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
@@ -16,9 +19,9 @@ spec:
     - from:
         {{- toYaml $ingressFrom | nindent 8 }}
       ports:
-        - port: {{ .Values.service.uiPort }}
+        - port: ui
           protocol: TCP
-        - port: {{ .Values.service.sendgridPort }}
+        - port: sendgrid
           protocol: TCP
         {{- range .Values.service.extraPorts }}
         - port: {{ default .port .targetPort }}

@@ -49,5 +49,29 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 
 {{/* Credential Secret name. */}}
 {{- define "messagepit.secretName" -}}
-{{- default (include "messagepit.fullname" .) .Values.existingSecret }}
+{{- if .Values.existingSecret }}
+{{- .Values.existingSecret }}
+{{- else if and .Values.externalSecret.enabled .Values.externalSecret.targetSecretName }}
+{{- .Values.externalSecret.targetSecretName }}
+{{- else }}
+{{- include "messagepit.fullname" . }}
+{{- end }}
+{{- end }}
+
+{{/* Public inbox hostname. */}}
+{{- define "messagepit.ingressHostname" -}}
+{{- if .Values.ingress.hostname }}
+{{- .Values.ingress.hostname }}
+{{- else }}
+{{- $subdomain := required "venvSubDomain is required when ingress.hostname is empty" .Values.venvSubDomain }}
+{{- $domain := required "venvDomain is required when ingress.hostname is empty" .Values.venvDomain }}
+{{- printf "messagepit.%s.%s" $subdomain $domain }}
+{{- end }}
+{{- end }}
+
+{{/* Reject ambiguous credential ownership. */}}
+{{- define "messagepit.validateCredentials" -}}
+{{- if and .Values.externalSecret.enabled .Values.existingSecret }}
+{{- fail "externalSecret.enabled and existingSecret are mutually exclusive" }}
+{{- end }}
 {{- end }}

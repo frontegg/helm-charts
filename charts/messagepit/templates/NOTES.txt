@@ -2,6 +2,9 @@ MessagePit is available inside the cluster at:
 
   SendGrid API: http://{{ include "messagepit.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.sendgridPort }}
   Inbox UI/API: http://{{ include "messagepit.fullname" . }}.{{ .Release.Namespace }}.svc.cluster.local:{{ .Values.service.uiPort }}
+{{- if .Values.ingress.enabled }}
+  Public inbox: https://{{ include "messagepit.ingressHostname" . }}
+{{- end }}
 
 Configure Identity with the SendGrid API URL and the same API key stored in
 {{ include "messagepit.secretName" . }}.

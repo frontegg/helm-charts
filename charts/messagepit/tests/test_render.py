@@ -194,6 +194,8 @@ class MessagePitChartRenderTests(unittest.TestCase):
         self.assertIn("externalServices.messagepit.sendgridApiKey", target_data["MP_SENDGRID_API_KEY"])
         self.assertIn("externalServices.messagepit.inboxUsername", target_data["MP_UI_AUTH"])
         self.assertIn("externalServices.messagepit.inboxPassword", target_data["MP_UI_AUTH"])
+        self.assertNotIn("\n", target_data["MP_SENDGRID_API_KEY"])
+        self.assertNotIn("\n", target_data["MP_UI_AUTH"])
 
         deployment = one_resource(documents, "Deployment")
         secret_names = {
@@ -202,6 +204,34 @@ class MessagePitChartRenderTests(unittest.TestCase):
             if "valueFrom" in item
         }
         self.assertEqual({"messagepit"}, secret_names)
+
+    def test_external_secret_requires_a_remote_key(self):
+        result = helm_template(
+            self.managed_values,
+            "--set",
+            "externalSecret.enabled=true",
+            "--set",
+            "sendgrid.apiKey=",
+            "--set",
+            "ui.auth=",
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(
+            "externalSecret.remoteKey or componentsCollectionIdentifier is required",
+            result.stderr,
+        )
+
+    def test_external_secret_and_existing_secret_are_mutually_exclusive(self):
+        result = helm_template(
+            self.external_secret_values,
+            "--set",
+            "existingSecret=other-credentials",
+        )
+        self.assertNotEqual(0, result.returncode)
+        self.assertIn(
+            "externalSecret.enabled and existingSecret are mutually exclusive",
+            result.stderr,
+        )
 
     def test_ingress_exposes_only_authenticated_ui_service(self):
         documents = rendered_documents(self.ingress_values)
