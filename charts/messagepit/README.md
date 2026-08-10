@@ -217,7 +217,7 @@ Enable ingress with either an explicit `ingress.hostname` or `venvSubDomain` plu
 https://messagepit.john-lennon.venv.life
 ```
 
-Opening that URL in a browser displays MessagePit's built-in inbox UI after Basic authentication. GitHub-hosted E2E tests use the same URL and credential through `MESSAGEPIT_BASE_URL`, `MESSAGEPIT_USERNAME`, and `MESSAGEPIT_PASSWORD`.
+Opening that URL in a browser displays MessagePit's built-in inbox UI after Basic authentication. GitHub-hosted E2E tests use the same URL and credential through `FRONTEGG_MESSAGEPIT_BASE_URL`, `FRONTEGG_MESSAGEPIT_USERNAME`, and `FRONTEGG_MESSAGEPIT_PASSWORD`. The `FRONTEGG_` prefix is required because the E2E suite reads its configuration through `@frontegg/convict`. The GitHub secret names stay `MESSAGEPIT_USERNAME` and `MESSAGEPIT_PASSWORD`.
 
 TLS is mandatory when ingress is enabled. The Ingress backend always targets the named `ui` Service port; it never exposes the SendGrid or future Twilio ports.
 
