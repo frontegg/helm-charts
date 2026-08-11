@@ -1,0 +1,27 @@
+name: messagepit
+team: identity
+envID: test
+appVersion: "1.3.0"
+
+image:
+  repository: example.com/messagepit
+  prefix: ""
+
+argoRollouts:
+  enabled: false
+
+web:
+  enabled: true
+  strategy:
+    type: Recreate
+  service:
+    ports:
+      - name: http
+        port: 8025
+        targetPort: http
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      memory: 256Mi

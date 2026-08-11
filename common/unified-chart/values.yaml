@@ -109,6 +109,7 @@ web:
   command: ["/bin/bash"]
   args: ["entrypoint.sh", "service"]
   replicaCount: 1
+  strategy: {}
   podAnnotations: {}
   ports:
     - name: http

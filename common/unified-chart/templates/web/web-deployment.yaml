@@ -10,6 +10,10 @@ metadata:
     {{- include "web.labels" $top | nindent 4 }}
 spec:
   revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
+  {{- with $values.web.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   {{- if $values.argoRollouts.enabled }}
   replicas: 0
   {{- else if not $values.web.autoscaling.enabled }}

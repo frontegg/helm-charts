@@ -23,3 +23,4 @@ jobs:
         run: |
           cd common/unified-chart
           helm template . --name-template=$NAME_TEMPLATE  --set name=$NAME --set team=$TEAM --set appVersion=$APP_VERSION --values $TEST_FILE --debug
+          bash tests/web-deployment-strategy.sh
