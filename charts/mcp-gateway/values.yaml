@@ -68,6 +68,24 @@ mcpGw:
     failureThreshold: 10
     periodSeconds: 10
 
+# Routes the OAuth and discovery endpoints to mcp-auth and everything else to mcp-gw.
+# Disabled by default: hybrid installs front the services with their own ingress.
+ingress:
+  enabled: false
+  className: nginx
+  host: ""
+  tlsSecretName: ""
+  annotations: {}
+  authPaths:
+    - /authorize
+    - /token
+    - /dcr/register
+    - /.well-known/oauth-protected-resource
+    - /.well-known/oauth-authorization-server
+    - /integration-callback
+    - /security-stepup-verify
+    - /external-mcp
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
