@@ -75,7 +75,15 @@ ingress:
   className: nginx
   host: ""
   tlsSecretName: ""
-  annotations: {}
+  # MCP sessions are long-lived streams; nginx defaults sever them at 60s and buffer responses.
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+  # Context can also arrive as a path prefix (/ctx/<b64>/authorize); prefix rules cannot see past
+  # it, so this regex sends the prefix form of the auth endpoints to mcp-auth as well.
+  ctxAuthRegex: '/ctx/[^/]+/(authorize|token|dcr/register|\.well-known|integration-callback|security-stepup-verify|external-mcp)'
   authPaths:
     - /authorize
     - /token

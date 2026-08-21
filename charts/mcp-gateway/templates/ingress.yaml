@@ -32,6 +32,15 @@ spec:
                 port:
                   number: {{ $.Values.mcpAuth.port }}
           {{- end }}
+          {{- with .Values.ingress.ctxAuthRegex }}
+          - path: {{ . }}
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: {{ include "fullname" $ }}-auth
+                port:
+                  number: {{ $.Values.mcpAuth.port }}
+          {{- end }}
           - path: /
             pathType: Prefix
             backend:
