@@ -65,6 +65,12 @@ defaults:
   serviceAccount:
     annotations:
       argocd.argoproj.io/sync-wave: "-100"
+  jobs:
+    podAnnotations:
+      karpenter.sh/do-not-disrupt: "true"
+  cronjobs:
+    podAnnotations:
+      karpenter.sh/do-not-disrupt: "true"
 
 revisionHistoryLimit: 2
 

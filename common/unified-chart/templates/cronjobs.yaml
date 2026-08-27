@@ -42,10 +42,9 @@ spec:
           labels:
             {{- include "job.labels" $top | nindent 12 }}
             app.kubernetes.io/component: {{ $jobName }}
-        {{- with $job.annotations }}
-        annotations:
-          {{- toYaml . | nindent 8 }}
-        {{- end }}
+          annotations:
+            {{- $podAnts := mergeOverwrite (deepCopy $values.defaults.cronjobs.podAnnotations) ($job.annotations | default dict) }}
+            {{- toYaml $podAnts | nindent 12 }}
         spec:
           {{- if $values.serviceAccount.enabled }}
           serviceAccountName: {{ include "service.account.name" $top }}

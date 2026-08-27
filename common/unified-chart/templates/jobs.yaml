@@ -12,14 +12,12 @@ metadata:
     {{- include "job.labels" $top | nindent 4 }}
     app.kubernetes.io/component: {{ $jobName }}
   annotations:
-    {{- $mgr_ants := $values.defaults.migration.annotations }}
+    {{- $job_ants := dict }}
     {{- if $job.metadata }}
-    {{- $job_ants := $job.metadata.annotations }}
-    {{- $new_ants := merge $job_ants $mgr_ants }}
-    {{- toYaml $new_ants | nindent 4 }}
-    {{- else }}
-    {{- toYaml $values.defaults.migration.annotations | nindent 4 }}
+    {{- $job_ants = $job.metadata.annotations | default dict }}
     {{- end }}
+    {{- $new_ants := mergeOverwrite (deepCopy $values.defaults.migration.annotations) $job_ants }}
+    {{- toYaml $new_ants | nindent 4 }}
 spec:
   {{- with $job.spec }}
   ttlSecondsAfterFinished: {{ .ttlSecondsAfterFinished | default 6000 }}
@@ -33,10 +31,9 @@ spec:
       labels:
         {{- include "job.labels" $top | nindent 8 }}
         app.kubernetes.io/component: {{ $jobName }}
-      {{- with .annotations }}
       annotations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- $podAnts := mergeOverwrite (deepCopy $values.defaults.jobs.podAnnotations) (.annotations | default dict) }}
+        {{- toYaml $podAnts | nindent 8 }}
     spec:
       {{- if $values.serviceAccount.enabled }}
       serviceAccountName: {{ include "service.account.name" $top }}
