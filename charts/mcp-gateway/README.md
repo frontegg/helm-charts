@@ -93,8 +93,10 @@ the map above — one regex rule for the auth paths, one catch-all for `mcp-gw`:
 ingress:
   enabled: true
   className: nginx
-  host: "mcp.example.com"        # required when enabled; wildcards such as *.mcp-gw.example.com are allowed
-  tlsSecretName: "mcp-gw-tls"    # omit to serve without TLS
+  host: "mcp.example.com"      # required when enabled; wildcards such as *.mcp-gw.example.com are allowed
+  tls:
+    enabled: true
+    secretName: "mcp-gw-tls"   # must cover host
 ```
 
 | Key                     | Default                                          | Description |
@@ -102,7 +104,8 @@ ingress:
 | `ingress.enabled`       | `false`                                          | Create the Ingress. |
 | `ingress.host`          | `""`                                             | External hostname. **Required** when enabled — rendering fails without it, rather than producing a host-less catch-all Ingress. |
 | `ingress.className`     | `nginx`                                          | `ingressClassName`. |
-| `ingress.tlsSecretName` | `""`                                             | TLS Secret for `host`. Omitted → no `tls` block. |
+| `ingress.tls.enabled`   | `false`                                          | Serve TLS for `host`. |
+| `ingress.tls.secretName`| `""`                                             | TLS Secret, **required** when `tls.enabled` — an empty name makes ingress-nginx fall back to its self-signed default certificate. |
 | `ingress.annotations`   | `nginx.ingress.kubernetes.io/use-regex: "true"`  | Merged with your own. **`use-regex` must stay** — the auth rule is a regex and silently stops matching without it. |
 | `ingress.authPaths`     | the eight auth paths above                       | Built into a single regex that also matches the `/ctx/<base64url>/` forms. |
 

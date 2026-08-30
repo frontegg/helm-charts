@@ -74,7 +74,11 @@ ingress:
   enabled: false
   className: nginx
   host: ""
-  tlsSecretName: ""
+  ## If enabled ingress will search for secret to enable TLS
+  ##
+  tls:
+    enabled: false
+    secretName: ""
   # use-regex is required: the auth rule is a regex, because context can be encoded as a
   # path segment (/ctx/<b64>/authorize) that a prefix rule cannot see past.
   annotations:

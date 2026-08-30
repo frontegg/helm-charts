@@ -18,11 +18,11 @@ spec:
   {{- with .Values.ingress.className }}
   ingressClassName: {{ . }}
   {{- end }}
-  {{- with .Values.ingress.tlsSecretName }}
+  {{- if .Values.ingress.tls.enabled }}
   tls:
     - hosts:
         - {{ $host | quote }}
-      secretName: {{ . }}
+      secretName: {{ required "ingress.tls.secretName is required when ingress.tls.enabled is true" .Values.ingress.tls.secretName }}
   {{- end }}
   rules:
     - host: {{ $host | quote }}
