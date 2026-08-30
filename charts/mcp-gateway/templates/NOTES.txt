@@ -37,23 +37,28 @@ Health checks:
     kubectl rollout status deploy/{{ include "fullname" . }}-auth --namespace {{ .Release.Namespace }}
     kubectl rollout status deploy/{{ include "fullname" . }}-gw --namespace {{ .Release.Namespace }}
 
-Routing Configuration:
-  This chart ships no Ingress/router. Front both services with your own ingress or
-  API gateway, preserving the Host header (must match env.fronteggMcpGwHost).
+Routing:
+{{- if .Values.ingress.enabled }}
+  An Ingress for {{ .Values.ingress.host }} sends the auth paths below to
+  {{ include "fullname" . }}-auth and everything else to {{ include "fullname" . }}-gw.
+    kubectl get ingress {{ include "fullname" . }} --namespace {{ .Release.Namespace }}
+{{- else }}
+  No Ingress was created (ingress.enabled is false). Front both services with your own
+  ingress or API gateway, preserving the Host header (must match env.fronteggMcpGwHost).
   Route the auth paths below to -auth; send everything else to -gw. Declare the auth
   paths BEFORE the catch-all "/" on order-based routers.
+{{- end }}
 
   {{ include "fullname" . }}-auth (port {{ .Values.mcpAuth.port }}):
-    - /.well-known/*                    (GET)
-    - /authorize                        (GET)
-    - /dcr/register                     (POST)
-    - /token                            (POST)
-    - /integration-callback             (GET)
-    - /external-mcp/authorize           (GET)
-    - /external-mcp/callback            (GET)
+{{- range .Values.ingress.authPaths }}
+    - {{ . }}
+{{- end }}
+  Each also matches with a context segment on either side, e.g.
+  /ctx/<base64url>/authorize and /.well-known/oauth-authorization-server/ctx/<base64url>.
 
   {{ include "fullname" . }}-gw (port {{ .Values.mcpGw.port }}):
     - / (all other paths)
+
 {{- if eq (.Values.env.eventStdoutEnabled | default "") "true" }}
 
 Event delivery:
