@@ -10,9 +10,12 @@ metadata:
   name: {{ required ".Values.name is required" $values.name }}-{{ $ingname }}
   labels:
     {{- include "labels" $top | nindent 4 }}
+    {{- with $ingress.labels }}
+    {{- tpl (. | toYaml) $top | nindent 4 }}
+    {{- end }}
   {{- with $ingress.annotations }}
   annotations:
-    {{- toYaml . | nindent 4 }}
+    {{- tpl (. | toYaml) $top | nindent 4 }}
   {{- end }}
 spec:
   {{- with $ingress.ingressClassName }}
