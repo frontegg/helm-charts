@@ -126,7 +126,7 @@ spec:
           {{- with $values.web.args }}
           args:
             {{- range . }}
-            - {{ . | quote  }}
+            - {{ tpl . $top | quote }}
             {{- end }}
           {{- end }}
       {{- with $values.web.nodeSelector }}
