@@ -16,6 +16,10 @@ spec:
   {{- else if not $values.web.autoscaling.enabled }}
   replicas: {{ $values.hp.replicaCount }}
   {{- end }}
+  {{- with $values.hp.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "hp.selector.labels" $top | nindent 6 }}

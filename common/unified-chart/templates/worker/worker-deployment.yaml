@@ -15,6 +15,10 @@ spec:
   replicas: {{ $values.worker.replicaCount }}
   {{- end }}
   revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
+  {{- with $values.worker.strategy }}
+  strategy:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
   selector:
     matchLabels:
       {{- include "worker.selector.labels" $top | nindent 6 }}
