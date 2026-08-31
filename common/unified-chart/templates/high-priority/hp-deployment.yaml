@@ -127,7 +127,7 @@ spec:
           {{- with $values.hp.args }}
           args:
             {{- range . }}
-            - {{ . | quote  }}
+            - {{ tpl . $top | quote }}
             {{- end }}
           {{- end }}
       {{- with $values.hp.nodeSelector }}

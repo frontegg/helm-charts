@@ -95,7 +95,7 @@ spec:
             {{- end }}
           args:
             {{- range .args }}
-            - {{ . | quote  }}
+            - {{ tpl . $top | quote }}
             {{- end }}
           resources:
             {{- if .resources }}
