@@ -51,7 +51,7 @@ spec:
           {{- end }}
           {{- with $job.nodeSelector }}
           nodeSelector:
-          {{ toYaml . | indent 2 }}
+          {{ tpl (. | toYaml) $top | indent 2 }}
           {{- end }}
           {{- with $values.imagePullSecrets }}
           imagePullSecrets:

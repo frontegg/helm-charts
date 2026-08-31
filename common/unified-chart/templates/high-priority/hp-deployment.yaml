@@ -128,7 +128,7 @@ spec:
           {{- end }}
       {{- with $values.hp.nodeSelector }}
       nodeSelector:
-      {{- toYaml . | nindent 8 }}
+      {{- tpl (. | toYaml) $top | nindent 8 }}
       {{- end }}
       {{- if $values.hp.affinity }}
       affinity:

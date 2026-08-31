@@ -127,7 +127,7 @@ spec:
           {{- end }}
       {{- with $values.web.nodeSelector }}
       nodeSelector:
-      {{- toYaml . | nindent 8 }}
+        {{- tpl (. | toYaml) $top | nindent 8 }}
       {{- end }}
       {{- if $values.web.affinity }}
       affinity:
