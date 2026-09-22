@@ -22,9 +22,11 @@ caching, and sit behind a single external hostname (only the path differs).
 - A Deployment + ClusterIP Service for `mcp-gw`
 - A shared ServiceAccount (created by default; toggle with `serviceAccount.create`)
 - Optional HorizontalPodAutoscaler per component (disabled by default)
+- An optional Ingress for ingress-nginx, **off by default** (`ingress.enabled`)
 
-The chart ships **no Ingress or L7 router** — front the two services with your own
-ingress / API gateway (NGINX, Traefik, Istio, Envoy, AWS ALB, GCP HTTPS LB, Kong, …).
+With `ingress.enabled: false` (the default) the chart ships **no L7 router** — front the
+two services with your own ingress / API gateway (NGINX, Traefik, Istio, Envoy, AWS ALB,
+GCP HTTPS LB, Kong, …) using the path map in [Routing](#routing).
 
 ## Installation
 
@@ -55,7 +57,7 @@ reference it with `existingSecret` — see [Configuration](#configuration).
 
 ## Routing
 
-Configure your ingress/API gateway with the path map below. Route the auth paths to
+Both services share one external hostname; only the path differs. Route the auth paths to
 **`<release>-mcp-gateway-auth`**; send **everything else** to **`<release>-mcp-gateway-gw`**.
 
 | Path                                          | Method | Target       |
@@ -63,12 +65,11 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 | `/.well-known/oauth-protected-resource`       | GET    | `mcp-auth`   |
 | `/.well-known/oauth-authorization-server`     | GET    | `mcp-auth`   |
 | `/authorize`                                  | GET    | `mcp-auth`   |
-| `/dcr/register`                               | POST   | `mcp-auth`   |
 | `/token`                                      | POST   | `mcp-auth`   |
-| `/integration-callback`                       | GET    | `mcp-auth`   |
+| `/dcr/register`                               | POST   | `mcp-auth`   |
+| `/integration-callback`, `/integration-callback/implicit` | GET, POST | `mcp-auth` |
 | `/security-stepup-verify`                     | GET    | `mcp-auth`   |
-| `/external-mcp/authorize`                     | GET    | `mcp-auth`   |
-| `/external-mcp/callback`                      | GET    | `mcp-auth`   |
+| `/external-mcp/*`                             | GET, POST | `mcp-auth` |
 | Everything else (`/`)                         | *      | `mcp-gw`     |
 
 Router requirements:
@@ -76,6 +77,40 @@ Router requirements:
 - **Specificity/order:** auth paths must take priority over the catch-all `/` (declare them first on order-based routers).
 - **Host header preservation:** the incoming `Host` must match `env.fronteggMcpGwHost` — both services use it to validate issuer URLs.
 - **Single external hostname:** both services share one external host.
+- **Context path segments:** every auth path above must also match with a `/ctx/<base64url>/`
+  segment on either side — `/ctx/<base64url>/dcr/register` and
+  `/.well-known/oauth-authorization-server/ctx/<base64url>`. The gateway advertises the first
+  form as its `registration_endpoint` whenever the discovery request carries query parameters,
+  so a router that only matches the bare paths will 404 dynamic client registration. Prefix
+  matching cannot see past a leading `/ctx` segment, so this needs a regex rule.
+
+### Built-in Ingress
+
+Set `ingress.enabled: true` to have the chart create an ingress-nginx `Ingress` implementing
+the map above — one regex rule for the auth paths, one catch-all for `mcp-gw`:
+
+```yaml
+ingress:
+  enabled: true
+  className: nginx
+  host: "mcp.example.com"      # required when enabled; wildcards such as *.mcp-gw.example.com are allowed
+  tls:
+    enabled: true
+    secretName: "mcp-gw-tls"   # must cover host
+```
+
+| Key                     | Default                                          | Description |
+|-------------------------|--------------------------------------------------|-------------|
+| `ingress.enabled`       | `false`                                          | Create the Ingress. |
+| `ingress.host`          | `""`                                             | External hostname. **Required** when enabled — rendering fails without it, rather than producing a host-less catch-all Ingress. |
+| `ingress.className`     | `nginx`                                          | `ingressClassName`. |
+| `ingress.tls.enabled`   | `false`                                          | Serve TLS for `host`. |
+| `ingress.tls.secretName`| `""`                                             | TLS Secret, **required** when `tls.enabled` — an empty name makes ingress-nginx fall back to its self-signed default certificate. |
+| `ingress.annotations`   | `nginx.ingress.kubernetes.io/use-regex: "true"`  | Merged with your own. **`use-regex` must stay** — the auth rule is a regex and silently stops matching without it. |
+| `ingress.authPaths`     | the eight auth paths above                       | Built into a single regex that also matches the `/ctx/<base64url>/` forms. |
+
+Only ingress-nginx is supported; for any other controller leave `ingress.enabled: false` and
+write your own from the table above.
 
 ## Configuration
 
@@ -208,6 +243,7 @@ instead of setting `secretEncryptionKey` inline.
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
 | `mcpAuth.resources` / `mcpGw.resources`           | 200m CPU / 256Mi req, 512Mi limit | Per-component resources. |
 | `service.type`                                    | `ClusterIP` | Service type for both components. |
+| `ingress.*`                                       | `enabled: false` | Optional ingress-nginx Ingress — see [Built-in Ingress](#built-in-ingress). |
 | `autoscaling.mcpAuth` / `autoscaling.mcpGw`       | `enabled: false`, 1–100 replicas @ 80% CPU | Per-component HPA. When enabled, the Deployment's `replicas` is omitted so the HPA manages it. |
 | `serviceAccount.create` / `serviceAccount.name`   | `true` / `""` | Set `create: false` + `name` to reuse an existing SA. |
 | `nodeSelector`, `tolerations`, `affinity`, `podAnnotations`, `podLabels`, `podSecurityContext`, `securityContext` | `{}` / `[]` | Applied to **both** deployments. |

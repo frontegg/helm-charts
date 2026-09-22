@@ -68,6 +68,33 @@ mcpGw:
     failureThreshold: 10
     periodSeconds: 10
 
+# Routes the OAuth and discovery endpoints to mcp-auth and everything else to mcp-gw.
+# Disabled by default: hybrid installs front the services with their own ingress.
+ingress:
+  enabled: false
+  className: nginx
+  host: ""
+  ## If enabled ingress will search for secret to enable TLS
+  ##
+  tls:
+    enabled: false
+    secretName: ""
+  # use-regex is required: the auth rule is a regex, because context can be encoded as a
+  # path segment (/ctx/<b64>/authorize) that a prefix rule cannot see past.
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+  # Endpoints mcp-auth serves, matched with or without a /ctx/<b64>/ segment on either
+  # side. Everything else goes to mcp-gw.
+  authPaths:
+    - /.well-known/oauth-protected-resource
+    - /.well-known/oauth-authorization-server
+    - /authorize
+    - /token
+    - /dcr/register
+    - /integration-callback
+    - /security-stepup-verify
+    - /external-mcp
+
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
