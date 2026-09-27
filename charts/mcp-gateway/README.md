@@ -285,3 +285,25 @@ persistent state (Redis lives externally).
 helm repo update
 helm upgrade mcp-gateway frontegg/mcp-gateway --version <new-chart-version> -f my-values.yaml
 ```
+
+### Versioning
+
+Chart versions follow [Semantic Versioning](https://semver.org). The chart's `appVersion`
+is the tag of the images it ships.
+
+- **Major** — you must change something, or should review a behavior change: a removed or
+  renamed setting, a new route, new required network access, higher resource requests, or a
+  changed security or access default. Read the notes for the version before upgrading.
+- **Minor** — new images and optional features; no changes required on your side.
+- **Patch** — chart or documentation fixes on the same images.
+
+### Upgrading to 1.0.0
+
+- **Routing:** route `POST /external-mcp/callback/complete` to `mcp-auth`. Routers that match
+  by prefix on `/external-mcp/callback` already do.
+- **Resources:** `mcp-gw` now requests 512Mi of memory, with a 1Gi limit (was 256Mi / 512Mi).
+- **Network:** `mcp-gw` downloads its local tool search model from `huggingface.co` the first
+  time it searches locally. See [Local tool search](#local-tool-search).
+- **Workforce default access:** an application's default access setting is now always applied
+  to tool calls no policy matches. If it is set to allow, those calls are allowed.
+- **New optional settings:** `hybridCacheMaxStalenessSeconds` and `toolSearchMode`.
