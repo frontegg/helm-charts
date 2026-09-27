@@ -293,20 +293,6 @@ is the tag of the images it ships.
 
 - **Major** — you must change something, or should review a behavior change: a removed or
   renamed setting, a new route, new required network access, higher resource requests, or a
-  changed security or access default. Read the notes for the version before upgrading.
+  changed security or access default.
 - **Minor** — new images and optional features; no changes required on your side.
 - **Patch** — chart or documentation fixes on the same images.
-
-### Upgrading to 1.0.0
-
-- **Routing:** route `POST /external-mcp/callback/complete` to `mcp-auth`. Routers that match
-  by prefix on `/external-mcp/callback` already do.
-- **Resources:** `mcp-gw` now requests 512Mi of memory, with a 1Gi limit (was 256Mi / 512Mi).
-- **Network:** `mcp-gw` downloads its local tool search model from `huggingface.co` the first
-  time it searches locally. See [Local tool search](#local-tool-search).
-- **Workforce default access:** an application's default access setting is now always applied
-  to tool calls no policy matches. If it is set to allow, those calls are allowed.
-- **New optional settings:** `hybridCacheMaxStalenessSeconds` and `toolSearchMode`.
-- **Image tags:** the images now default to the chart's `appVersion`. If your values file sets
-  `mcpAuth.tag` or `mcpGw.tag` (for example, copied from an earlier chart's `values.yaml`),
-  remove them, or you keep running the old images.
