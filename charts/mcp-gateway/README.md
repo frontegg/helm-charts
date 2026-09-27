@@ -66,7 +66,6 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 | `/dcr/register`                               | POST   | `mcp-auth`   |
 | `/token`                                      | POST   | `mcp-auth`   |
 | `/integration-callback`                       | GET    | `mcp-auth`   |
-| `/security-stepup-verify`                     | GET    | `mcp-auth`   |
 | `/external-mcp/authorize`                     | GET    | `mcp-auth`   |
 | `/external-mcp/callback`                      | GET    | `mcp-auth`   |
 | `/external-mcp/callback/complete`             | POST   | `mcp-auth`   |
