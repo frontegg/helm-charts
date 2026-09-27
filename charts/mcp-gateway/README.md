@@ -243,7 +243,7 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 | Key                                             | Default | Description |
 |-------------------------------------------------|---------|-------------|
 | `mcpAuth.repository` / `mcpGw.repository`        | Frontegg ECR | Container images (managed by Frontegg). |
-| `mcpAuth.tag` / `mcpGw.tag`                       | pinned  | **Do not override** — upgrade the chart version to pick up new images. |
+| `mcpAuth.tag` / `mcpGw.tag`                       | `""` (the chart's `appVersion`) | **Do not override** — upgrade the chart version to pick up new images. |
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
 | `mcpAuth.resources` / `mcpGw.resources`           | `mcp-auth`: 200m CPU / 256Mi req, 512Mi limit; `mcp-gw`: 200m CPU / 512Mi req, 1Gi limit | Per-component resources. |
 | `service.type`                                    | `ClusterIP` | Service type for both components. |
@@ -307,3 +307,6 @@ is the tag of the images it ships.
 - **Workforce default access:** an application's default access setting is now always applied
   to tool calls no policy matches. If it is set to allow, those calls are allowed.
 - **New optional settings:** `hybridCacheMaxStalenessSeconds` and `toolSearchMode`.
+- **Image tags:** the images now default to the chart's `appVersion`. If your values file sets
+  `mcpAuth.tag` or `mcpGw.tag` (for example, copied from an earlier chart's `values.yaml`),
+  remove them, or you keep running the old images.
