@@ -5,7 +5,8 @@
 # MCP Auth container/deployment configuration
 mcpAuth:
   repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-auth
-  tag: 65e17bc
+  # Defaults to the chart's appVersion.
+  tag: ""
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
@@ -38,16 +39,18 @@ mcpAuth:
 # MCP Gateway container/deployment configuration
 mcpGw:
   repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-gw
-  tag: 65e17bc
+  # Defaults to the chart's appVersion.
+  tag: ""
   pullPolicy: IfNotPresent
   replicaCount: 1
   port: 8080
+  # Local tool search loads an embedding model (~90Mi) and the app's search index on top of the base footprint.
   resources:
     requests:
       cpu: 200m
-      memory: 256Mi
-    limits:
       memory: 512Mi
+    limits:
+      memory: 1Gi
   livenessProbe:
     httpGet:
       path: /health
@@ -146,5 +149,7 @@ env:
   # eventWebhookProvider: ""
   # eventWebhookUrl: ""
   # eventWebhookSecret: ""
+  # hybridCacheMaxStalenessSeconds: "86400"
+  # toolSearchMode: "cloud"
 
 existingSecret: ""

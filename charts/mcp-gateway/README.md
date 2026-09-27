@@ -66,9 +66,9 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 | `/dcr/register`                               | POST   | `mcp-auth`   |
 | `/token`                                      | POST   | `mcp-auth`   |
 | `/integration-callback`                       | GET    | `mcp-auth`   |
-| `/security-stepup-verify`                     | GET    | `mcp-auth`   |
 | `/external-mcp/authorize`                     | GET    | `mcp-auth`   |
 | `/external-mcp/callback`                      | GET    | `mcp-auth`   |
+| `/external-mcp/callback/complete`             | POST   | `mcp-auth`   |
 | Everything else (`/`)                         | *      | `mcp-gw`     |
 
 Router requirements:
@@ -122,6 +122,8 @@ For secrets, you have two options:
 | `eventWebhookProvider`       | Where to forward audit events: `datadog` \| `splunk` \| `coralogix` \| `webhook`. |
 | `eventWebhookUrl`            | Destination URL for the event webhook. |
 | `eventWebhookSecret`         | Secret used to authorize event webhook deliveries. |
+| `hybridCacheMaxStalenessSeconds` | How long cached control-plane data keeps being served while the control plane is unavailable. Default `"86400"` (24h); `"0"` disables it. See [Control plane outages](#control-plane-outages). |
+| `toolSearchMode`             | `cloud` (default) searches tools in the control plane and locally while it is unavailable; `local` only searches locally. See [Local tool search](#local-tool-search). |
 
 To add any other env var, just add a key under `env`.
 
@@ -199,14 +201,51 @@ To keep the key out of Helm values, provide it as `SECRET_ENCRYPTION_KEY` in an
 `existingSecret` (see [Referencing an existing Secret](#referencing-an-existing-secret))
 instead of setting `secretEncryptionKey` inline.
 
+### Control plane outages
+
+The gateway caches control-plane data (tools, policies, configuration) in your Redis. If
+the control plane is unavailable when the cache is due for a refresh, the gateway keeps
+serving the last data it fetched, for up to `hybridCacheMaxStalenessSeconds` (24h by
+default). Requests to the control plane time out after 10 seconds, so an unresponsive
+control plane falls back to the cache instead of stalling requests.
+
+### Local tool search
+
+`mcp-gw` can search tools itself, with the same embedding model and ranking as the
+control plane, from a search index it caches in your Redis:
+
+- `toolSearchMode: "cloud"` (default) — searches in the control plane, and locally while
+  it is unavailable.
+- `toolSearchMode: "local"` — only searches locally; queries never leave your network.
+  Searches fail, rather than fall back to the control plane, if local search is unavailable.
+
+The embedding model (about 23 MB) is downloaded on the first local search, so `mcp-gw`
+needs outbound HTTPS access to `huggingface.co`. Files are verified by checksum.
+
+Only needed if you run with `readOnlyRootFilesystem: true`: the model is written under
+`/tmp`, which is then read-only, so mount a writable volume there. With the chart's
+defaults `/tmp` is writable and nothing is needed.
+
+```yaml
+volumes:
+  - name: tmp
+    emptyDir: {}
+volumeMounts:
+  - name: tmp
+    mountPath: /tmp
+```
+
+Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the default
+`mcpGw.resources` account for.
+
 ### Common values
 
 | Key                                             | Default | Description |
 |-------------------------------------------------|---------|-------------|
 | `mcpAuth.repository` / `mcpGw.repository`        | Frontegg ECR | Container images (managed by Frontegg). |
-| `mcpAuth.tag` / `mcpGw.tag`                       | pinned  | **Do not override** — upgrade the chart version to pick up new images. |
+| `mcpAuth.tag` / `mcpGw.tag`                       | `""` (the chart's `appVersion`) | **Do not override** — upgrade the chart version to pick up new images. |
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
-| `mcpAuth.resources` / `mcpGw.resources`           | 200m CPU / 256Mi req, 512Mi limit | Per-component resources. |
+| `mcpAuth.resources` / `mcpGw.resources`           | `mcp-auth`: 200m CPU / 256Mi req, 512Mi limit; `mcp-gw`: 200m CPU / 512Mi req, 1Gi limit | Per-component resources. |
 | `service.type`                                    | `ClusterIP` | Service type for both components. |
 | `autoscaling.mcpAuth` / `autoscaling.mcpGw`       | `enabled: false`, 1–100 replicas @ 80% CPU | Per-component HPA. When enabled, the Deployment's `replicas` is omitted so the HPA manages it. |
 | `serviceAccount.create` / `serviceAccount.name`   | `true` / `""` | Set `create: false` + `name` to reuse an existing SA. |
@@ -246,3 +285,14 @@ persistent state (Redis lives externally).
 helm repo update
 helm upgrade mcp-gateway frontegg/mcp-gateway --version <new-chart-version> -f my-values.yaml
 ```
+
+### Versioning
+
+Chart versions follow [Semantic Versioning](https://semver.org). The chart's `appVersion`
+is the tag of the images it ships.
+
+- **Major** — you must change something, or should review a behavior change: a removed or
+  renamed setting, a new route, new required network access, higher resource requests, or a
+  changed security or access default.
+- **Minor** — new images and optional features; no changes required on your side.
+- **Patch** — chart or documentation fixes on the same images.

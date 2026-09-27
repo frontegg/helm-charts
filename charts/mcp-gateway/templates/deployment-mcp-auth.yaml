@@ -42,7 +42,7 @@ spec:
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.mcpAuth.repository }}:{{ .Values.mcpAuth.tag }}"
+          image: "{{ .Values.mcpAuth.repository }}:{{ .Values.mcpAuth.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.mcpAuth.pullPolicy }}
           env:
             - name: PORT
