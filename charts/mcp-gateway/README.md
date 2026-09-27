@@ -69,6 +69,7 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 | `/security-stepup-verify`                     | GET    | `mcp-auth`   |
 | `/external-mcp/authorize`                     | GET    | `mcp-auth`   |
 | `/external-mcp/callback`                      | GET    | `mcp-auth`   |
+| `/external-mcp/callback/complete`             | POST   | `mcp-auth`   |
 | Everything else (`/`)                         | *      | `mcp-gw`     |
 
 Router requirements:
