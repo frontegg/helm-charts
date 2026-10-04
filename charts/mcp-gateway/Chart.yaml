@@ -2,6 +2,6 @@ apiVersion: v2
 name: mcp-gateway
 description: A Helm chart for frontegg's MCP Gateway (mcp-auth + mcp-gw)
 type: application
-version: 1.0.1
+version: 1.0.2
 # Tag of the mcp-auth and mcp-gw images this chart version ships.
-appVersion: "f11243a"
+appVersion: "abae1cd"
