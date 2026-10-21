@@ -29,9 +29,65 @@ jobs:
           python-version: "3.10"
           check-latest: true
 
-  release:
+  # mcp-gateway: make sure the image tag pinned by the chart (appVersion) exists in the
+  # customer-facing Docker Hub organization before the chart is published. Skipped entirely
+  # until the repository variable CUSTOMER_HUB_ORG is set; only runs when the mcp-gateway
+  # chart changed. Re-promoting an existing tag is a no-op.
+  mcp-gateway-version:
+    name: Resolve mcp-gateway appVersion
     runs-on: ubuntu-latest
     needs: lint-chart
+    if: vars.CUSTOMER_HUB_ORG != ''
+    outputs:
+      changed: ${{ github.event_name == 'workflow_dispatch' || steps.filter.outputs.mcp-gateway == 'true' }}
+      tag: ${{ steps.version.outputs.tag }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect mcp-gateway chart changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            mcp-gateway:
+              - 'charts/mcp-gateway/**'
+
+      - name: Read appVersion
+        id: version
+        if: github.event_name == 'workflow_dispatch' || steps.filter.outputs.mcp-gateway == 'true'
+        run: |
+          set -euo pipefail
+          tag="$(yq -r '.appVersion' charts/mcp-gateway/Chart.yaml)"
+          [[ "$tag" =~ ^[0-9a-f]{7,40}$ ]] || { echo "::error::charts/mcp-gateway/Chart.yaml appVersion '$tag' is not a commit SHA"; exit 1; }
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+  promote-mcp-gateway-images:
+    name: Promote mcp-gateway images
+    needs: mcp-gateway-version
+    if: needs.mcp-gateway-version.outputs.changed == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        image: [hybrid-agen-co-gw, hybrid-agen-co-auth]
+    uses: frontegg/workflows/.github/workflows/promote-image.yaml@master
+    with:
+      image: ${{ matrix.image }}
+      tag: ${{ needs.mcp-gateway-version.outputs.tag }}
+      target_namespace: ${{ vars.CUSTOMER_HUB_ORG }}
+      environment: customer-registry
+    secrets:
+      source_user: ${{ secrets.CUSTOMER_PROMOTE_SOURCE_USER }}
+      source_password: ${{ secrets.CUSTOMER_PROMOTE_SOURCE_PASSWORD }}
+      target_password: ${{ secrets.CUSTOMER_HUB_TOKEN }}
+
+  release:
+    runs-on: ubuntu-latest
+    needs: [lint-chart, mcp-gateway-version, promote-mcp-gateway-images]
+    # Release when lint passed and the mcp-gateway promotion either succeeded or was skipped
+    # (unconfigured / chart untouched). A failed version lookup or promotion blocks the release
+    # so the chart never pins a tag customers cannot pull.
+    if: ${{ !cancelled() && needs.lint-chart.result == 'success' && contains(fromJSON('["success","skipped"]'), needs.mcp-gateway-version.result) && contains(fromJSON('["success","skipped"]'), needs.promote-mcp-gateway-images.result) }}
     permissions:
       contents: write
     steps:

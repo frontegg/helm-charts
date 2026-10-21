@@ -4,7 +4,7 @@
 
 # MCP Auth container/deployment configuration
 mcpAuth:
-  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-auth
+  repository: docker.io/fronteggcustomers/hybrid-agen-co-auth
   # Defaults to the chart's appVersion.
   tag: ""
   pullPolicy: IfNotPresent
@@ -38,7 +38,7 @@ mcpAuth:
 
 # MCP Gateway container/deployment configuration
 mcpGw:
-  repository: 527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg/hybrid-agen-co-gw
+  repository: docker.io/fronteggcustomers/hybrid-agen-co-gw
   # Defaults to the chart's appVersion.
   tag: ""
   pullPolicy: IfNotPresent
@@ -71,6 +71,14 @@ mcpGw:
     failureThreshold: 10
     periodSeconds: 10
 
+# The images live in a private Docker Hub organization. Create a pull secret with the credential
+# Frontegg provided and reference it here:
+#   kubectl create secret docker-registry frontegg-registry \
+#     --docker-server=https://index.docker.io/v1/ \
+#     --docker-username=fronteggcustomers \
+#     --docker-password='<token from Frontegg>'
+# imagePullSecrets:
+#   - name: frontegg-registry
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
