@@ -54,9 +54,13 @@ reference it with `existingSecret` — see [Configuration](#configuration).
 
 ### Registry access
 
-The images are published to a private Docker Hub organization, `fronteggcustomers`.
-Frontegg provides you with a pull-only token. Create a pull secret in the release
-namespace and reference it from your values:
+The images are published to a private Docker Hub organization, `fronteggcustomers`, and
+Frontegg provides you with a pull-only token. Pull them from Docker Hub directly, or, on AWS,
+through your own Amazon ECR. The `imageRegistry` value selects where both images come from.
+
+#### Docker Hub (default)
+
+Create a pull secret in the release namespace and reference it from your values:
 
 ```bash
 kubectl create secret docker-registry frontegg-registry \
@@ -72,6 +76,43 @@ imagePullSecrets:
 
 Use `https://index.docker.io/v1/` as `--docker-server`: kubelet falls back to that key for
 Docker Hub images, so the secret works with or without the `docker.io/` host prefix.
+
+#### Amazon ECR (AWS)
+
+Mirror the images into ECR in your own account with a
+[pull through cache rule](https://docs.aws.amazon.com/AmazonECR/latest/userguide/pull-through-cache-creating-rule.html).
+Your cluster then pulls from ECR with its IAM role, and the Frontegg token stays in AWS Secrets
+Manager instead of Kubernetes.
+
+1. Store the token in Secrets Manager, in the same region as the rule. The name must start with
+   `ecr-pullthroughcache/`, and the secret must use the default `aws/secretsmanager` key (ECR
+   can't read secrets encrypted with a customer-managed key):
+
+   ```bash
+   aws secretsmanager create-secret --region us-east-1 \
+     --name ecr-pullthroughcache/frontegg \
+     --secret-string '{"username":"fronteggcustomers","accessToken":"<token from Frontegg>"}'
+   ```
+
+2. Create the rule in the region your cluster runs in:
+
+   ```bash
+   aws ecr create-pull-through-cache-rule --region us-east-1 \
+     --ecr-repository-prefix frontegg-hub \
+     --upstream-registry-url registry-1.docker.io \
+     --credential-arn <arn of the secret above>
+   ```
+
+3. Point the chart at the cache. Leave `imagePullSecrets` empty: EKS nodes pull from ECR in
+   their own account with the node IAM role (it needs `ecr:BatchImportUpstreamImage` and
+   `ecr:CreateRepository` for the first pull, which creates the cached repositories).
+
+   ```yaml
+   imageRegistry: <account-id>.dkr.ecr.us-east-1.amazonaws.com/frontegg-hub/fronteggcustomers
+   ```
+
+The first pull of each chart version copies its images into your ECR; later pulls are served
+from ECR.
 
 ## Routing
 
@@ -264,7 +305,8 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 
 | Key                                             | Default | Description |
 |-------------------------------------------------|---------|-------------|
-| `mcpAuth.repository` / `mcpGw.repository`        | `docker.io/fronteggcustomers/hybrid-agen-co-{auth,gw}` | Container images (managed by Frontegg). Override only to point at your own mirror. |
+| `imageRegistry`                                   | `docker.io/fronteggcustomers` | Registry and namespace both images are pulled from (`<imageRegistry>/hybrid-agen-co-{auth,gw}`). Set it to your ECR pull-through cache prefix on AWS — see [Registry access](#registry-access). |
+| `mcpAuth.repository` / `mcpGw.repository`        | `""`    | Full image path without tag for one image; overrides `imageRegistry`. Leave empty unless you mirror the images under different names. |
 | `mcpAuth.tag` / `mcpGw.tag`                       | `""` (the chart's `appVersion`) | **Do not override** — upgrade the chart version to pick up new images. |
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
 | `mcpAuth.resources` / `mcpGw.resources`           | `mcp-auth`: 200m CPU / 256Mi req, 512Mi limit; `mcp-gw`: 200m CPU / 512Mi req, 1Gi limit | Per-component resources. |
@@ -272,7 +314,7 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 | `autoscaling.mcpAuth` / `autoscaling.mcpGw`       | `enabled: false`, 1–100 replicas @ 80% CPU | Per-component HPA. When enabled, the Deployment's `replicas` is omitted so the HPA manages it. |
 | `serviceAccount.create` / `serviceAccount.name`   | `true` / `""` | Set `create: false` + `name` to reuse an existing SA. |
 | `nodeSelector`, `tolerations`, `affinity`, `podAnnotations`, `podLabels`, `podSecurityContext`, `securityContext` | `{}` / `[]` | Applied to **both** deployments. |
-| `imagePullSecrets`                                | `[]`    | Pull secret for the Frontegg registry — see [Registry access](#registry-access). |
+| `imagePullSecrets`                                | `[]`    | Pull secret for Docker Hub — see [Registry access](#registry-access). Not needed for ECR on EKS. |
 | `volumes`, `volumeMounts`                         | `[]`    | Standard pod-level options. |
 
 Enable autoscaling per component:

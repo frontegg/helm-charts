@@ -63,6 +63,17 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Container image for a component: its `repository` when set, otherwise
+<imageRegistry>/<image name>, tagged with its `tag` or the chart's appVersion.
+Usage: include "componentImage" (dict "root" . "component" .Values.mcpGw "name" "hybrid-agen-co-gw")
+*/}}
+{{- define "componentImage" -}}
+{{- $registry := required "imageRegistry is required" .root.Values.imageRegistry | trimSuffix "/" -}}
+{{- $repository := .component.repository | default (printf "%s/%s" $registry .name) -}}
+{{- printf "%s:%s" $repository (.component.tag | default .root.Chart.AppVersion) -}}
+{{- end }}
+
+{{/*
 Convert camelCase to UPPER_SNAKE_CASE
 */}}
 {{- define "toEnvVarName" -}}
