@@ -148,8 +148,11 @@ env:
   vendorClientId: ""
   vendorClientSecret: ""
   applicationId: ""
+  # Your Frontegg cloud MCP gateway host, without scheme, e.g. <id>.mcp-gw.frontegg.com.
   fronteggMcpGwHost: ""
+  # The same Frontegg cloud host with scheme; published as the OAuth authorization server.
   externalAuthorizationUrl: ""
+  # Public URL clients use to reach this gateway, with scheme, e.g. https://mcp.example.com.
   hybridAuthHost: ""
   # secretEncryptionKey: ""
   # approvalFlowWebhookEndpoint: ""

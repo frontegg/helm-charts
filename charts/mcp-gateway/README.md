@@ -45,9 +45,9 @@ env:
   vendorClientId: "<frontegg-vendor-client-id>"
   vendorClientSecret: "<frontegg-vendor-client-secret>"
   applicationId: "<frontegg-application-id>"
-  fronteggMcpGwHost: "mcp.example.com"                 # external host, no scheme
-  externalAuthorizationUrl: "https://mcp.example.com"  # same host, with scheme
-  hybridAuthHost: "https://auth.example.com"
+  fronteggMcpGwHost: "<id>.mcp-gw.frontegg.com"                 # your Frontegg cloud MCP gateway host, no scheme
+  externalAuthorizationUrl: "https://<id>.mcp-gw.frontegg.com"  # the same cloud host, with scheme
+  hybridAuthHost: "https://mcp.example.com"                     # public URL clients use to reach this gateway
 ```
 
 To keep secrets out of your values file, put them in a Secret you manage yourself and
@@ -95,7 +95,7 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 Router requirements:
 
 - **Specificity/order:** auth paths must take priority over the catch-all `/` (declare them first on order-based routers).
-- **Host header preservation:** the incoming `Host` must match `env.fronteggMcpGwHost` — both services use it to validate issuer URLs.
+- **Host header preservation:** pass the original `Host` through. It must be the host of `env.hybridAuthHost`, the public URL clients connect to; the services build the OAuth protected-resource metadata from it.
 - **Single external hostname:** both services share one external host.
 
 ## Configuration
@@ -129,9 +129,9 @@ For secrets, you have two options:
 | `vendorClientId`           | `""`      | Frontegg vendor client ID. |
 | `vendorClientSecret`       | `""`      | Frontegg vendor client secret. |
 | `applicationId`            | `""`      | Frontegg application ID. |
-| `fronteggMcpGwHost`        | `""`      | External hostname of the gateway, **without** scheme. |
-| `externalAuthorizationUrl` | `""`      | Same hostname **with** scheme; published as the OAuth issuer. |
-| `hybridAuthHost`           | `""`      | URL of your hybrid auth service, with scheme. |
+| `fronteggMcpGwHost`        | `""`      | Your **Frontegg cloud** MCP gateway host, **without** scheme (for example `<id>.mcp-gw.frontegg.com`). The gateway reaches Frontegg through it. Not the host this chart is served on. |
+| `externalAuthorizationUrl` | `""`      | The same Frontegg cloud host **with** scheme; published to MCP clients as the OAuth authorization server. |
+| `hybridAuthHost`           | `""`      | Public URL clients use to reach this gateway, with scheme (for example `https://mcp.example.com`). Integration OAuth callbacks and step-up links point here. |
 
 ### Optional environment (`env`, commented out by default)
 
