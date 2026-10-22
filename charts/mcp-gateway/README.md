@@ -83,14 +83,22 @@ Docker Hub images, so the secret works with or without the `docker.io/` host pre
 
 #### Amazon ECR (AWS)
 
-Send Frontegg the AWS account ID your cluster runs in; Frontegg grants it pull access. Then:
+Available on request: send Frontegg the AWS account ID your cluster runs in. Frontegg adds a
+repository policy on `docker-hub/frontegg/hybrid-agen-co-auth` and `-gw` that lets that account
+pull (`ecr:BatchGetImage`, `ecr:GetDownloadUrlForLayer`, `ecr:BatchCheckLayerAvailability`).
+Every image a chart version pins is already cached there. Then:
 
 ```yaml
 imageSource: ecr
 ```
 
-No `imagePullSecrets`: EKS nodes pull with their IAM role. The managed policy
-`AmazonEC2ContainerRegistryReadOnly` on the node role is enough.
+- No `imagePullSecrets`: EKS nodes pull with their IAM role. The managed policy
+  `AmazonEC2ContainerRegistryReadOnly` on the node role covers your side.
+- Remove any `mcpAuth.repository` / `mcpGw.repository` override: it takes precedence over
+  `imageSource`.
+- The registry is in `us-east-1`. Nodes need a route to `*.dkr.ecr.us-east-1.amazonaws.com`
+  (internet, or an ECR interface endpoint in `us-east-1`); an ECR VPC endpoint in another region
+  doesn't reach it.
 
 #### Your own registry
 
@@ -360,7 +368,8 @@ organization, and pulling now requires a credential:
 2. Create the `frontegg-registry` pull secret and set `imagePullSecrets` as described in
    [Registry access](#registry-access).
 3. Remove any `mcpAuth.repository` / `mcpGw.repository` override that points at
-   `527305576865.dkr.ecr.us-east-1.amazonaws.com`.
+   `527305576865.dkr.ecr.us-east-1.amazonaws.com`. From 2.1.0, set `imageSource: ecr` instead
+   if you pull from Frontegg's ECR.
 
 This release also ships image `7719250`, which changes how the gateway authenticates and is
 configured:

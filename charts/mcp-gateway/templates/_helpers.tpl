@@ -70,7 +70,7 @@ dockerhub and ecr are Frontegg's own registries; custom uses .Values.imageRegist
 {{- $registries := dict
     "dockerhub" "docker.io/fronteggcustomers"
     "ecr" "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg" -}}
-{{- $source := .Values.imageSource | default "dockerhub" -}}
+{{- $source := .Values.imageSource | default "dockerhub" | toString -}}
 {{- if eq $source "custom" -}}
 {{- required "imageRegistry is required when imageSource is custom" .Values.imageRegistry | trimSuffix "/" -}}
 {{- else if hasKey $registries $source -}}
@@ -86,7 +86,10 @@ Container image for a component: its `repository` when set, otherwise
 Usage: include "componentImage" (dict "root" . "component" .Values.mcpGw "name" "hybrid-agen-co-gw")
 */}}
 {{- define "componentImage" -}}
-{{- $repository := .component.repository | default (printf "%s/%s" (include "imageRegistry" .root) .name) -}}
+{{- $repository := .component.repository -}}
+{{- if not $repository -}}
+{{- $repository = printf "%s/%s" (include "imageRegistry" .root) .name -}}
+{{- end -}}
 {{- printf "%s:%s" $repository (.component.tag | default .root.Chart.AppVersion) -}}
 {{- end }}
 
