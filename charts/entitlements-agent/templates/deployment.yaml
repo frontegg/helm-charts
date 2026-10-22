@@ -1,16 +1,18 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fullname" . }}
+  name: {{ include "fullname" . }}-mcp-server
   labels:
     {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: mcp-server
 spec:
   {{- if not .Values.autoscaling.enabled }}
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.mcpServer.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
       {{- include "selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: mcp-server
   template:
     metadata:
       {{- with .Values.podAnnotations }}
@@ -19,6 +21,7 @@ spec:
       {{- end }}
       labels:
         {{- include "commonLabels" . | nindent 8 }}
+        app.kubernetes.io/component: mcp-server
         {{- with .Values.podLabels }}
         {{- toYaml . | nindent 8 }}
         {{- end }}
@@ -33,45 +36,11 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
-        - name: {{ .Chart.Name }}-pdp-agent
+        - name: mcp-server
           {{- with .Values.securityContext }}
           securityContext:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          image: "{{ .Values.pdpAgent.repository }}:{{ .Values.pdpAgent.tag }}"
-          imagePullPolicy: {{ .Values.pdpAgent.pullPolicy }}
-          {{- if .Values.env.pdpAgent }}
-          env:
-            {{- range $key, $value := .Values.env.pdpAgent }}
-            - name: {{ include "toEnvVarName" $key }}
-              value: {{ $value | quote }}
-            {{- end }}
-          {{- end }}
-          ports:
-            - name: http
-              containerPort: 8181
-              protocol: TCP
-          {{- with .Values.livenessProbe }}
-          livenessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.readinessProbe }}
-          readinessProbe:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.resources.pdpAgent }}
-          resources:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.volumeMounts }}
-          volumeMounts:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-        - name: {{ .Chart.Name }}-mcp-server
-          securityContext:
-            capabilities:
-              drop:
-              - NET_RAW
           image: "{{ .Values.mcpServer.repository }}:{{ .Values.mcpServer.tag }}"
           imagePullPolicy: {{ .Values.mcpServer.pullPolicy }}
           {{- if .Values.env.mcpServer }}
@@ -82,11 +51,15 @@ spec:
             {{- end }}
           {{- end }}
           ports:
-            - name: http-mcp-server
+            - name: http
               containerPort: 8182
               protocol: TCP
           {{- with .Values.resources.mcpServer }}
           resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.volumeMounts }}
+          volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
       {{- with .Values.volumes }}
