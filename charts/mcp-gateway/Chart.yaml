@@ -6,4 +6,4 @@ version: 2.0.0
 # Tag of the mcp-auth and mcp-gw images this chart version ships. Customers pull it from
 # docker.io/fronteggcustomers: before changing it, run "Push To Customers" in frontegg/mcp-gateway
 # with the new tag, or installs of this chart version fail with image not found.
-appVersion: "abae1cd"
+appVersion: "7719250"

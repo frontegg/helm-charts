@@ -45,9 +45,8 @@ env:
   vendorClientId: "<frontegg-vendor-client-id>"
   vendorClientSecret: "<frontegg-vendor-client-secret>"
   applicationId: "<frontegg-application-id>"
-  fronteggMcpGwHost: "<id>.mcp-gw.frontegg.com"                 # your Frontegg cloud MCP gateway host, no scheme
-  externalAuthorizationUrl: "https://<id>.mcp-gw.frontegg.com"  # the same cloud host, with scheme
-  hybridAuthHost: "https://mcp.example.com"                     # public URL clients use to reach this gateway
+  fronteggMcpGwHost: "<id>.mcp-gw.frontegg.com"  # your Frontegg cloud MCP gateway host, no scheme
+  hybridAuthHost: "https://mcp.example.com"      # public URL clients use to reach this gateway
 ```
 
 To keep secrets out of your values file, put them in a Secret you manage yourself and
@@ -129,9 +128,10 @@ For secrets, you have two options:
 | `vendorClientId`           | `""`      | Frontegg vendor client ID. |
 | `vendorClientSecret`       | `""`      | Frontegg vendor client secret. |
 | `applicationId`            | `""`      | Frontegg application ID. |
-| `fronteggMcpGwHost`        | `""`      | Your **Frontegg cloud** MCP gateway host, **without** scheme (for example `<id>.mcp-gw.frontegg.com`). The gateway reaches Frontegg through it. Not the host this chart is served on. |
-| `externalAuthorizationUrl` | `""`      | The same Frontegg cloud host **with** scheme; published to MCP clients as the OAuth authorization server. |
+| `fronteggMcpGwHost`        | `""`      | Your **Frontegg cloud** MCP gateway host, **without** scheme (for example `<id>.mcp-gw.frontegg.com`). The gateway reads your signing keys and feature flags from it and publishes `https://<fronteggMcpGwHost>` to MCP clients as the OAuth authorization server. Not the host this chart is served on. |
 | `hybridAuthHost`           | `""`      | Public URL clients use to reach this gateway, with scheme (for example `https://mcp.example.com`). Integration OAuth callbacks and step-up links point here. |
+
+Both pods check these at startup: without `fronteggMcpGwHost` they log `FRONTEGG_MCP_GW_HOST env var is required` and exit; without `hybridAuthHost` they log an error and keep running, but integration OAuth callbacks fail.
 
 ### Optional environment (`env`, commented out by default)
 
@@ -145,6 +145,7 @@ For secrets, you have two options:
 | `eventWebhookSecret`         | Secret used to authorize event webhook deliveries. |
 | `hybridCacheMaxStalenessSeconds` | How long cached control-plane data keeps being served while the control plane is unavailable. Default `"86400"` (24h); `"0"` disables it. See [Control plane outages](#control-plane-outages). |
 | `toolSearchMode`             | `cloud` (default) searches tools in the control plane and locally while it is unavailable; `local` only searches locally. See [Local tool search](#local-tool-search). |
+| `externalAuthorizationUrl`   | **Deprecated.** Read only when `fronteggMcpGwHost` is unset, as the source of that host. The authorization server is always `https://<fronteggMcpGwHost>`. |
 
 To add any other env var, just add a key under `env`.
 
@@ -330,4 +331,25 @@ organization, and pulling now requires a credential:
 3. Remove any `mcpAuth.repository` / `mcpGw.repository` override that points at
    `527305576865.dkr.ecr.us-east-1.amazonaws.com`.
 
-No other values changed.
+This release also ships image `7719250`, which changes how the gateway authenticates and is
+configured:
+
+- **`fronteggMcpGwHost` is your Frontegg cloud MCP gateway host**, not the host this chart is
+  served on. The gateway reads your signing keys and feature flags from it. Set `hybridAuthHost`
+  to the public URL clients use, and make your router pass that host through as `Host`.
+- **`externalAuthorizationUrl` is deprecated.** The authorization server is
+  `https://<fronteggMcpGwHost>`. You can remove it once `fronteggMcpGwHost` is set.
+- **Startup checks.** Pods exit at startup when `fronteggMcpGwHost` (or the deprecated
+  `externalAuthorizationUrl`) is missing. A missing `hybridAuthHost` is logged as an error.
+- **Tenant and user access tokens are rejected** with 401. User tokens and machine tokens are
+  unaffected.
+- **Requests carry the token's real claims** (tenant, user, application, session). Data the
+  gateway keyed by tenant in your Redis resets once: approved policy bypasses (users approve
+  again), rate-limit counters and the user-groups cache.
+- **Tokens are checked against `applicationId`.** A token issued for another application is
+  rejected when `applicationId` is set.
+- **`hybridCacheMaxStalenessSeconds: "0"`** now caches signing keys for an hour, as other
+  control-plane data, instead of fetching them on every request.
+- **Integration tool results are compact JSON** instead of pretty-printed JSON.
+- **MCP clients that send no OAuth scope now sign in.** The gateway requests
+  `openid profile email` for them.
