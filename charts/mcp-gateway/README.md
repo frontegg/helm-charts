@@ -45,13 +45,33 @@ env:
   vendorClientId: "<frontegg-vendor-client-id>"
   vendorClientSecret: "<frontegg-vendor-client-secret>"
   applicationId: "<frontegg-application-id>"
-  fronteggMcpGwHost: "mcp.example.com"                 # external host, no scheme
-  externalAuthorizationUrl: "https://mcp.example.com"  # same host, with scheme
-  hybridAuthHost: "https://auth.example.com"
+  fronteggMcpGwHost: "<id>.mcp-gw.frontegg.com"  # your Frontegg cloud MCP gateway host, no scheme
+  hybridAuthHost: "https://mcp.example.com"      # public URL clients use to reach this gateway
 ```
 
 To keep secrets out of your values file, put them in a Secret you manage yourself and
 reference it with `existingSecret` — see [Configuration](#configuration).
+
+### Registry access
+
+The images are published to a private Docker Hub organization, `fronteggcustomers`.
+Frontegg provides you with a pull-only token. Create a pull secret in the release
+namespace and reference it from your values:
+
+```bash
+kubectl create secret docker-registry frontegg-registry \
+  --docker-server=https://index.docker.io/v1/ \
+  --docker-username=fronteggcustomers \
+  --docker-password='<token from Frontegg>'
+```
+
+```yaml
+imagePullSecrets:
+  - name: frontegg-registry
+```
+
+Use `https://index.docker.io/v1/` as `--docker-server`: kubelet falls back to that key for
+Docker Hub images, so the secret works with or without the `docker.io/` host prefix.
 
 ## Routing
 
@@ -74,7 +94,7 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 Router requirements:
 
 - **Specificity/order:** auth paths must take priority over the catch-all `/` (declare them first on order-based routers).
-- **Host header preservation:** the incoming `Host` must match `env.fronteggMcpGwHost` — both services use it to validate issuer URLs.
+- **Host header preservation:** pass the original `Host` through. It must be the host of `env.hybridAuthHost`, the public URL clients connect to; the services build the OAuth protected-resource metadata from it.
 - **Single external hostname:** both services share one external host.
 
 ## Configuration
@@ -108,9 +128,10 @@ For secrets, you have two options:
 | `vendorClientId`           | `""`      | Frontegg vendor client ID. |
 | `vendorClientSecret`       | `""`      | Frontegg vendor client secret. |
 | `applicationId`            | `""`      | Frontegg application ID. |
-| `fronteggMcpGwHost`        | `""`      | External hostname of the gateway, **without** scheme. |
-| `externalAuthorizationUrl` | `""`      | Same hostname **with** scheme; published as the OAuth issuer. |
-| `hybridAuthHost`           | `""`      | URL of your hybrid auth service, with scheme. |
+| `fronteggMcpGwHost`        | `""`      | Your **Frontegg cloud** MCP gateway host, **without** scheme (for example `<id>.mcp-gw.frontegg.com`). The gateway reads your signing keys and feature flags from it and publishes `https://<fronteggMcpGwHost>` to MCP clients as the OAuth authorization server. Not the host this chart is served on. |
+| `hybridAuthHost`           | `""`      | Public URL clients use to reach this gateway, with scheme (for example `https://mcp.example.com`). Integration OAuth callbacks and step-up links point here. |
+
+Both pods check these at startup: without `fronteggMcpGwHost` they log `FRONTEGG_MCP_GW_HOST env var is required` and exit; without `hybridAuthHost` they log an error and keep running, but integration OAuth callbacks fail.
 
 ### Optional environment (`env`, commented out by default)
 
@@ -124,6 +145,7 @@ For secrets, you have two options:
 | `eventWebhookSecret`         | Secret used to authorize event webhook deliveries. |
 | `hybridCacheMaxStalenessSeconds` | How long cached control-plane data keeps being served while the control plane is unavailable. Default `"86400"` (24h); `"0"` disables it. See [Control plane outages](#control-plane-outages). |
 | `toolSearchMode`             | `cloud` (default) searches tools in the control plane and locally while it is unavailable; `local` only searches locally. See [Local tool search](#local-tool-search). |
+| `externalAuthorizationUrl`   | **Deprecated.** Read only when `fronteggMcpGwHost` is unset, as the source of that host. The authorization server is always `https://<fronteggMcpGwHost>`. |
 
 To add any other env var, just add a key under `env`.
 
@@ -242,7 +264,7 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 
 | Key                                             | Default | Description |
 |-------------------------------------------------|---------|-------------|
-| `mcpAuth.repository` / `mcpGw.repository`        | Frontegg ECR | Container images (managed by Frontegg). |
+| `mcpAuth.repository` / `mcpGw.repository`        | `docker.io/fronteggcustomers/hybrid-agen-co-{auth,gw}` | Container images (managed by Frontegg). Override only to point at your own mirror. |
 | `mcpAuth.tag` / `mcpGw.tag`                       | `""` (the chart's `appVersion`) | **Do not override** — upgrade the chart version to pick up new images. |
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
 | `mcpAuth.resources` / `mcpGw.resources`           | `mcp-auth`: 200m CPU / 256Mi req, 512Mi limit; `mcp-gw`: 200m CPU / 512Mi req, 1Gi limit | Per-component resources. |
@@ -250,7 +272,8 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 | `autoscaling.mcpAuth` / `autoscaling.mcpGw`       | `enabled: false`, 1–100 replicas @ 80% CPU | Per-component HPA. When enabled, the Deployment's `replicas` is omitted so the HPA manages it. |
 | `serviceAccount.create` / `serviceAccount.name`   | `true` / `""` | Set `create: false` + `name` to reuse an existing SA. |
 | `nodeSelector`, `tolerations`, `affinity`, `podAnnotations`, `podLabels`, `podSecurityContext`, `securityContext` | `{}` / `[]` | Applied to **both** deployments. |
-| `imagePullSecrets`, `volumes`, `volumeMounts`     | `[]`    | Standard pod-level options. |
+| `imagePullSecrets`                                | `[]`    | Pull secret for the Frontegg registry — see [Registry access](#registry-access). |
+| `volumes`, `volumeMounts`                         | `[]`    | Standard pod-level options. |
 
 Enable autoscaling per component:
 
@@ -296,3 +319,37 @@ is the tag of the images it ships.
   changed security or access default.
 - **Minor** — new images and optional features; no changes required on your side.
 - **Patch** — chart or documentation fixes on the same images.
+
+### Upgrading to 2.0.0
+
+Images moved from Frontegg's internal registry to the `fronteggcustomers` Docker Hub
+organization, and pulling now requires a credential:
+
+1. Obtain a pull token from Frontegg.
+2. Create the `frontegg-registry` pull secret and set `imagePullSecrets` as described in
+   [Registry access](#registry-access).
+3. Remove any `mcpAuth.repository` / `mcpGw.repository` override that points at
+   `527305576865.dkr.ecr.us-east-1.amazonaws.com`.
+
+This release also ships image `7719250`, which changes how the gateway authenticates and is
+configured:
+
+- **`fronteggMcpGwHost` is your Frontegg cloud MCP gateway host**, not the host this chart is
+  served on. The gateway reads your signing keys and feature flags from it. Set `hybridAuthHost`
+  to the public URL clients use, and make your router pass that host through as `Host`.
+- **`externalAuthorizationUrl` is deprecated.** The authorization server is
+  `https://<fronteggMcpGwHost>`. You can remove it once `fronteggMcpGwHost` is set.
+- **Startup checks.** Pods exit at startup when `fronteggMcpGwHost` (or the deprecated
+  `externalAuthorizationUrl`) is missing. A missing `hybridAuthHost` is logged as an error.
+- **Tenant and user access tokens are rejected** with 401. User tokens and machine tokens are
+  unaffected.
+- **Requests carry the token's real claims** (tenant, user, application, session). Data the
+  gateway keyed by tenant in your Redis resets once: approved policy bypasses (users approve
+  again), rate-limit counters and the user-groups cache.
+- **Tokens are checked against `applicationId`.** A token issued for another application is
+  rejected when `applicationId` is set.
+- **`hybridCacheMaxStalenessSeconds: "0"`** now caches signing keys for an hour, as other
+  control-plane data, instead of fetching them on every request.
+- **Integration tool results are compact JSON** instead of pretty-printed JSON.
+- **MCP clients that send no OAuth scope now sign in.** The gateway requests
+  `openid profile email` for them.

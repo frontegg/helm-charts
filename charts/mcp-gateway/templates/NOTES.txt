@@ -39,7 +39,7 @@ Health checks:
 
 Routing Configuration:
   This chart ships no Ingress/router. Front both services with your own ingress or
-  API gateway, preserving the Host header (must match env.fronteggMcpGwHost).
+  API gateway, preserving the Host header (must be the host of env.hybridAuthHost).
   Route the auth paths below to -auth; send everything else to -gw. Declare the auth
   paths BEFORE the catch-all "/" on order-based routers.
 
