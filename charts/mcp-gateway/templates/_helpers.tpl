@@ -63,13 +63,30 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Registry both images come from, by .Values.imageSource:
+dockerhub and ecr are Frontegg's own registries; custom uses .Values.imageRegistry.
+*/}}
+{{- define "imageRegistry" -}}
+{{- $registries := dict
+    "dockerhub" "docker.io/fronteggcustomers"
+    "ecr" "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg" -}}
+{{- $source := .Values.imageSource | default "dockerhub" -}}
+{{- if eq $source "custom" -}}
+{{- required "imageRegistry is required when imageSource is custom" .Values.imageRegistry | trimSuffix "/" -}}
+{{- else if hasKey $registries $source -}}
+{{- get $registries $source -}}
+{{- else -}}
+{{- fail (printf "imageSource must be dockerhub, ecr or custom (got %q)" $source) -}}
+{{- end -}}
+{{- end }}
+
+{{/*
 Container image for a component: its `repository` when set, otherwise
-<imageRegistry>/<image name>, tagged with its `tag` or the chart's appVersion.
+<registry>/<image name>, tagged with its `tag` or the chart's appVersion.
 Usage: include "componentImage" (dict "root" . "component" .Values.mcpGw "name" "hybrid-agen-co-gw")
 */}}
 {{- define "componentImage" -}}
-{{- $registry := required "imageRegistry is required" .root.Values.imageRegistry | trimSuffix "/" -}}
-{{- $repository := .component.repository | default (printf "%s/%s" $registry .name) -}}
+{{- $repository := .component.repository | default (printf "%s/%s" (include "imageRegistry" .root) .name) -}}
 {{- printf "%s:%s" $repository (.component.tag | default .root.Chart.AppVersion) -}}
 {{- end }}
 

@@ -54,9 +54,13 @@ reference it with `existingSecret` — see [Configuration](#configuration).
 
 ### Registry access
 
-The images are published to a private Docker Hub organization, `fronteggcustomers`, and
-Frontegg provides you with a pull-only token. Pull them from Docker Hub directly, or, on AWS,
-through your own Amazon ECR. The `imageRegistry` value selects where both images come from.
+Frontegg publishes the images to Docker Hub and to Amazon ECR. Pick one with `imageSource`:
+
+| `imageSource` | Images pulled from | Authentication |
+|---|---|---|
+| `dockerhub` (default) | `docker.io/fronteggcustomers` | Pull secret with the token Frontegg gives you |
+| `ecr` | Frontegg's Amazon ECR (`us-east-1`) | Your nodes' IAM role, once Frontegg has granted your AWS account access |
+| `custom` | `imageRegistry`, your own mirror | Whatever your mirror needs |
 
 #### Docker Hub (default)
 
@@ -79,40 +83,24 @@ Docker Hub images, so the secret works with or without the `docker.io/` host pre
 
 #### Amazon ECR (AWS)
 
-Mirror the images into ECR in your own account with a
-[pull through cache rule](https://docs.aws.amazon.com/AmazonECR/latest/userguide/pull-through-cache-creating-rule.html).
-Your cluster then pulls from ECR with its IAM role, and the Frontegg token stays in AWS Secrets
-Manager instead of Kubernetes.
+Send Frontegg the AWS account ID your cluster runs in; Frontegg grants it pull access. Then:
 
-1. Store the token in Secrets Manager, in the same region as the rule. The name must start with
-   `ecr-pullthroughcache/`, and the secret must use the default `aws/secretsmanager` key (ECR
-   can't read secrets encrypted with a customer-managed key):
+```yaml
+imageSource: ecr
+```
 
-   ```bash
-   aws secretsmanager create-secret --region us-east-1 \
-     --name ecr-pullthroughcache/frontegg \
-     --secret-string '{"username":"fronteggcustomers","accessToken":"<token from Frontegg>"}'
-   ```
+No `imagePullSecrets`: EKS nodes pull with their IAM role. The managed policy
+`AmazonEC2ContainerRegistryReadOnly` on the node role is enough.
 
-2. Create the rule in the region your cluster runs in:
+#### Your own registry
 
-   ```bash
-   aws ecr create-pull-through-cache-rule --region us-east-1 \
-     --ecr-repository-prefix frontegg-hub \
-     --upstream-registry-url registry-1.docker.io \
-     --credential-arn <arn of the secret above>
-   ```
+Mirror `hybrid-agen-co-auth` and `hybrid-agen-co-gw` (same names and tags) into your registry,
+for example with an ECR pull-through cache of the Docker Hub organization, and set:
 
-3. Point the chart at the cache. Leave `imagePullSecrets` empty: EKS nodes pull from ECR in
-   their own account with the node IAM role (it needs `ecr:BatchImportUpstreamImage` and
-   `ecr:CreateRepository` for the first pull, which creates the cached repositories).
-
-   ```yaml
-   imageRegistry: <account-id>.dkr.ecr.us-east-1.amazonaws.com/frontegg-hub/fronteggcustomers
-   ```
-
-The first pull of each chart version copies its images into your ECR; later pulls are served
-from ECR.
+```yaml
+imageSource: custom
+imageRegistry: registry.example.com/frontegg   # images: <imageRegistry>/hybrid-agen-co-{auth,gw}
+```
 
 ## Routing
 
@@ -305,8 +293,9 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 
 | Key                                             | Default | Description |
 |-------------------------------------------------|---------|-------------|
-| `imageRegistry`                                   | `docker.io/fronteggcustomers` | Registry and namespace both images are pulled from (`<imageRegistry>/hybrid-agen-co-{auth,gw}`). Set it to your ECR pull-through cache prefix on AWS — see [Registry access](#registry-access). |
-| `mcpAuth.repository` / `mcpGw.repository`        | `""`    | Full image path without tag for one image; overrides `imageRegistry`. Leave empty unless you mirror the images under different names. |
+| `imageSource`                                     | `dockerhub` | Where both images come from: `dockerhub`, `ecr` or `custom` — see [Registry access](#registry-access). |
+| `imageRegistry`                                   | `""`    | Registry and namespace for `imageSource: custom` (`<imageRegistry>/hybrid-agen-co-{auth,gw}`). |
+| `mcpAuth.repository` / `mcpGw.repository`        | `""`    | Full image path without tag for one image; overrides `imageSource`. Leave empty unless you mirror the images under different names. |
 | `mcpAuth.tag` / `mcpGw.tag`                       | `""` (the chart's `appVersion`) | **Do not override** — upgrade the chart version to pick up new images. |
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
 | `mcpAuth.resources` / `mcpGw.resources`           | `mcp-auth`: 200m CPU / 256Mi req, 512Mi limit; `mcp-gw`: 200m CPU / 512Mi req, 1Gi limit | Per-component resources. |
