@@ -63,6 +63,37 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
+Registry both images come from. .Values.imageRegistry is "dockerhub" or "aws" for Frontegg's own
+registries; any other non-empty value is the customer's mirror (registry and namespace).
+*/}}
+{{- define "imageRegistry" -}}
+{{- $registries := dict
+    "dockerhub" "docker.io/fronteggcustomers"
+    "aws" "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg" -}}
+{{- $value := "" -}}
+{{- if kindIs "string" .Values.imageRegistry -}}
+{{- $value = .Values.imageRegistry | trim | trimSuffix "/" -}}
+{{- end -}}
+{{- if not $value -}}
+{{- fail "imageRegistry must be dockerhub, aws or your registry (e.g. registry.example.com/frontegg)" -}}
+{{- end -}}
+{{- get $registries $value | default $value -}}
+{{- end }}
+
+{{/*
+Container image for a component: its `repository` when set, otherwise
+<registry>/<image name>, tagged with its `tag` or the chart's appVersion.
+Usage: include "componentImage" (dict "root" . "component" .Values.mcpGw "name" "hybrid-agen-co-gw")
+*/}}
+{{- define "componentImage" -}}
+{{- $repository := .component.repository -}}
+{{- if not $repository -}}
+{{- $repository = printf "%s/%s" (include "imageRegistry" .root) .name -}}
+{{- end -}}
+{{- printf "%s:%s" $repository (.component.tag | default .root.Chart.AppVersion) -}}
+{{- end }}
+
+{{/*
 Convert camelCase to UPPER_SNAKE_CASE
 */}}
 {{- define "toEnvVarName" -}}
