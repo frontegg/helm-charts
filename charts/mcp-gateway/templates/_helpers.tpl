@@ -63,21 +63,21 @@ Create the name of the service account to use
 {{- end }}
 
 {{/*
-Registry both images come from, by .Values.imageSource:
-dockerhub and ecr are Frontegg's own registries; custom uses .Values.imageRegistry.
+Registry both images come from. .Values.imageRegistry is "dockerhub" or "aws" for Frontegg's own
+registries; any other non-empty value is the customer's mirror (registry and namespace).
 */}}
 {{- define "imageRegistry" -}}
 {{- $registries := dict
     "dockerhub" "docker.io/fronteggcustomers"
-    "ecr" "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg" -}}
-{{- $source := .Values.imageSource | default "dockerhub" | toString -}}
-{{- if eq $source "custom" -}}
-{{- required "imageRegistry is required when imageSource is custom" .Values.imageRegistry | trimSuffix "/" -}}
-{{- else if hasKey $registries $source -}}
-{{- get $registries $source -}}
-{{- else -}}
-{{- fail (printf "imageSource must be dockerhub, ecr or custom (got %q)" $source) -}}
+    "aws" "527305576865.dkr.ecr.us-east-1.amazonaws.com/docker-hub/frontegg" -}}
+{{- $value := "" -}}
+{{- if kindIs "string" .Values.imageRegistry -}}
+{{- $value = .Values.imageRegistry | trim | trimSuffix "/" -}}
 {{- end -}}
+{{- if not $value -}}
+{{- fail "imageRegistry must be dockerhub, aws or your registry (e.g. registry.example.com/frontegg)" -}}
+{{- end -}}
+{{- get $registries $value | default $value -}}
 {{- end }}
 
 {{/*

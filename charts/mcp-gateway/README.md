@@ -54,13 +54,13 @@ reference it with `existingSecret` — see [Configuration](#configuration).
 
 ### Registry access
 
-Frontegg publishes the images to Docker Hub and to Amazon ECR. Pick one with `imageSource`:
+Frontegg publishes the images to Docker Hub and to Amazon ECR. Pick one with `imageRegistry`:
 
-| `imageSource` | Images pulled from | Authentication |
+| `imageRegistry` | Images pulled from | Authentication |
 |---|---|---|
 | `dockerhub` (default) | `docker.io/fronteggcustomers` | Pull secret with the token Frontegg gives you |
-| `ecr` | Frontegg's Amazon ECR (`us-east-1`) | Your nodes' IAM role, once Frontegg has granted your AWS account access |
-| `custom` | `imageRegistry`, your own mirror | Whatever your mirror needs |
+| `aws` | Frontegg's Amazon ECR (`us-east-1`) | Your nodes' IAM role, once Frontegg has granted your AWS account access |
+| Any other value, e.g. `registry.example.com/frontegg` | Your own mirror: `<imageRegistry>/hybrid-agen-co-{auth,gw}` | Whatever your mirror needs |
 
 #### Docker Hub (default)
 
@@ -89,13 +89,13 @@ pull (`ecr:BatchGetImage`, `ecr:GetDownloadUrlForLayer`, `ecr:BatchCheckLayerAva
 Every image a chart version pins is already cached there. Then:
 
 ```yaml
-imageSource: ecr
+imageRegistry: aws
 ```
 
 - No `imagePullSecrets`: EKS nodes pull with their IAM role. The managed policy
   `AmazonEC2ContainerRegistryReadOnly` on the node role covers your side.
 - Remove any `mcpAuth.repository` / `mcpGw.repository` override: it takes precedence over
-  `imageSource`.
+  `imageRegistry`.
 - The registry is in `us-east-1`. Nodes need a route to `*.dkr.ecr.us-east-1.amazonaws.com`
   (internet, or an ECR interface endpoint in `us-east-1`); an ECR VPC endpoint in another region
   doesn't reach it.
@@ -106,7 +106,6 @@ Mirror `hybrid-agen-co-auth` and `hybrid-agen-co-gw` (same names and tags) into 
 for example with an ECR pull-through cache of the Docker Hub organization, and set:
 
 ```yaml
-imageSource: custom
 imageRegistry: registry.example.com/frontegg   # images: <imageRegistry>/hybrid-agen-co-{auth,gw}
 ```
 
@@ -301,9 +300,8 @@ Loading the model adds about 90 MB of memory to an `mcp-gw` pod, which the defau
 
 | Key                                             | Default | Description |
 |-------------------------------------------------|---------|-------------|
-| `imageSource`                                     | `dockerhub` | Where both images come from: `dockerhub`, `ecr` or `custom` — see [Registry access](#registry-access). |
-| `imageRegistry`                                   | `""`    | Registry and namespace for `imageSource: custom` (`<imageRegistry>/hybrid-agen-co-{auth,gw}`). |
-| `mcpAuth.repository` / `mcpGw.repository`        | `""`    | Full image path without tag for one image; overrides `imageSource`. Leave empty unless you mirror the images under different names. |
+| `imageRegistry`                                   | `dockerhub` | Where both images come from: `dockerhub`, `aws`, or your own registry and namespace (`<imageRegistry>/hybrid-agen-co-{auth,gw}`) — see [Registry access](#registry-access). Must not be empty. |
+| `mcpAuth.repository` / `mcpGw.repository`        | `""`    | Full image path without tag for one image; overrides `imageRegistry`. Leave empty unless you mirror the images under different names. |
 | `mcpAuth.tag` / `mcpGw.tag`                       | `""` (the chart's `appVersion`) | **Do not override** — upgrade the chart version to pick up new images. |
 | `mcpAuth.port` / `mcpGw.port`                     | `8080`  | Container/Service port. |
 | `mcpAuth.resources` / `mcpGw.resources`           | `mcp-auth`: 200m CPU / 256Mi req, 512Mi limit; `mcp-gw`: 200m CPU / 512Mi req, 1Gi limit | Per-component resources. |
@@ -368,7 +366,7 @@ organization, and pulling now requires a credential:
 2. Create the `frontegg-registry` pull secret and set `imagePullSecrets` as described in
    [Registry access](#registry-access).
 3. Remove any `mcpAuth.repository` / `mcpGw.repository` override that points at
-   `527305576865.dkr.ecr.us-east-1.amazonaws.com`. From 2.1.0, set `imageSource: ecr` instead
+   `527305576865.dkr.ecr.us-east-1.amazonaws.com`. From 2.1.0, set `imageRegistry: aws` instead
    if you pull from Frontegg's ECR.
 
 This release also ships image `7719250`, which changes how the gateway authenticates and is

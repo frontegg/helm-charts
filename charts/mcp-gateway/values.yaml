@@ -2,18 +2,17 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
-# Where both images are pulled from. Frontegg publishes them in two places:
-#   dockerhub - docker.io/fronteggcustomers (default). Needs the pull secret below.
-#   ecr       - Frontegg's Amazon ECR. EKS nodes pull with their IAM role, so no pull secret,
+# Where both images are pulled from:
+#   dockerhub - Frontegg's Docker Hub, docker.io/fronteggcustomers (default). Needs the pull secret below.
+#   aws       - Frontegg's Amazon ECR. EKS nodes pull with their IAM role, so no pull secret,
 #               once Frontegg has granted your AWS account access.
-#   custom    - your own mirror: set imageRegistry, e.g. registry.example.com/frontegg
-imageSource: dockerhub
-# Registry and namespace for imageSource: custom (images are <imageRegistry>/hybrid-agen-co-{auth,gw}).
-imageRegistry: ""
+#   anything else is used as-is as your own mirror (registry and namespace), e.g.
+#   registry.example.com/frontegg -> registry.example.com/frontegg/hybrid-agen-co-{auth,gw}
+imageRegistry: dockerhub
 
 # MCP Auth container/deployment configuration
 mcpAuth:
-  # Full image path without tag. Overrides imageSource for this image; leave empty normally.
+  # Full image path without tag. Overrides imageRegistry for this image; leave empty normally.
   repository: ""
   # Defaults to the chart's appVersion.
   tag: ""
@@ -48,7 +47,7 @@ mcpAuth:
 
 # MCP Gateway container/deployment configuration
 mcpGw:
-  # Full image path without tag. Overrides imageSource for this image; leave empty normally.
+  # Full image path without tag. Overrides imageRegistry for this image; leave empty normally.
   repository: ""
   # Defaults to the chart's appVersion.
   tag: ""
