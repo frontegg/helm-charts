@@ -2,9 +2,18 @@
 # This is a YAML-formatted file.
 # Declare variables to be passed into your templates.
 
+# Where both images are pulled from:
+#   dockerhub - Frontegg's Docker Hub, docker.io/fronteggcustomers (default). Needs the pull secret below.
+#   aws       - Frontegg's Amazon ECR. EKS nodes pull with their IAM role, so no pull secret,
+#               once Frontegg has granted your AWS account access.
+#   anything else is used as-is as your own mirror (registry and namespace), e.g.
+#   registry.example.com/frontegg -> registry.example.com/frontegg/hybrid-agen-co-{auth,gw}
+imageRegistry: dockerhub
+
 # MCP Auth container/deployment configuration
 mcpAuth:
-  repository: docker.io/fronteggcustomers/hybrid-agen-co-auth
+  # Full image path without tag. Overrides imageRegistry for this image; leave empty normally.
+  repository: ""
   # Defaults to the chart's appVersion.
   tag: ""
   pullPolicy: IfNotPresent
@@ -38,7 +47,8 @@ mcpAuth:
 
 # MCP Gateway container/deployment configuration
 mcpGw:
-  repository: docker.io/fronteggcustomers/hybrid-agen-co-gw
+  # Full image path without tag. Overrides imageRegistry for this image; leave empty normally.
+  repository: ""
   # Defaults to the chart's appVersion.
   tag: ""
   pullPolicy: IfNotPresent
@@ -71,8 +81,8 @@ mcpGw:
     failureThreshold: 10
     periodSeconds: 10
 
-# The images live in a private Docker Hub organization. Create a pull secret with the credential
-# Frontegg provided and reference it here:
+# The default registry is a private Docker Hub organization. Create a pull secret with the
+# credential Frontegg provided and reference it here (not needed for ECR on EKS):
 #   kubectl create secret docker-registry frontegg-registry \
 #     --docker-server=https://index.docker.io/v1/ \
 #     --docker-username=fronteggcustomers \
