@@ -36,6 +36,10 @@ spec:
       serviceAccountName: {{ include "service.account.name" $top }}
       {{- end }}
       terminationGracePeriodSeconds: {{ $values.hp.terminationGracePeriodSeconds | default 30 }}
+      {{- with $values.hp.dnsConfig }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with $values.imagePullSecrets }}
       imagePullSecrets:
       {{- toYaml . | nindent 8 }}

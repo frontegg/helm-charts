@@ -68,9 +68,17 @@ defaults:
   jobs:
     podAnnotations:
       karpenter.sh/do-not-disrupt: "true"
+    dnsConfig:
+      options:
+        - name: ndots
+          value: "2"
   cronjobs:
     podAnnotations:
       karpenter.sh/do-not-disrupt: "true"
+    dnsConfig:
+      options:
+        - name: ndots
+          value: "2"
 
 revisionHistoryLimit: 2
 
@@ -162,6 +170,10 @@ web:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "2"
 
 worker:
   enabled: false
@@ -230,6 +242,10 @@ worker:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "2"
 
 hp:
   enabled: false
@@ -296,6 +312,10 @@ hp:
   nodeSelector: {}
   tolerations: []
   affinity: {}
+  dnsConfig:
+    options:
+      - name: ndots
+        value: "2"
   lifecycle:
     enabled: true
     preStop:

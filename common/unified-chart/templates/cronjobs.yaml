@@ -53,6 +53,10 @@ spec:
           nodeSelector:
           {{ tpl (. | toYaml) $top | indent 2 }}
           {{- end }}
+          {{- with ($job.dnsConfig | default $values.defaults.cronjobs.dnsConfig) }}
+          dnsConfig:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           {{- with $values.imagePullSecrets }}
           imagePullSecrets:
             {{- toYaml . | nindent 12 }}
