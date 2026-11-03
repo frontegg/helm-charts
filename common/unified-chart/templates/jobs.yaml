@@ -39,6 +39,10 @@ spec:
       serviceAccountName: {{ include "service.account.name" $top }}
       {{- end }}
       restartPolicy: {{ .restartPolicy | default "Never" }}
+      {{- with (.dnsConfig | default $values.defaults.jobs.dnsConfig) }}
+      dnsConfig:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
       {{- with $values.imagePullSecrets }}
       imagePullSecrets :
         {{- toYaml . | nindent 8 }}

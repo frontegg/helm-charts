@@ -1,0 +1,33 @@
+---
+name: unified-chart version bump check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - common/unified-chart/**
+
+jobs:
+  version-bump-check:
+    if: github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Require at least a patch version bump
+        shell: bash
+        env:
+          BASE_REF: ${{ github.base_ref }}
+          CHART_FILE: common/unified-chart/Chart.yaml
+        run: |
+          base_version=$(git show "origin/${BASE_REF}:${CHART_FILE}" | yq e '.version' -)
+          pr_version=$(yq e '.version' "$CHART_FILE")
+          highest_version=$(printf '%s\n' "$base_version" "$pr_version" | sort -V | tail -n1)
+
+          if [[ "$pr_version" != "$base_version" && "$pr_version" == "$highest_version" ]]; then
+            echo "Chart version bumped from $base_version to $pr_version"
+          else
+            echo "::error file=${CHART_FILE}::unified-chart version must be bumped at least by patch (${BASE_REF}: $base_version, PR: $pr_version)"
+            exit 1
+          fi
