@@ -139,7 +139,7 @@ spec:
       {{- end }}
       {{- if $values.web.affinity }}
       affinity:
-        {{- tpl ($values.web.affinity | toYaml) $top | toYaml | nindent 8 }}
+        {{- tpl ($values.web.affinity | toYaml) $top | nindent 8 }}
       {{- else }}
       affinity:
         podAntiAffinity:
