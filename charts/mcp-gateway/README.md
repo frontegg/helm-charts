@@ -267,7 +267,7 @@ import window on this gateway, and `mcp-auth` lists the server's tools from insi
 network and saves them to the control plane. To enable it:
 
 - Route `POST /external-mcp/import` to `mcp-auth` (see [Routing](#routing)).
-- In the Agen dashboard, set **Hybrid gateway URL** in the MCP settings to `hybridAuthHost`.
+- In the Agen dashboard, set **Hybrid Gateway URL** in the MCP settings to `hybridAuthHost`.
 - Admins open the import window from their browser, so the browser must reach
   `hybridAuthHost`, as it already must for OAuth callbacks.
 
