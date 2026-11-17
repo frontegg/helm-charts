@@ -9,7 +9,7 @@ metadata:
   labels:
     {{- include "web.labels" $top | nindent 4 }}
 spec:
-  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
+  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 3 }}
   {{- with $values.web.strategy }}
   strategy:
     {{- toYaml . | nindent 4 }}

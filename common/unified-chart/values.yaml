@@ -80,7 +80,7 @@ defaults:
         - name: ndots
           value: "2"
 
-revisionHistoryLimit: 2
+revisionHistoryLimit: 3
 
 imagePullPolicy: Always
 

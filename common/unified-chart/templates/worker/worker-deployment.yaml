@@ -14,7 +14,7 @@ spec:
   {{- else if not $values.web.autoscaling.enabled }}
   replicas: {{ $values.worker.replicaCount }}
   {{- end }}
-  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
+  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 3 }}
   {{- with $values.worker.strategy }}
   strategy:
     {{- toYaml . | nindent 4 }}

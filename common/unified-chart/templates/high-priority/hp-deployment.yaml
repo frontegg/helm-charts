@@ -10,7 +10,7 @@ metadata:
   {{- include "hp.labels" $top | nindent 4 }}
   {{- toYaml $values.hp.labels | nindent 4 }}
 spec:
-  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 2 }}
+  revisionHistoryLimit: {{ $values.revisionHistoryLimit | default 3 }}
   {{- if $values.argoRollouts.enabled }}
   replicas: 0
   {{- else if not $values.web.autoscaling.enabled }}
