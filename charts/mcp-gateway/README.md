@@ -125,6 +125,7 @@ Configure your ingress/API gateway with the path map below. Route the auth paths
 | `/external-mcp/authorize`                     | GET    | `mcp-auth`   |
 | `/external-mcp/callback`                      | GET    | `mcp-auth`   |
 | `/external-mcp/callback/complete`             | POST   | `mcp-auth`   |
+| `/external-mcp/import`                        | POST   | `mcp-auth`   |
 | Everything else (`/`)                         | *      | `mcp-gw`     |
 
 Router requirements:
@@ -259,6 +260,21 @@ To keep the key out of Helm values, provide it as `SECRET_ENCRYPTION_KEY` in an
 `existingSecret` (see [Referencing an existing Secret](#referencing-an-existing-secret))
 instead of setting `secretEncryptionKey` inline.
 
+### MCP servers in your network
+
+Admins can connect MCP servers that only your network reaches. The Agen dashboard opens an
+import window on this gateway, and `mcp-auth` lists the server's tools from inside your
+network and saves them to the control plane. To enable it:
+
+- Route `POST /external-mcp/import` to `mcp-auth` (see [Routing](#routing)).
+- In the Agen dashboard, set **Hybrid gateway URL** in the MCP settings to `hybridAuthHost`.
+- Admins open the import window from their browser, so the browser must reach
+  `hybridAuthHost`, as it already must for OAuth callbacks.
+
+The import authenticates to the MCP server the same way tool calls do: with the server's
+headers, its client credentials (decrypted with `secretEncryptionKey` when set), or the
+admin's own sign-in, redirected back to `/external-mcp/callback`.
+
 ### Control plane outages
 
 The gateway caches control-plane data (tools, policies, configuration) in your Redis. If
@@ -356,6 +372,11 @@ is the tag of the images it ships.
   changed security or access default.
 - **Minor** — new images and optional features; no changes required on your side.
 - **Patch** — chart or documentation fixes on the same images.
+
+### Upgrading to 2.2.0
+
+Adds the `POST /external-mcp/import` route for [MCP servers in your network](#mcp-servers-in-your-network).
+Route it to `<release>-mcp-gateway-auth` with the other auth paths if you use that feature.
 
 ### Upgrading to 2.0.0
 
