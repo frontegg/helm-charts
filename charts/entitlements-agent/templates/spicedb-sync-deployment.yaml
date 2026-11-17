@@ -1,0 +1,120 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fullname" . }}-spicedb-sync
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: spicedb-sync
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.spicedbSync.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: spicedb-sync
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "commonLabels" . | nindent 8 }}
+        app.kubernetes.io/component: spicedb-sync
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "serviceAccountName" . }}
+      {{- with .Values.podSecurityContext }}
+      securityContext:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: spicedb-sync
+          {{- with .Values.securityContext }}
+          securityContext:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          image: "{{ .Values.spicedbSync.repository }}:{{ .Values.spicedbSync.tag }}"
+          imagePullPolicy: {{ .Values.spicedbSync.pullPolicy }}
+          env:
+            # Frontegg Configuration
+            {{- if .Values.env.spicedbSync }}
+            {{- range $key, $value := .Values.env.spicedbSync }}
+            - name: {{ include "toEnvVarName" $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+            # SpiceDB Configuration
+            - name: SPICEDB_ADDRESS
+              value: "{{ include "fullname" . }}-spicedb:{{ .Values.service.spicedb.port }}"
+            {{- if .Values.env.spicedb }}
+            {{- range $key, $value := .Values.env.spicedb }}
+            - name: {{ include "toEnvVarName" $key }}
+              value: {{ $value | quote }}
+            {{- end }}
+            {{- end }}
+            # ZED CLI keyring password
+            - name: ZED_KEYRING_PASSWORD
+              value: {{ .Values.spicedbSync.config.zedKeyringPassword | quote }}
+          {{- if .Values.healthChecks.spicedbSync.enabled }}
+          livenessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - sync-loop.sh
+            initialDelaySeconds: {{ .Values.healthChecks.spicedbSync.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthChecks.spicedbSync.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.spicedbSync.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthChecks.spicedbSync.failureThreshold }}
+          readinessProbe:
+            exec:
+              command:
+                - pgrep
+                - -f
+                - sync-loop.sh
+            initialDelaySeconds: {{ .Values.healthChecks.spicedbSync.initialDelaySeconds }}
+            periodSeconds: {{ .Values.healthChecks.spicedbSync.periodSeconds }}
+            timeoutSeconds: {{ .Values.healthChecks.spicedbSync.timeoutSeconds }}
+            failureThreshold: {{ .Values.healthChecks.spicedbSync.failureThreshold }}
+          {{- end }}
+          {{- with .Values.resources.spicedbSync }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          volumeMounts:
+            {{- if .Values.spicedbSync.config.logPersistence.enabled }}
+            - name: spicedb-sync-logs
+              mountPath: /var/log/spicedb-sync
+            {{- end }}
+            {{- with .Values.volumeMounts }}
+            {{- toYaml . | nindent 12 }}
+            {{- end }}
+      volumes:
+        {{- if .Values.spicedbSync.config.logPersistence.enabled }}
+        - name: spicedb-sync-logs
+          persistentVolumeClaim:
+            claimName: {{ include "fullname" . }}-spicedb-sync-logs
+        {{- end }}
+        {{- with .Values.volumes }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }} 

@@ -1,0 +1,18 @@
+{{- if .Values.spicedbSync.config.logPersistence.enabled }}
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "fullname" . }}-spicedb-sync-logs
+  labels:
+    {{- include "commonLabels" . | nindent 4 }}
+    app.kubernetes.io/component: spicedb-sync
+spec:
+  accessModes:
+    - ReadWriteOnce
+  {{- if .Values.spicedbSync.config.logPersistence.storageClass }}
+  storageClassName: {{ .Values.spicedbSync.config.logPersistence.storageClass | quote }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.spicedbSync.config.logPersistence.size | quote }}
+{{- end }} 
