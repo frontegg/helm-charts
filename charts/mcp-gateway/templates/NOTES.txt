@@ -52,6 +52,7 @@ Routing Configuration:
     - /external-mcp/authorize           (GET)
     - /external-mcp/callback            (GET)
     - /external-mcp/callback/complete   (POST)
+    - /external-mcp/import              (POST)
 
   {{ include "fullname" . }}-gw (port {{ .Values.mcpGw.port }}):
     - / (all other paths)
