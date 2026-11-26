@@ -373,6 +373,13 @@ is the tag of the images it ships.
 - **Minor** — new images and optional features; no changes required on your side.
 - **Patch** — chart or documentation fixes on the same images.
 
+### Upgrading to 2.3.0
+
+Ships image `8f40ac7`. No changes are required on your side.
+
+- The gateway accepts M2M access tokens (`userAccessToken`, `tenantAccessToken`) once Frontegg
+  enables them for your application. The token's `applicationId` must match `env.applicationId`.
+
 ### Upgrading to 2.2.0
 
 Adds the `POST /external-mcp/import` route for [MCP servers in your network](#mcp-servers-in-your-network).
